@@ -4,4 +4,12 @@ import UnoCSS from "unocss/vite";
 
 export default defineConfig({
   plugins: [UnoCSS({ configFile: "./uno.config.ts" }), solid()],
+  build: {
+    target: "esnext",
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: "esnext",
+    },
+  },
 });

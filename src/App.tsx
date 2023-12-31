@@ -1,33 +1,61 @@
-import { createSignal } from "solid-js";
-import solidLogo from "./assets/solid.svg";
-import viteLogo from "/vite.svg";
+import * as pdfjsLib from "pdfjs-dist";
+import { JSX } from "solid-js";
+import { parsePDF } from "./utils/pdf";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `../../node_modules/pdfjs-dist/build/pdf.worker.mjs`;
 
 function App() {
-  const [count, setCount] = createSignal(0);
+  const handleChange: JSX.InputEventHandlerUnion<
+    HTMLInputElement,
+    InputEvent
+  > = async (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      console.time("parsing");
+      console.log(await parsePDF(file));
+      console.timeEnd("parsing");
+    }
+  };
 
+  const handleSubmit: JSX.EventHandlerUnion<HTMLInputElement, MouseEvent> = (
+    event
+  ) => {
+    event.preventDefault();
+  };
   return (
-    <>
-      <div class="bg-blue-400">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} class="logo" alt="Vite logo" />
-        </a>
-        {/* <a href="https://solidjs.com" target="_blank">
-          <img src={solidLogo} class="logo solid" alt="Solid logo" />
-        </a> */}
-      </div>
-      <h1 class="border-solid border border-black bg-red-200">Vite + Solid</h1>
-      <div class="card border border-red-200">
-        <button bg="red-200" onClick={() => setCount((count) => count + 1)}>
-          count is {count()}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p class="read-the-docs">
-        Click on the Vite and Solid logos to learn more
-      </p>
-    </>
+    <main>
+      <header>
+        <h1>MoneyLeh 💵</h1>
+        <h3>Manage your personal finances...</h3>
+      </header>
+      <section>
+        <h1>Quick Start</h1>
+        <h2>Try out our pdf extraction feature below</h2>
+        <div>
+          <form>
+            <label>Convert PDF Statements to CSV format</label>
+            <select>
+              <optgroup label="Credit Card Statements">
+                <option value="dbs">DBS</option>
+                <option value="citi">Citi</option>
+                <option value="uob">UOB</option>
+              </optgroup>
+              <optgroup label="Bank Statements">
+                <option value="dbs">DBS</option>
+                <option value="citi">Citi</option>
+                <option value="uob">UOB</option>
+              </optgroup>
+            </select>
+            <input
+              type="file"
+              onInput={handleChange}
+              placeholder="Select files"
+            ></input>
+            <input type="submit" value="submit" onClick={handleSubmit}></input>
+          </form>
+        </div>
+      </section>
+    </main>
   );
 }
 
