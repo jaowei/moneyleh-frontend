@@ -13,3 +13,26 @@ export const parsePDF = async (file: File) => {
   }
   return allPagesTextData;
 };
+
+export const sendPDFText = async (
+  PDFTextData: Array<TextItem | TextMarkedContent>,
+  layoutType: string
+) => {
+  try {
+    const response = await fetch(
+      `${
+        import.meta.env.VITE_BACKEND_BASE_URL
+      }/transactions/file/pdf/layout/${layoutType}/parse`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data: PDFTextData }),
+      }
+    );
+    return response.json();
+  } catch (error) {
+    return error;
+  }
+};
