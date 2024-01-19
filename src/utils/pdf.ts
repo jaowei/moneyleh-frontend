@@ -31,7 +31,7 @@ export const sendPDFText = async (
         body: JSON.stringify({ data: PDFTextData }),
       }
     );
-    return response.json();
+    return await response.json();
   } catch (error) {
     return error;
   }
