@@ -1,5 +1,6 @@
 import * as pdfjsLib from "pdfjs-dist";
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
+import { RowData } from "../components";
 
 export const parsePDF = async (file: File) => {
   const allPagesTextData: Array<TextItem | TextMarkedContent> = [];
@@ -17,7 +18,7 @@ export const parsePDF = async (file: File) => {
 export const sendPDFText = async (
   PDFTextData: Array<TextItem | TextMarkedContent>,
   layoutType: string
-) => {
+): Promise<Array<RowData>> => {
   try {
     const response = await fetch(
       `${
@@ -33,6 +34,6 @@ export const sendPDFText = async (
     );
     return await response.json();
   } catch (error) {
-    return error;
+    throw error;
   }
 };

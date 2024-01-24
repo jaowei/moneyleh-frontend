@@ -1,15 +1,23 @@
 import * as pdfjsLib from "pdfjs-dist";
-import { JSX, createSignal } from "solid-js";
+import { JSX, createResource, createSignal } from "solid-js";
 import { sendPDFText } from "./utils/pdf";
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
-import { FileInput, LandingFormSectionText, Wave } from "./components";
+import {
+  DataGrid,
+  FileInput,
+  LandingFormSectionText,
+  RowData,
+  Wave,
+} from "./components";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `../../node_modules/pdfjs-dist/build/pdf.worker.mjs`;
 
 function App() {
-  const [docFormat, setDocFormat] = createSignal<string>();
+  const [docFormat, setDocFormat] = createSignal<string>("dbs-creditcard");
   const [pdfTextData, setPdfTextData] =
     createSignal<Array<TextItem | TextMarkedContent>>();
+  const [rowData, setRowData] = createSignal<Array<RowData>>();
+  const [isProcessing, setIsProcessing] = createSignal(false);
 
   const handleSelectChange: JSX.ChangeEventHandlerUnion<
     HTMLSelectElement,
@@ -22,15 +30,19 @@ function App() {
     setDocFormat(`${option.value}-${category}`);
   };
 
-  const handleSubmit: JSX.EventHandlerUnion<HTMLInputElement, MouseEvent> = (
-    event
-  ) => {
+  const handleSubmit: JSX.EventHandlerUnion<
+    HTMLInputElement,
+    MouseEvent
+  > = async (event) => {
     event.preventDefault();
+    setIsProcessing(true);
     const data = pdfTextData();
     const layoutType = docFormat();
     if (!data) return; // TODO: throw error toast
     if (!layoutType) return; // TODO: throw error toast
-    sendPDFText(data, layoutType);
+    const response = await sendPDFText(data, layoutType);
+    setRowData(response);
+    setIsProcessing(false);
   };
   return (
     <main class="flex flex-col items-center w-full h-full">
@@ -71,12 +83,12 @@ function App() {
               <FileInput dataSetter={setPdfTextData} />
             </div>
           </div>
-          <div class="flex flex-row items-center h-full" p="x-8">
+          <div class="flex flex-row items-center h-full" p="x-8 b-16">
             <LandingFormSectionText primaryText="3. Process File" />
             <div class="flex flex-row justify-center w-full h-full">
               <input
                 type="submit"
-                value="Process File"
+                value={isProcessing() ? "Processing..." : "Process File"}
                 onClick={handleSubmit}
                 disabled={!pdfTextData()}
                 class={`rounded font-sans ${
@@ -91,6 +103,9 @@ function App() {
             </div>
           </div>
         </form>
+      </section>
+      <section class="flex w-full justify-center max-w-7xl h-full">
+        <DataGrid rowData={rowData} />
       </section>
     </main>
   );

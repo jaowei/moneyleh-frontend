@@ -5,6 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  ag-grid-community:
+    specifier: ~31.0.2
+    version: 31.0.2
+  ag-grid-solid:
+    specifier: ~31.0.2
+    version: 31.0.2(solid-js@1.8.7)
   pdfjs-dist:
     specifier: ^4.0.269
     version: 4.0.269
@@ -1335,6 +1341,19 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
     dev: true
+
+  /ag-grid-community@31.0.2:
+    resolution: {integrity: sha512-gxUdHeAZUV2TDHqnDax5QSQgUxIvJ1zaFxUuPzcfiiPwbN6btz6kxg/KNrDfEjQi70JBfJV46BMR9KTG6iAVmQ==}
+    dev: false
+
+  /ag-grid-solid@31.0.2(solid-js@1.8.7):
+    resolution: {integrity: sha512-UbD4jGuHGGSM6thJxDh2TjWmuihP1BPekeXNfctswk2MLNj9qdPUWQWyMxawvaUMVRu6ML7oqwJJTDjBX9JBDA==}
+    peerDependencies:
+      solid-js: '>=1.0.0'
+    dependencies:
+      ag-grid-community: 31.0.2
+      solid-js: 1.8.7
+    dev: false
 
   /agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
