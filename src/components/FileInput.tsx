@@ -4,9 +4,10 @@ import { parsePDF } from "../utils/pdf";
 
 interface FileInputProps {
   dataSetter: Setter<Array<TextItem | TextMarkedContent> | undefined>;
+  fileNameSetter: Setter<string>;
 }
 
-export const FileInput = ({ dataSetter }: FileInputProps) => {
+export const FileInput = (props: FileInputProps) => {
   const onDragEnterHandler = (e: DragEvent) => {
     e.preventDefault();
   };
@@ -15,12 +16,19 @@ export const FileInput = ({ dataSetter }: FileInputProps) => {
     e.preventDefault();
   };
 
+  const parseAndSetPDFData = async (file: File) => {
+    const pdfTextData = await parsePDF(file);
+    props.dataSetter(pdfTextData);
+    props.fileNameSetter(file?.name);
+  };
+
   const handleDrop = async (e: DragEvent) => {
     e.preventDefault();
+    props.dataSetter(undefined);
+    props.fileNameSetter("");
     const file = e.dataTransfer?.files[0];
     if (file) {
-      const pdfTextData = await parsePDF(file);
-      dataSetter(pdfTextData);
+      await parseAndSetPDFData(file);
     }
   };
 
@@ -28,10 +36,11 @@ export const FileInput = ({ dataSetter }: FileInputProps) => {
     HTMLInputElement,
     InputEvent
   > = async (event) => {
+    props.dataSetter(undefined);
+    props.fileNameSetter("");
     const file = event.target.files?.[0];
     if (file) {
-      const pdfTextData = await parsePDF(file);
-      dataSetter(pdfTextData);
+      await parseAndSetPDFData(file);
     }
   };
 
@@ -43,23 +52,23 @@ export const FileInput = ({ dataSetter }: FileInputProps) => {
         onInput={handleInputChange}
         class="w-[0.1px] h-[0.1px] opacity-0 absolute overflow-hidden -z-1"
         accept=".pdf"
-      ></input>
+      />
       <div
         class="flex justify-center items-center"
         border="2 dashed cyan-900"
-        p="y-4 x-4"
+        p="y-6 x-4"
         onDragLeave={onDragEnterHandler}
         onDragOver={onDragOverHandler}
         onDrop={handleDrop}
       >
-        <div class="i-radix-icons-file" />
+        <div class="i-radix-icons-file" p="r-2" />
         Drop Files or
         <label
           for="file"
           text="white sm"
           class="min-w-max bg-cyan-900 rounded hover:bg-cyan-700"
           border="~ solid black"
-          p="y-0.5 x-1"
+          p="y-1 x-1"
           m="l-1"
           cursor="pointer"
         >

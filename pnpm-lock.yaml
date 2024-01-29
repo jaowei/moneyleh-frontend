@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@iconify-json/svg-spinners':
+    specifier: ^1.1.2
+    version: 1.1.2
   ag-grid-community:
     specifier: ~31.0.2
     version: 31.0.2
@@ -17,6 +20,9 @@ dependencies:
   solid-js:
     specifier: ^1.8.7
     version: 1.8.7
+  solid-toast:
+    specifier: ^0.5.0
+    version: 0.5.0(solid-js@1.8.7)
 
 devDependencies:
   '@iconify-json/radix-icons':
@@ -684,9 +690,14 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
+  /@iconify-json/svg-spinners@1.1.2:
+    resolution: {integrity: sha512-Aab6SqkORaTJ1W+ooufn6C8BsBitrn3uk8iRQLPA6pjhyvQAhkKCGMctyXIL5ZjrycnoFVsZ4mx7KnwEMra8qg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: false
+
   /@iconify/types@2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
-    dev: true
 
   /@iconify/utils@2.1.12:
     resolution: {integrity: sha512-7vf3Uk6H7TKX4QMs2gbg5KR1X9J0NJzKSRNWhMZ+PWN92l0t6Q3tj2ZxLDG07rC3ppWBtTtA4FPmkQphuEmdsg==}
@@ -3494,6 +3505,14 @@ packages:
       '@babel/types': 7.23.6
       solid-js: 1.8.7
     dev: true
+
+  /solid-toast@0.5.0(solid-js@1.8.7):
+    resolution: {integrity: sha512-t770JakjyS2P9b8Qa1zMLOD51KYKWXbTAyJePVUoYex5c5FH5S/HtUBUbZAWFcqRCKmAE8KhyIiCvDZA8bOnxQ==}
+    peerDependencies:
+      solid-js: ^1.5.4
+    dependencies:
+      solid-js: 1.8.7
+    dev: false
 
   /source-map-js@1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
