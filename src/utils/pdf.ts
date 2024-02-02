@@ -23,7 +23,7 @@ export const sendPDFText = async (
     const response = await fetch(
       `${
         import.meta.env.VITE_BACKEND_BASE_URL
-      }/transactions/file/pdf/layout/${layoutType}/parse`,
+      }transactions/file/pdf/layout/${layoutType}/parse`,
       {
         method: "POST",
         headers: {
