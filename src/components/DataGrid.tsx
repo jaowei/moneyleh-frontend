@@ -20,9 +20,9 @@ export const DataGrid = (props: DataGridProps) => {
   let gridRef: any;
 
   const columnDefs = [
-    { field: "Date" },
-    { field: "Description" },
-    { field: "Amount" },
+    { field: "Date", editable: true },
+    { field: "Description", editable: true },
+    { field: "Amount", editable: true },
   ];
 
   const autoSizeStrategy = {
@@ -59,21 +59,39 @@ export const DataGrid = (props: DataGridProps) => {
     <div>
       <div class="flex justify-center" p="t-12">
         <div class="flex justify-between max-w-xs" p="b-4">
-          <button onClick={onClickCopyAll} disabled={!props.rowData()?.length}>
-            <div class="flex flex-row">
+          <button
+            onClick={onClickCopyAll}
+            disabled={!props.rowData()?.length}
+            bg={!props.rowData()?.length ? "gray-500" : "cyan-900"}
+            cursor={!props.rowData()?.length ? "not-allowed" : "pointer"}
+            text="white sm"
+            border="~ solid black"
+            p="y-1 x-2"
+            class="rounded font-sans"
+          >
+            <div class="flex flex-row items-center">
               <div class="i-radix-icons-clipboard" />
               Copy All
             </div>
           </button>
-          <button onClick={onClickDownload} disabled={!props.rowData()?.length}>
-            <div class="flex flex-row">
+          <button
+            onClick={onClickDownload}
+            disabled={!props.rowData()?.length}
+            bg={!props.rowData()?.length ? "gray-500" : "cyan-900"}
+            cursor={!props.rowData()?.length ? "not-allowed" : "pointer"}
+            text="white sm"
+            border="~ solid black"
+            p="y-1 x-2"
+            class="rounded font-sans"
+          >
+            <div class="flex flex-row items-center">
               <div class="i-radix-icons-download" />
               Download as CSV
             </div>
           </button>
         </div>
       </div>
-      <div class="ag-theme-quartz w-7xl h-xl">
+      <div class="ag-theme-quartz w-7xl h-xl" p="b-12">
         <AgGridSolid
           ref={gridRef}
           rowData={props.rowData()}
