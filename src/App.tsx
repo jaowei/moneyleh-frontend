@@ -15,7 +15,7 @@ import {
 import toast, { Toaster } from "solid-toast";
 import { FILE_PROCESSING_ERROR } from "./constants";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = `../../node_modules/pdfjs-dist/build/pdf.worker.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
 
 function App() {
   //refs
@@ -76,8 +76,17 @@ function App() {
       <Toaster position="bottom-right" />
       <Wave />
       <header text="gray-800 center" m="t-36 b-16">
-        <h1 text="cyan-900" font="extrabold">
-          MoneyLeh💵
+        <h1
+          text="cyan-900"
+          font="extrabold"
+          class="flex flex-row justify-center items-center"
+        >
+          <div
+            class="i-vaadin:piggy-bank-coin"
+            style={{ color: "#164e63" }}
+            p="r-2"
+          />
+          MoneyLeh
         </h1>
         <h4 text="gray-700" font="medium">
           Validate + Extract your credit card/bank statements

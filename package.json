@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "copy-assets": "cp ./node_modules/pdfjs-dist/build/pdf.worker.min.mjs ./public/",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "pnpm run copy-assets && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@iconify-json/radix-icons": "^1.1.14",
+    "@iconify-json/vaadin": "^1.1.9",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@unocss/preset-attributify": "^0.58.0",
     "@unocss/preset-icons": "^0.58.3",
