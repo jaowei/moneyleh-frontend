@@ -8,6 +8,7 @@ import {
   LandingFormSection,
   LandingFormSectionContent,
   LandingFormSectionText,
+  PrimaryButton,
   RowData,
   Spinner,
   Wave,
@@ -89,11 +90,11 @@ function App() {
           MoneyLeh
         </h1>
         <h4 text="gray-700" font="medium">
-          Validate + Extract your credit card/bank statements
+          Extract your PDF credit card statements to CSV
         </h4>
       </header>
       <section class="flex w-full max-w-7xl h-full">
-        <form class="flex flex-col w-full justify-center">
+        <form class="flex flex-col w-full justify-center sm:px-6">
           <LandingFormSection>
             <LandingFormSectionText
               primaryText="1. Select Statement Type"
@@ -107,9 +108,8 @@ function App() {
                 onChange={handleSelectChange}
               >
                 <optgroup id="creditcard" label="Credit Card Statements">
-                  <option value="dbs">DBS</option>
-                  <option value="citi">Citi</option>
-                  <option value="uob">UOB</option>
+                  <option value="dbs">DBS - Development Bank Singapore</option>
+                  <option value="citi">Citibank - Singapore</option>
                 </optgroup>
               </select>
             </LandingFormSectionContent>
@@ -130,20 +130,12 @@ function App() {
                 <div class="i-radix-icons-file" />
                 <div p="l-2 r-4">{fileName()}</div>
                 <Show when={!isProcessing()} fallback={<Spinner />}>
-                  <button
+                  <PrimaryButton
                     onClick={handleSubmit}
                     disabled={!pdfTextData()}
-                    class={`rounded font-sans ${
-                      !pdfTextData() ? "" : "hover:bg-cyan-700"
-                    }`}
-                    bg={!pdfTextData() ? "gray-500" : "cyan-900"}
-                    text="white sm"
-                    border="~ solid black"
-                    p="y-1 x-2"
-                    cursor={!pdfTextData() ? "not-allowed" : "pointer"}
                   >
                     Process
-                  </button>
+                  </PrimaryButton>
                 </Show>
               </div>
             </LandingFormSectionContent>
@@ -156,6 +148,21 @@ function App() {
       >
         <DataGrid rowData={rowData} />
       </section>
+      <footer class="flex w-full h-16" bg="cyan-900">
+        <div class="flex flex-row items-center" p="x-6">
+          <a
+            href="https://github.com/jaowei/moneyleh-frontend"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <div class="i-fa6-brands:github w-2em h-2em bg-white" />
+          </a>
+          <div class="flex flex-row items-center" p="l-6">
+            <p text="white">Made in</p>
+            <div class="i-flag:sg-4x3 w-1em h-1em" p="l-6" />
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }

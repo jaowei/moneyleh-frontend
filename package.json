@@ -18,6 +18,8 @@
     "solid-toast": "^0.5.0"
   },
   "devDependencies": {
+    "@iconify-json/fa6-brands": "^1.1.18",
+    "@iconify-json/flag": "^1.1.48",
     "@iconify-json/radix-icons": "^1.1.14",
     "@iconify-json/vaadin": "^1.1.9",
     "@typescript-eslint/eslint-plugin": "^6.4.0",

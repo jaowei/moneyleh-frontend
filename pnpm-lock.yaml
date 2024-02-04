@@ -25,6 +25,12 @@ dependencies:
     version: 0.5.0(solid-js@1.8.7)
 
 devDependencies:
+  '@iconify-json/fa6-brands':
+    specifier: ^1.1.18
+    version: 1.1.18
+  '@iconify-json/flag':
+    specifier: ^1.1.48
+    version: 1.1.48
   '@iconify-json/radix-icons':
     specifier: ^1.1.14
     version: 1.1.14
@@ -685,6 +691,18 @@ packages:
 
   /@humanwhocodes/object-schema@2.0.1:
     resolution: {integrity: sha512-dvuCeX5fC9dXgJn9t+X5atfmgQAzUOWqS1254Gh0m6i8wKd10ebXkfNKiRK+1GWi/yTvvLDHpoxLr0xxxeslWw==}
+    dev: true
+
+  /@iconify-json/fa6-brands@1.1.18:
+    resolution: {integrity: sha512-vmeJP06Xbj0XbVGiBHg0q8H3M894d4bGXKCmiHt6JqUdpiGcIV7r96N+BOU4ZS1+hvpV57fTfXlFPiUfxAIfkg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/flag@1.1.48:
+    resolution: {integrity: sha512-M83pP/Xc/UjxAwCUGn/d0uNulxW8Dm14eH1r49Mg3lmdpMgRSidRzpCEIRk9VMmxICAWbFMoFYcCJZqPeCS9HQ==}
+    dependencies:
+      '@iconify/types': 2.0.0
     dev: true
 
   /@iconify-json/radix-icons@1.1.14:
