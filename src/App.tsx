@@ -18,7 +18,11 @@ import { FILE_PROCESSING_ERROR } from "./constants";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
 
-function App() {
+type AppProps = {
+  worker: Worker;
+};
+
+function App(props: AppProps) {
   //refs
   const [dataGridRef, setDataGridRef] = createSignal<HTMLDivElement>();
 
@@ -39,6 +43,7 @@ function App() {
     const option = event.target.options[selectedIdx];
     const optGroup = option.parentElement;
     const category = optGroup?.getAttribute("id");
+    props.worker.postMessage([category]);
     setDocFormat(`${option.value}-${category}`);
   };
 

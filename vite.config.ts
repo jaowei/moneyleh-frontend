@@ -7,9 +7,17 @@ export default defineConfig({
   build: {
     target: "esnext",
   },
+  server: {
+    // see https://github.com/sqlite/sqlite-wasm
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp",
+    },
+  },
   optimizeDeps: {
     esbuildOptions: {
       target: "esnext",
     },
+    exclude: ["@sqlite.org/sqlite-wasm"],
   },
 });

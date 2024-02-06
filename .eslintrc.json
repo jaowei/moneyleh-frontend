@@ -6,10 +6,6 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["solid"],
   "extends": ["plugin:solid/typescript", "prettier"],
-  "parserOptions": {
-    "ecmaVersion": "latest",
-    "sourceType": "module",
-    "project": "./tsconfig.json"
-  },
-  "rules": {}
+  "rules": {},
+  "ignorePatterns": ["dist", ".eslintrc.json"]
 }
