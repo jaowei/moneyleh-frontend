@@ -1,10 +1,11 @@
-import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
-import { JSX, Setter } from "solid-js";
-import { parsePDF } from "../utils/pdf";
+import { Accessor, JSX, Setter } from "solid-js";
+import { parsePDF } from "../lib/parsePdf/parsePdf";
+import { RowData } from "../types";
 
 interface FileInputProps {
-  dataSetter: Setter<Array<TextItem | TextMarkedContent> | undefined>;
+  dataSetter: Setter<Array<RowData> | undefined>;
   fileNameSetter: Setter<string>;
+  docFormat: Accessor<string>;
 }
 
 export const FileInput = (props: FileInputProps) => {
@@ -17,7 +18,7 @@ export const FileInput = (props: FileInputProps) => {
   };
 
   const parseAndSetPDFData = async (file: File) => {
-    const pdfTextData = await parsePDF(file);
+    const pdfTextData = await parsePDF(file, props.docFormat());
     props.dataSetter(pdfTextData);
     props.fileNameSetter(file?.name);
   };

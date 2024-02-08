@@ -21,9 +21,9 @@ export const DataGrid = (props: DataGridProps) => {
   let gridRef: any;
 
   const columnDefs = [
-    { field: "Date", editable: true },
-    { field: "Description", editable: true },
-    { field: "Amount", editable: true },
+    { field: "date", editable: true },
+    { field: "description", editable: true },
+    { field: "amount", editable: true },
   ];
 
   const autoSizeStrategy = {

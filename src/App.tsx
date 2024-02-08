@@ -123,8 +123,9 @@ function App(props: AppProps) {
             <LandingFormSectionText primaryText="2. Select File" />
             <LandingFormSectionContent>
               <FileInput
-                dataSetter={setPdfTextData}
+                dataSetter={setRowData}
                 fileNameSetter={setFileName}
+                docFormat={docFormat}
               />
             </LandingFormSectionContent>
           </LandingFormSection>
