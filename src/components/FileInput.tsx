@@ -1,6 +1,13 @@
 import { Accessor, JSX, Setter } from "solid-js";
 import { parsePDF } from "../lib/parsePdf/parsePdf";
+import { parseCSV } from "../lib/parseCsv/parseCsv";
 import { RowData } from "../types";
+import {
+  AcceptedMIMETypesEnum,
+  FILE_PROCESSING_ERROR,
+  INVALID_FORMAT_ERROR,
+} from "../constants";
+import toast from "solid-toast";
 
 interface FileInputProps {
   dataSetter: Setter<Array<RowData> | undefined>;
@@ -17,10 +24,25 @@ export const FileInput = (props: FileInputProps) => {
     e.preventDefault();
   };
 
-  const parseAndSetPDFData = async (file: File) => {
-    const pdfTextData = await parsePDF(file, props.docFormat());
-    props.dataSetter(pdfTextData);
-    props.fileNameSetter(file?.name);
+  const handleFileType = async (file: File | undefined) => {
+    let rowData;
+    switch (file?.type) {
+      case AcceptedMIMETypesEnum.PDF:
+        rowData = await parsePDF(file, props.docFormat());
+        break;
+      case AcceptedMIMETypesEnum.CSV:
+        rowData = await parseCSV(file, props.docFormat());
+        break;
+      default:
+        toast.error(INVALID_FORMAT_ERROR);
+        break;
+    }
+    if (!rowData) {
+      toast.error(FILE_PROCESSING_ERROR);
+      return;
+    }
+    props.dataSetter(rowData);
+    props.fileNameSetter(file?.name ?? "");
   };
 
   const handleDrop = async (e: DragEvent) => {
@@ -28,9 +50,7 @@ export const FileInput = (props: FileInputProps) => {
     props.dataSetter(undefined);
     props.fileNameSetter("");
     const file = e.dataTransfer?.files[0];
-    if (file) {
-      await parseAndSetPDFData(file);
-    }
+    handleFileType(file);
   };
 
   const handleInputChange: JSX.InputEventHandlerUnion<
@@ -40,9 +60,8 @@ export const FileInput = (props: FileInputProps) => {
     props.dataSetter(undefined);
     props.fileNameSetter("");
     const file = event.target.files?.[0];
-    if (file) {
-      await parseAndSetPDFData(file);
-    }
+    console.log(file?.type);
+    handleFileType(file);
   };
 
   return (
@@ -52,7 +71,7 @@ export const FileInput = (props: FileInputProps) => {
         type="file"
         onInput={handleInputChange}
         class="w-[0.1px] h-[0.1px] opacity-0 absolute overflow-hidden -z-1"
-        accept=".pdf"
+        accept=".pdf,.csv"
       />
       <div
         class="flex justify-center items-center"

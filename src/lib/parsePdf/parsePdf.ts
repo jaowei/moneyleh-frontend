@@ -1,6 +1,6 @@
 import * as pdfjsLib from "pdfjs-dist";
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
-import { StatementFormatsEnum } from "../../constants";
+import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../constants";
 import { parseDBSFormat } from "./dbs";
 import { parseCitiFormat } from "./citi";
 import toast from "solid-toast";
@@ -24,7 +24,7 @@ export const parsePDF = async (file: File, layoutType: string) => {
       return parseCitiFormat(allPagesTextData);
 
     default:
-      toast.error("File format not supported");
+      toast.error(INVALID_FORMAT_ERROR);
       break;
   }
 };

@@ -116,6 +116,9 @@ function App(props: AppProps) {
                   <option value="dbs">DBS - Development Bank Singapore</option>
                   <option value="citi">Citibank - Singapore</option>
                 </optgroup>
+                <optgroup id="account" label="Bank Accounts">
+                  <option value="dbs">DBS - Development Bank Singapore</option>
+                </optgroup>
               </select>
             </LandingFormSectionContent>
           </LandingFormSection>

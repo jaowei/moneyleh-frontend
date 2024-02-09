@@ -1,10 +1,7 @@
 import { RowData } from "../../types";
+import { extendedDayjs } from "../../utils/dayjs";
 import { PDFParser, isTextItem } from "./parsePdf.types";
-import * as dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import { isInSameRow } from "./utils";
-
-dayjs.extend(customParseFormat);
 
 const filterTextData = (text: string): boolean => {
   if (
@@ -20,7 +17,7 @@ const filterTextData = (text: string): boolean => {
 
 const getYear = (text: string): string => {
   const textLen = text.length;
-  if (dayjs(text, "DD MMM YYYY").isValid()) {
+  if (extendedDayjs(text, "DD MMM YYYY").isValid()) {
     return text.slice(textLen - 4);
   }
   return "";

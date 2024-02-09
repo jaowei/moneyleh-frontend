@@ -1,29 +1,7 @@
 import { RowData } from "../../components";
+import { extendedDayjs } from "../../utils/dayjs";
 import { PDFParser, isTextItem } from "./parsePdf.types";
-import * as dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import updateLocale from "dayjs/plugin/updateLocale";
 import { isInSameRow } from "./utils";
-
-dayjs.extend(customParseFormat);
-dayjs.extend(updateLocale);
-
-dayjs.updateLocale("en", {
-  monthsShort: [
-    "JAN",
-    "FEB",
-    "MAR",
-    "APR",
-    "MAY",
-    "JUN",
-    "JUL",
-    "AUG",
-    "SEP",
-    "OCT",
-    "NOV",
-    "DEC",
-  ],
-});
 
 const getYear = (text: string, row: string[]): string => {
   if (text.includes("Statement Date")) {
@@ -39,7 +17,7 @@ const isValidCitiRow = (row: string[], headerCoord: number): boolean => {
   if (row.length > 6) {
     const text = row.join("");
     const date = text.slice(0, 6);
-    if (!dayjs(date, "DD MMM").isValid()) {
+    if (!extendedDayjs(date, "DD MMM").isValid()) {
       return false;
     }
   }
