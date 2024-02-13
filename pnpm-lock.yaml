@@ -5,15 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@iconify-json/svg-spinners':
-    specifier: ^1.1.2
-    version: 1.1.2
   '@sqlite.org/sqlite-wasm':
     specifier: 3.45.1-build1
     version: 3.45.1-build1
-  '@types/papaparse':
-    specifier: ^5.3.14
-    version: 5.3.14
   ag-grid-community:
     specifier: ~31.0.3
     version: 31.0.3
@@ -35,6 +29,9 @@ dependencies:
   solid-toast:
     specifier: ^0.5.0
     version: 0.5.0(solid-js@1.8.14)
+  xlsx:
+    specifier: https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz
+    version: '@cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz'
 
 devDependencies:
   '@iconify-json/fa6-brands':
@@ -46,9 +43,15 @@ devDependencies:
   '@iconify-json/radix-icons':
     specifier: ^1.1.14
     version: 1.1.14
+  '@iconify-json/svg-spinners':
+    specifier: ^1.1.2
+    version: 1.1.2
   '@iconify-json/vaadin':
     specifier: ^1.1.9
     version: 1.1.9
+  '@types/papaparse':
+    specifier: ^5.3.14
+    version: 5.3.14
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.21.0
     version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.56.0)(typescript@5.3.3)
@@ -736,7 +739,7 @@ packages:
     resolution: {integrity: sha512-Aab6SqkORaTJ1W+ooufn6C8BsBitrn3uk8iRQLPA6pjhyvQAhkKCGMctyXIL5ZjrycnoFVsZ4mx7KnwEMra8qg==}
     dependencies:
       '@iconify/types': 2.0.0
-    dev: false
+    dev: true
 
   /@iconify-json/vaadin@1.1.9:
     resolution: {integrity: sha512-Ty+082mPgp/p3gVnY3p14fZz/bimxJJeSfB6DgOD60cCoSEw2yXYb2HcUzx1B+xeGbEKDrWdLoqfasFOpnl7AA==}
@@ -746,6 +749,7 @@ packages:
 
   /@iconify/types@2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
+    dev: true
 
   /@iconify/utils@2.1.22:
     resolution: {integrity: sha512-6UHVzTVXmvO8uS6xFF+L/QTSpTzA/JZxtgU+KYGFyDYMEObZ1bu/b5l+zNJjHy+0leWjHI+C0pXlzGvv3oXZMA==}
@@ -1004,13 +1008,13 @@ packages:
     resolution: {integrity: sha512-QmgQZGWu1Yw9TDyAP9ZzpFJKynYNeOvwMJmaxABfieQoVoiVOS6MN1WSpqpRcbeA5+RW82kraAVxCCJg+780Qw==}
     dependencies:
       undici-types: 5.26.5
-    dev: false
+    dev: true
 
   /@types/papaparse@5.3.14:
     resolution: {integrity: sha512-LxJ4iEFcpqc6METwp9f6BV6VVc43m6MfH0VqFosHvrUgfXiFe6ww7R3itkOQ+TCK6Y+Iv/+RnnvtRZnkc5Kc9g==}
     dependencies:
       '@types/node': 20.11.17
-    dev: false
+    dev: true
 
   /@types/semver@7.5.6:
     resolution: {integrity: sha512-dn1l8LaMea/IjDoHNd9J52uBbInB796CDffS6VdIxvqYCPSG0V0DzHp76GpaWnlhg88uYyPbXCDIowa86ybd5A==}
@@ -3845,7 +3849,7 @@ packages:
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
-    dev: false
+    dev: true
 
   /unocss@0.58.5(postcss@8.4.35)(vite@5.1.1):
     resolution: {integrity: sha512-0g4P6jLgRRNnhscxw7nQ9RHGrKJ1UPPiHPet+YT3TXUcmy4mTiYgo9+kGQf5bjyrzsELJ10cT6Qz2y6g9Tls4g==}
@@ -4047,3 +4051,11 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  '@cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz':
+    resolution: {tarball: https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz}
+    name: xlsx
+    version: 0.20.1
+    engines: {node: '>=0.8'}
+    hasBin: true
+    dev: false

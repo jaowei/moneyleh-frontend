@@ -3,11 +3,13 @@ import { parsePDF } from "../lib/parsePdf/parsePdf";
 import { parseCSV } from "../lib/parseCsv/parseCsv";
 import { RowData } from "../types";
 import {
+  ACCEPTED_FILE_TYPES,
   AcceptedMIMETypesEnum,
   FILE_PROCESSING_ERROR,
   INVALID_FORMAT_ERROR,
 } from "../constants";
 import toast from "solid-toast";
+import { parseExcel } from "../lib/parseExcel/parseExcel";
 
 interface FileInputProps {
   dataSetter: Setter<Array<RowData> | undefined>;
@@ -32,6 +34,9 @@ export const FileInput = (props: FileInputProps) => {
         break;
       case AcceptedMIMETypesEnum.CSV:
         rowData = await parseCSV(file, props.docFormat());
+        break;
+      case AcceptedMIMETypesEnum.XLS:
+        rowData = await parseExcel(file, props.docFormat());
         break;
       default:
         toast.error(INVALID_FORMAT_ERROR);
@@ -71,7 +76,7 @@ export const FileInput = (props: FileInputProps) => {
         type="file"
         onInput={handleInputChange}
         class="w-[0.1px] h-[0.1px] opacity-0 absolute overflow-hidden -z-1"
-        accept=".pdf,.csv"
+        accept={ACCEPTED_FILE_TYPES}
       />
       <div
         class="flex justify-center items-center"
@@ -96,7 +101,7 @@ export const FileInput = (props: FileInputProps) => {
         </label>
       </div>
       <p text="xs red" m="y-1">
-        *Supported File Formats: .pdf
+        *Supported File Formats: {ACCEPTED_FILE_TYPES}
       </p>
     </div>
   );

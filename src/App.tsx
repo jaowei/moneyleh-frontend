@@ -95,16 +95,13 @@ function App(props: AppProps) {
           MoneyLeh
         </h1>
         <h4 text="gray-700" font="medium">
-          Extract your PDF credit card statements to CSV
+          Offline first personal finances tracker
         </h4>
       </header>
       <section class="flex w-full max-w-7xl h-full">
         <form class="flex flex-col w-full justify-center sm:px-6">
           <LandingFormSection>
-            <LandingFormSectionText
-              primaryText="1. Select Statement Type"
-              secondaryText="*Converts PDF Statements to CSV format"
-            />
+            <LandingFormSectionText primaryText="1. Select Statement Type" />
             <LandingFormSectionContent>
               <select
                 class="w-full max-w-xs rounded shadow-lg"
@@ -112,11 +109,20 @@ function App(props: AppProps) {
                 p="y-1 l-2"
                 onChange={handleSelectChange}
               >
-                <optgroup id="creditcard" label="Credit Card Statements">
+                <optgroup
+                  id="creditcard-pdf"
+                  label="Credit Card Statements - PDF"
+                >
                   <option value="dbs">DBS - Development Bank Singapore</option>
                   <option value="citi">Citibank - Singapore</option>
                 </optgroup>
-                <optgroup id="account" label="Bank Accounts">
+                <optgroup
+                  id="creditcard-xls"
+                  label="Credit Card Statements - XLS"
+                >
+                  <option value="uob">UOB - United Overseas Bank</option>
+                </optgroup>
+                <optgroup id="account-csv" label="Bank Accounts - CSV">
                   <option value="dbs">DBS - Development Bank Singapore</option>
                 </optgroup>
               </select>

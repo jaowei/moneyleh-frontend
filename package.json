@@ -10,22 +10,23 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@iconify-json/svg-spinners": "^1.1.2",
     "@sqlite.org/sqlite-wasm": "3.45.1-build1",
-    "@types/papaparse": "^5.3.14",
     "ag-grid-community": "~31.0.3",
     "ag-grid-solid": "~31.0.3",
     "dayjs": "^1.11.10",
     "papaparse": "^5.4.1",
     "pdfjs-dist": "^4.0.379",
     "solid-js": "^1.8.14",
-    "solid-toast": "^0.5.0"
+    "solid-toast": "^0.5.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   },
   "devDependencies": {
     "@iconify-json/fa6-brands": "^1.1.18",
     "@iconify-json/flag": "^1.1.48",
     "@iconify-json/radix-icons": "^1.1.14",
+    "@iconify-json/svg-spinners": "^1.1.2",
     "@iconify-json/vaadin": "^1.1.9",
+    "@types/papaparse": "^5.3.14",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@unocss/preset-attributify": "^0.58.5",
     "@unocss/preset-icons": "^0.58.5",

@@ -23,7 +23,6 @@ const upperCaseMonths = [
 const lowerCaseMonths = upperCaseMonths.map(
   (mth) => mth[0] + mth.slice(1).toLowerCase()
 );
-console.log(lowerCaseMonths);
 
 dayjs.updateLocale("en", {
   monthsShort: [...upperCaseMonths, ...lowerCaseMonths],

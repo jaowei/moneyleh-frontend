@@ -11,7 +11,7 @@ export const parseCSV = async (
   const textContent = await file.text();
   const parsedContent = Papa.parse(textContent, { skipEmptyLines: true });
   switch (statementFormat) {
-    case StatementFormatsEnum.DBS_ACCOUNT:
+    case StatementFormatsEnum.DBS_ACCOUNT_CSV:
       return parseDBSFormat(parsedContent);
     default:
       toast.error(INVALID_FORMAT_ERROR);

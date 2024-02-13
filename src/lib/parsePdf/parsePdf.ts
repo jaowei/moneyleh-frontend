@@ -17,10 +17,10 @@ export const parsePDF = async (file: File, layoutType: string) => {
   }
 
   switch (layoutType) {
-    case StatementFormatsEnum.DBS_CARD:
+    case StatementFormatsEnum.DBS_CARD_PDF:
       return parseDBSFormat(allPagesTextData);
 
-    case StatementFormatsEnum.CITI_CARD:
+    case StatementFormatsEnum.CITI_CARD_PDF:
       return parseCitiFormat(allPagesTextData);
 
     default:
