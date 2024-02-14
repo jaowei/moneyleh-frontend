@@ -109,21 +109,14 @@ function App(props: AppProps) {
                 p="y-1 l-2"
                 onChange={handleSelectChange}
               >
-                <optgroup
-                  id="creditcard-pdf"
-                  label="Credit Card Statements - PDF"
-                >
-                  <option value="dbs">DBS - Development Bank Singapore</option>
-                  <option value="citi">Citibank - Singapore</option>
+                <optgroup id="creditcard" label="Credit Card Statements">
+                  <option value="dbs">DBS - PDF</option>
+                  <option value="citi">Citibank - PDF</option>
+                  <option value="uob">UOB - XLS</option>
+                  <option value="hsbc">HSBC - CSV</option>
                 </optgroup>
-                <optgroup
-                  id="creditcard-xls"
-                  label="Credit Card Statements - XLS"
-                >
-                  <option value="uob">UOB - United Overseas Bank</option>
-                </optgroup>
-                <optgroup id="account-csv" label="Bank Accounts - CSV">
-                  <option value="dbs">DBS - Development Bank Singapore</option>
+                <optgroup id="account" label="Bank Accounts">
+                  <option value="dbs">DBS - CSV</option>
                 </optgroup>
               </select>
             </LandingFormSectionContent>

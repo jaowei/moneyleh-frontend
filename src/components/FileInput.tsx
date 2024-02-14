@@ -65,7 +65,6 @@ export const FileInput = (props: FileInputProps) => {
     props.dataSetter(undefined);
     props.fileNameSetter("");
     const file = event.target.files?.[0];
-    console.log(file?.type);
     handleFileType(file);
   };
 

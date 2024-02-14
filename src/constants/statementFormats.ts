@@ -1,6 +1,7 @@
 export enum StatementFormatsEnum {
-  DBS_CARD_PDF = "dbs-creditcard-pdf",
-  CITI_CARD_PDF = "citi-creditcard-pdf",
-  DBS_ACCOUNT_CSV = "dbs-account-csv",
-  UOB_CARD_XLS = "uob-creditcard-xls",
+  DBS_CARD = "dbs-creditcard",
+  CITI_CARD = "citi-creditcard",
+  DBS_ACCOUNT = "dbs-account",
+  UOB_CARD = "uob-creditcard",
+  HSBC_CARD = "hsbc-creditcard",
 }

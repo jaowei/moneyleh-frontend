@@ -14,7 +14,7 @@ export const parseExcel = async (
     toast.error("No sheets detected");
   }
   switch (statementFormat) {
-    case StatementFormatsEnum.UOB_CARD_XLS:
+    case StatementFormatsEnum.UOB_CARD:
       return parseUOBFormat(workbook);
     default:
       toast.error(INVALID_FORMAT_ERROR);
