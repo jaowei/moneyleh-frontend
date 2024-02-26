@@ -36,7 +36,9 @@ export const DataGrid = (props: DataGridProps) => {
   > = async (e) => {
     e.preventDefault();
     try {
-      await navigator.clipboard.writeText(gridRef.api.getDataAsCsv());
+      await navigator.clipboard.writeText(
+        gridRef.api.getDataAsCsv({ columnSeparator: "\t" })
+      );
       toast.success("Copied to clipboard!");
     } catch (error) {
       toast.error("Failed to copy data");

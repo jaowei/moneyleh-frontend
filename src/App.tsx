@@ -14,7 +14,7 @@ import {
   Wave,
 } from "./components";
 import toast, { Toaster } from "solid-toast";
-import { FILE_PROCESSING_ERROR } from "./constants";
+import { FILE_PROCESSING_ERROR, StatementFormatsEnum } from "./constants";
 import { PasswordDialog } from "./components/PasswordDialog";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
@@ -27,7 +27,9 @@ function App(props: AppProps) {
   //refs
   const [dataGridRef, setDataGridRef] = createSignal<HTMLDivElement>();
 
-  const [docFormat, setDocFormat] = createSignal<string>("dbs-creditcard");
+  const [docFormat, setDocFormat] = createSignal<string>(
+    StatementFormatsEnum.DBS_CARD
+  );
   // const [pdfTextData, setPdfTextData] =
   //   createSignal<Array<TextItem | TextMarkedContent>>();
   const [rowData, setRowData] = createSignal<Array<RowData>>();
