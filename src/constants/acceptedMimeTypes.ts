@@ -4,4 +4,4 @@ export enum AcceptedMIMETypesEnum {
   XLS = "application/vnd.ms-excel",
 }
 
-export const ACCEPTED_FILE_TYPES = ".csv,.pdf.xls";
+export const ACCEPTED_FILE_TYPES = ".csv,.pdf,.xls";

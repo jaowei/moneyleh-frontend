@@ -15,6 +15,7 @@ import {
 } from "./components";
 import toast, { Toaster } from "solid-toast";
 import { FILE_PROCESSING_ERROR } from "./constants";
+import { PasswordDialog } from "./components/PasswordDialog";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
 
@@ -27,13 +28,15 @@ function App(props: AppProps) {
   const [dataGridRef, setDataGridRef] = createSignal<HTMLDivElement>();
 
   const [docFormat, setDocFormat] = createSignal<string>("dbs-creditcard");
-  const [pdfTextData, setPdfTextData] =
-    createSignal<Array<TextItem | TextMarkedContent>>();
+  // const [pdfTextData, setPdfTextData] =
+  //   createSignal<Array<TextItem | TextMarkedContent>>();
   const [rowData, setRowData] = createSignal<Array<RowData>>();
   const [fileName, setFileName] = createSignal("No file selected");
+  const [filePassword, setFilePassword] = createSignal<string>();
+  const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
 
   // loading
-  const [isProcessing, setIsProcessing] = createSignal(false);
+  // const [isProcessing, setIsProcessing] = createSignal(false);
 
   const handleSelectChange: JSX.ChangeEventHandlerUnion<
     HTMLSelectElement,
@@ -47,35 +50,35 @@ function App(props: AppProps) {
     setDocFormat(`${option.value}-${category}`);
   };
 
-  const handleSubmit: JSX.EventHandlerUnion<
-    HTMLButtonElement,
-    MouseEvent
-  > = async (event) => {
-    event.preventDefault();
-    setIsProcessing(true);
-    const data = pdfTextData();
-    const layoutType = docFormat();
-    const dataDisplaySectionRef = dataGridRef();
-    if (!data) {
-      toast.error(FILE_PROCESSING_ERROR);
-      return;
-    }
-    if (!layoutType) {
-      toast.error(FILE_PROCESSING_ERROR);
-      return;
-    }
-    try {
-      const response = await sendPDFText(data, layoutType);
-      setRowData(response);
-      if (dataDisplaySectionRef) {
-        dataDisplaySectionRef.scrollIntoView({ behavior: "smooth" });
-      }
-      toast.success("File processed successfully");
-    } catch (error) {
-      toast.error(FILE_PROCESSING_ERROR);
-    }
-    setIsProcessing(false);
-  };
+  // const handleSubmit: JSX.EventHandlerUnion<
+  //   HTMLButtonElement,
+  //   MouseEvent
+  // > = async (event) => {
+  //   event.preventDefault();
+  //   setIsProcessing(true);
+  //   const data = pdfTextData();
+  //   const layoutType = docFormat();
+  //   const dataDisplaySectionRef = dataGridRef();
+  //   if (!data) {
+  //     toast.error(FILE_PROCESSING_ERROR);
+  //     return;
+  //   }
+  //   if (!layoutType) {
+  //     toast.error(FILE_PROCESSING_ERROR);
+  //     return;
+  //   }
+  //   try {
+  //     const response = await sendPDFText(data, layoutType);
+  //     setRowData(response);
+  //     if (dataDisplaySectionRef) {
+  //       dataDisplaySectionRef.scrollIntoView({ behavior: "smooth" });
+  //     }
+  //     toast.success("File processed successfully");
+  //   } catch (error) {
+  //     toast.error(FILE_PROCESSING_ERROR);
+  //   }
+  //   setIsProcessing(false);
+  // };
 
   return (
     <main class="flex flex-col items-center w-full h-full">
@@ -115,8 +118,9 @@ function App(props: AppProps) {
                   <option value="uob">UOB - XLS</option>
                   <option value="hsbc">HSBC - CSV</option>
                 </optgroup>
-                <optgroup id="account" label="Bank Accounts">
+                <optgroup id="account" label="Accounts">
                   <option value="dbs">DBS - CSV</option>
+                  <option value="moomoo">MooMoo - PDF</option>
                 </optgroup>
               </select>
             </LandingFormSectionContent>
@@ -128,6 +132,9 @@ function App(props: AppProps) {
                 dataSetter={setRowData}
                 fileNameSetter={setFileName}
                 docFormat={docFormat}
+                password={filePassword}
+                passwordDialogTriggerSetter={setPasswordDialogIsOpen}
+                passwordSetter={setFilePassword}
               />
             </LandingFormSectionContent>
           </LandingFormSection>
@@ -137,14 +144,14 @@ function App(props: AppProps) {
               <div class="flex flex-row items-center">
                 <div class="i-radix-icons-file" />
                 <div p="l-2 r-4">{fileName()}</div>
-                <Show when={!isProcessing()} fallback={<Spinner />}>
+                {/* <Show when={!isProcessing()} fallback={<Spinner />}>
                   <PrimaryButton
                     onClick={handleSubmit}
                     disabled={!pdfTextData()}
                   >
                     Process
                   </PrimaryButton>
-                </Show>
+                </Show> */}
               </div>
             </LandingFormSectionContent>
           </LandingFormSection>
@@ -156,6 +163,11 @@ function App(props: AppProps) {
       >
         <DataGrid rowData={rowData} />
       </section>
+      <PasswordDialog
+        passwordDialogTrigger={passwordDialogIsOpen}
+        passwordDialogTriggerSetter={setPasswordDialogIsOpen}
+        passwordSetter={setFilePassword}
+      />
       <footer class="flex w-full h-16" bg="cyan-900">
         <div class="flex flex-row items-center" p="x-6">
           <a

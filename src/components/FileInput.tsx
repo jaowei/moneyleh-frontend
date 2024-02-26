@@ -1,4 +1,4 @@
-import { Accessor, JSX, Setter } from "solid-js";
+import { Accessor, JSX, Setter, createEffect, createSignal } from "solid-js";
 import { parsePDF } from "../lib/parsePdf/parsePdf";
 import { parseCSV } from "../lib/parseCsv/parseCsv";
 import { RowData } from "../types";
@@ -15,9 +15,23 @@ interface FileInputProps {
   dataSetter: Setter<Array<RowData> | undefined>;
   fileNameSetter: Setter<string>;
   docFormat: Accessor<string>;
+  password: Accessor<string | undefined>;
+  passwordDialogTriggerSetter: Setter<boolean>;
+  passwordSetter: Setter<string | undefined>;
 }
 
 export const FileInput = (props: FileInputProps) => {
+  const [savedFile, setSavedFile] = createSignal<File>();
+
+  createEffect(() => {
+    const file = savedFile();
+    if (file && props.password()) {
+      handleFileType(file);
+      setSavedFile();
+      props.passwordSetter();
+    }
+  });
+
   const onDragEnterHandler = (e: DragEvent) => {
     e.preventDefault();
   };
@@ -27,27 +41,35 @@ export const FileInput = (props: FileInputProps) => {
   };
 
   const handleFileType = async (file: File | undefined) => {
-    let rowData;
-    switch (file?.type) {
-      case AcceptedMIMETypesEnum.PDF:
-        rowData = await parsePDF(file, props.docFormat());
-        break;
-      case AcceptedMIMETypesEnum.CSV:
-        rowData = await parseCSV(file, props.docFormat());
-        break;
-      case AcceptedMIMETypesEnum.XLS:
-        rowData = await parseExcel(file, props.docFormat());
-        break;
-      default:
-        toast.error(INVALID_FORMAT_ERROR);
-        break;
+    try {
+      let rowData;
+      switch (file?.type) {
+        case AcceptedMIMETypesEnum.PDF:
+          console.log(props.password());
+          rowData = await parsePDF(file, props.docFormat(), props.password());
+          break;
+        case AcceptedMIMETypesEnum.CSV:
+          rowData = await parseCSV(file, props.docFormat());
+          break;
+        case AcceptedMIMETypesEnum.XLS:
+          rowData = await parseExcel(file, props.docFormat());
+          break;
+        default:
+          toast.error(INVALID_FORMAT_ERROR);
+          break;
+      }
+      if (!rowData) {
+        toast.error(FILE_PROCESSING_ERROR);
+        return;
+      }
+      props.dataSetter(rowData);
+      props.fileNameSetter(file?.name ?? "");
+    } catch (error: any) {
+      if (error?.name === "PasswordException") {
+        props.passwordDialogTriggerSetter(true);
+        setSavedFile(file);
+      }
     }
-    if (!rowData) {
-      toast.error(FILE_PROCESSING_ERROR);
-      return;
-    }
-    props.dataSetter(rowData);
-    props.fileNameSetter(file?.name ?? "");
   };
 
   const handleDrop = async (e: DragEvent) => {

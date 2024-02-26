@@ -1,6 +1,7 @@
-import { ParentComponent } from "solid-js";
+import { JSX, ParentComponent, mergeProps } from "solid-js";
 
-interface PrimaryButtonProps {
+interface PrimaryButtonProps
+  extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: (
     e: MouseEvent & {
       currentTarget: HTMLButtonElement;
@@ -11,16 +12,23 @@ interface PrimaryButtonProps {
 }
 
 export const PrimaryButton: ParentComponent<PrimaryButtonProps> = (props) => {
+  const mergedProps = mergeProps(
+    {
+      text: "white sm",
+      p: "y-1 x-2",
+    },
+    props
+  );
   return (
     <button
-      class={`rounded font-sans ${props.disabled ? "" : "hover:bg-cyan-700"}`}
-      p="y-1 x-2"
+      class={`rounded font-sans ${mergedProps.disabled ? "" : "hover:bg-cyan-700"}`}
       border="~ solid black"
-      text="white sm"
-      onClick={(e) => props?.onClick?.(e)}
-      disabled={props?.disabled}
-      bg={props?.disabled ? "gray-500" : "cyan-900"}
-      cursor={props?.disabled ? "not-allowed" : "pointer"}
+      onClick={(e) => mergedProps?.onClick?.(e)}
+      disabled={mergedProps?.disabled}
+      bg={mergedProps?.disabled ? "gray-500" : "cyan-900"}
+      cursor={mergedProps?.disabled ? "not-allowed" : "pointer"}
+      text={mergedProps.text}
+      p={mergedProps.p}
     >
       {props?.children}
     </button>
