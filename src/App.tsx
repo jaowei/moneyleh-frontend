@@ -9,13 +9,13 @@ import {
   LandingFormSectionContent,
   LandingFormSectionText,
   PrimaryButton,
-  RowData,
   Spinner,
   Wave,
 } from "./components";
 import toast, { Toaster } from "solid-toast";
 import { FILE_PROCESSING_ERROR, StatementFormatsEnum } from "./constants";
 import { PasswordDialog } from "./components/PasswordDialog";
+import { RowData } from "./types";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
 
@@ -83,9 +83,14 @@ function App(props: AppProps) {
   // };
 
   return (
-    <main class="flex flex-col items-center w-full h-full">
+    <main>
       <Toaster position="bottom-right" />
       <Wave />
+      <PasswordDialog
+        passwordDialogTrigger={passwordDialogIsOpen}
+        passwordDialogTriggerSetter={setPasswordDialogIsOpen}
+        passwordSetter={setFilePassword}
+      />
       <header text="gray-800 center" m="t-36 b-16">
         <h1
           text="cyan-900"
@@ -103,50 +108,51 @@ function App(props: AppProps) {
           Offline first personal finances tracker
         </h4>
       </header>
-      <section class="flex w-full max-w-7xl h-full">
-        <form class="flex flex-col w-full justify-center sm:px-6">
-          <LandingFormSection>
-            <LandingFormSectionText primaryText="1. Select Statement Type" />
-            <LandingFormSectionContent>
-              <select
-                class="w-full max-w-xs rounded shadow-lg"
-                cursor="pointer"
-                p="y-1 l-2"
-                onChange={handleSelectChange}
-              >
-                <optgroup id="creditcard" label="Credit Card Statements">
-                  <option value="dbs">DBS - PDF</option>
-                  <option value="citi">Citibank - PDF</option>
-                  <option value="uob">UOB - XLS</option>
-                  <option value="hsbc">HSBC - CSV</option>
-                </optgroup>
-                <optgroup id="account" label="Accounts">
-                  <option value="dbs">DBS - CSV</option>
-                  <option value="moomoo">MooMoo - PDF</option>
-                </optgroup>
-              </select>
-            </LandingFormSectionContent>
-          </LandingFormSection>
-          <LandingFormSection>
-            <LandingFormSectionText primaryText="2. Select File" />
-            <LandingFormSectionContent>
-              <FileInput
-                dataSetter={setRowData}
-                fileNameSetter={setFileName}
-                docFormat={docFormat}
-                password={filePassword}
-                passwordDialogTriggerSetter={setPasswordDialogIsOpen}
-                passwordSetter={setFilePassword}
-              />
-            </LandingFormSectionContent>
-          </LandingFormSection>
-          <LandingFormSection>
-            <LandingFormSectionText primaryText="3. Process File" />
-            <LandingFormSectionContent>
-              <div class="flex flex-row items-center">
-                <div class="i-radix-icons-file" />
-                <div p="l-2 r-4">{fileName()}</div>
-                {/* <Show when={!isProcessing()} fallback={<Spinner />}>
+      <div class="flex flex-col items-center w-full h-full">
+        <section class="flex w-full max-w-7xl h-full">
+          <form class="flex flex-col w-full justify-center sm:px-6">
+            <LandingFormSection>
+              <LandingFormSectionText primaryText="1. Select Statement Type" />
+              <LandingFormSectionContent>
+                <select
+                  class="w-full max-w-xs rounded shadow-lg"
+                  cursor="pointer"
+                  p="y-1 l-2"
+                  onChange={handleSelectChange}
+                >
+                  <optgroup id="creditcard" label="Credit Card Statements">
+                    <option value="dbs">DBS - PDF</option>
+                    <option value="citi">Citibank - PDF</option>
+                    <option value="uob">UOB - XLS</option>
+                    <option value="hsbc">HSBC - CSV</option>
+                  </optgroup>
+                  <optgroup id="account" label="Accounts">
+                    <option value="dbs">DBS - CSV</option>
+                    <option value="moomoo">MooMoo - PDF</option>
+                  </optgroup>
+                </select>
+              </LandingFormSectionContent>
+            </LandingFormSection>
+            <LandingFormSection>
+              <LandingFormSectionText primaryText="2. Select File" />
+              <LandingFormSectionContent>
+                <FileInput
+                  dataSetter={setRowData}
+                  fileNameSetter={setFileName}
+                  docFormat={docFormat}
+                  password={filePassword}
+                  passwordDialogTriggerSetter={setPasswordDialogIsOpen}
+                  passwordSetter={setFilePassword}
+                />
+              </LandingFormSectionContent>
+            </LandingFormSection>
+            <LandingFormSection>
+              <LandingFormSectionText primaryText="3. Process File" />
+              <LandingFormSectionContent>
+                <div class="flex flex-row items-center">
+                  <div class="i-radix-icons-file" />
+                  <div p="l-2 r-4">{fileName()}</div>
+                  {/* <Show when={!isProcessing()} fallback={<Spinner />}>
                   <PrimaryButton
                     onClick={handleSubmit}
                     disabled={!pdfTextData()}
@@ -154,22 +160,15 @@ function App(props: AppProps) {
                     Process
                   </PrimaryButton>
                 </Show> */}
-              </div>
-            </LandingFormSectionContent>
-          </LandingFormSection>
-        </form>
-      </section>
-      <section
-        class="flex w-full justify-center max-w-7xl h-full"
-        ref={setDataGridRef}
-      >
+                </div>
+              </LandingFormSectionContent>
+            </LandingFormSection>
+          </form>
+        </section>
+      </div>
+      <section class="w-full max-w-7xl h-full mx-auto" ref={setDataGridRef}>
         <DataGrid rowData={rowData} />
       </section>
-      <PasswordDialog
-        passwordDialogTrigger={passwordDialogIsOpen}
-        passwordDialogTriggerSetter={setPasswordDialogIsOpen}
-        passwordSetter={setFilePassword}
-      />
       <footer class="flex w-full h-16" bg="cyan-900">
         <div class="flex flex-row items-center" p="x-6">
           <a

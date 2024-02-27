@@ -45,7 +45,6 @@ export const FileInput = (props: FileInputProps) => {
       let rowData;
       switch (file?.type) {
         case AcceptedMIMETypesEnum.PDF:
-          console.log(props.password());
           rowData = await parsePDF(file, props.docFormat(), props.password());
           break;
         case AcceptedMIMETypesEnum.CSV:

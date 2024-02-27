@@ -1,4 +1,4 @@
-import { RowData } from "../../components";
+import { RowData } from "../../types";
 import { extendedDayjs } from "../../utils/dayjs";
 import { PDFParser, isTextItem } from "./parsePdf.types";
 import { isInSameRow } from "./utils";
@@ -42,6 +42,7 @@ const parseRow = (rowString: string, year: string): RowData => {
 
   return {
     date: parsedDate,
+    currency: "SGD",
     description,
     amount,
   };

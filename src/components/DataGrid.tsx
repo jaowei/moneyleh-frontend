@@ -6,12 +6,7 @@ import "./dataGrid.css";
 import { Accessor, JSX } from "solid-js";
 import toast from "solid-toast";
 import { PrimaryButton } from ".";
-
-export interface RowData {
-  date: string;
-  description: string;
-  amount: number;
-}
+import { RowData } from "../types";
 
 interface DataGridProps {
   rowData: Accessor<Array<RowData> | undefined>;
@@ -22,6 +17,7 @@ export const DataGrid = (props: DataGridProps) => {
 
   const columnDefs = [
     { field: "date", editable: true },
+    { field: "currency", editable: true },
     { field: "description", editable: true },
     { field: "amount", editable: true },
   ];
@@ -60,8 +56,8 @@ export const DataGrid = (props: DataGridProps) => {
 
   return (
     <div>
-      <div class="flex justify-center" p="t-12">
-        <div class="flex justify-between max-w-xs" p="b-4">
+      <div p="t-12">
+        <div class="flex justify-between max-w-max mx-auto" p="b-4">
           <PrimaryButton
             onClick={onClickCopyAll}
             disabled={!props.rowData()?.length}
@@ -82,7 +78,7 @@ export const DataGrid = (props: DataGridProps) => {
           </PrimaryButton>
         </div>
       </div>
-      <div class="ag-theme-quartz xl:w-7xl lg:w-5xl sm:w-2xl h-xl " p="b-12">
+      <div class="ag-theme-quartz h-xl " p="b-12">
         <AgGridSolid
           ref={gridRef}
           rowData={props.rowData()}

@@ -6,8 +6,9 @@ export const parseHSBCFormat = (
   return parsedContent.data.map((data: string[]) => {
     return {
       date: data[0],
+      currency: "SGD",
       description: data[1],
       amount: parseFloat(data[2]) * -1,
-    } as RowData;
+    };
   });
 };

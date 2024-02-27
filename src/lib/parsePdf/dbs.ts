@@ -35,6 +35,7 @@ const parseRow = (row: Array<string>, year: string): RowData => {
 
   return {
     date: date ?? "",
+    currency: "SGD",
     description: row.at(1) ?? "",
     amount: parsedAmount,
   };

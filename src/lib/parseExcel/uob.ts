@@ -11,6 +11,7 @@ export const parseUOBFormat = (workbook: WorkBook): Array<RowData> => {
     if (extendedDayjs(curr[0], "DD MMM YYYY").isValid()) {
       prev.push({
         date: curr[0],
+        currency: curr[5],
         description: curr[2],
         amount: parseFloat(curr?.at(-1) ?? "0"),
       });

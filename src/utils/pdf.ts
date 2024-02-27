@@ -1,6 +1,6 @@
 import * as pdfjsLib from "pdfjs-dist";
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
-import { RowData } from "../components";
+import { RowData } from "../types";
 
 export const parsePDF = async (file: File) => {
   const allPagesTextData: Array<TextItem | TextMarkedContent> = [];
