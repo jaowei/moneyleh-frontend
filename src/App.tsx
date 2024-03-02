@@ -1,19 +1,15 @@
 import * as pdfjsLib from "pdfjs-dist";
-import { JSX, Show, createSignal } from "solid-js";
-import { sendPDFText } from "./utils/pdf";
-import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
+import { JSX, createSignal } from "solid-js";
 import {
   DataGrid,
   FileInput,
   LandingFormSection,
   LandingFormSectionContent,
   LandingFormSectionText,
-  PrimaryButton,
-  Spinner,
   Wave,
 } from "./components";
-import toast, { Toaster } from "solid-toast";
-import { FILE_PROCESSING_ERROR, StatementFormatsEnum } from "./constants";
+import { Toaster } from "solid-toast";
+import { StatementFormatsEnum } from "./constants";
 import { PasswordDialog } from "./components/PasswordDialog";
 import { RowData } from "./types";
 
@@ -24,9 +20,6 @@ type AppProps = {
 };
 
 function App(props: AppProps) {
-  //refs
-  const [dataGridRef, setDataGridRef] = createSignal<HTMLDivElement>();
-
   const [docFormat, setDocFormat] = createSignal<string>(
     StatementFormatsEnum.DBS_CARD
   );
@@ -51,36 +44,6 @@ function App(props: AppProps) {
     props.worker.postMessage([category]);
     setDocFormat(`${option.value}-${category}`);
   };
-
-  // const handleSubmit: JSX.EventHandlerUnion<
-  //   HTMLButtonElement,
-  //   MouseEvent
-  // > = async (event) => {
-  //   event.preventDefault();
-  //   setIsProcessing(true);
-  //   const data = pdfTextData();
-  //   const layoutType = docFormat();
-  //   const dataDisplaySectionRef = dataGridRef();
-  //   if (!data) {
-  //     toast.error(FILE_PROCESSING_ERROR);
-  //     return;
-  //   }
-  //   if (!layoutType) {
-  //     toast.error(FILE_PROCESSING_ERROR);
-  //     return;
-  //   }
-  //   try {
-  //     const response = await sendPDFText(data, layoutType);
-  //     setRowData(response);
-  //     if (dataDisplaySectionRef) {
-  //       dataDisplaySectionRef.scrollIntoView({ behavior: "smooth" });
-  //     }
-  //     toast.success("File processed successfully");
-  //   } catch (error) {
-  //     toast.error(FILE_PROCESSING_ERROR);
-  //   }
-  //   setIsProcessing(false);
-  // };
 
   return (
     <main>
@@ -167,7 +130,7 @@ function App(props: AppProps) {
           </form>
         </section>
       </div>
-      <section class="w-full max-w-7xl h-full mx-auto" ref={setDataGridRef}>
+      <section class="w-full max-w-7xl h-full mx-auto">
         <DataGrid rowData={rowData} />
       </section>
       <footer class="flex w-full h-16" bg="cyan-900">
