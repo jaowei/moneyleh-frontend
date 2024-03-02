@@ -129,6 +129,7 @@ function App(props: AppProps) {
                   <optgroup id="account" label="Accounts">
                     <option value="dbs">DBS - CSV</option>
                     <option value="moomoo">MooMoo - PDF</option>
+                    <option value="ibkr">IBKR - CSV</option>
                   </optgroup>
                 </select>
               </LandingFormSectionContent>

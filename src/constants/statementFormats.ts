@@ -5,4 +5,5 @@ export enum StatementFormatsEnum {
   UOB_CARD = "uob-creditcard",
   HSBC_CARD = "hsbc-creditcard",
   MOOMOO_ACCOUNT = "moomoo-account",
+  IBKR_ACCOUNT = "ibkr-account",
 }

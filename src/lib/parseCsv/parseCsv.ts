@@ -4,6 +4,7 @@ import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../constants";
 import toast from "solid-toast";
 import { parseDBSFormat } from "./dbs";
 import { parseHSBCFormat } from "./hsbc";
+import { parseIBKRFormat } from "./ibkr";
 
 export const parseCSV = async (
   file: File,
@@ -16,6 +17,8 @@ export const parseCSV = async (
       return parseDBSFormat(parsedContent);
     case StatementFormatsEnum.HSBC_CARD:
       return parseHSBCFormat(parsedContent);
+    case StatementFormatsEnum.IBKR_ACCOUNT:
+      return parseIBKRFormat(parsedContent);
     default:
       toast.error(INVALID_FORMAT_ERROR);
       break;

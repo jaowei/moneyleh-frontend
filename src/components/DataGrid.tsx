@@ -33,7 +33,10 @@ export const DataGrid = (props: DataGridProps) => {
     e.preventDefault();
     try {
       await navigator.clipboard.writeText(
-        gridRef.api.getDataAsCsv({ columnSeparator: "\t" })
+        gridRef.api.getDataAsCsv({
+          columnSeparator: "\t",
+          skipColumnHeaders: true,
+        })
       );
       toast.success("Copied to clipboard!");
     } catch (error) {
