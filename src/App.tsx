@@ -14,7 +14,7 @@ type AppProps = {
   worker: Worker;
 };
 
-function App(props: AppProps) {
+function App(_props: AppProps) {
   const [filePassword, setFilePassword] = createSignal<string>();
   const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
 

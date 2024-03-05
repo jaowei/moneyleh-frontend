@@ -18,7 +18,7 @@ export const LandingContent = () => {
             a standardised format!
           </div>
         </div>
-        <div class="grid grid-cols-3 gap-24" p="t-12">
+        <div class="grid grid-cols-3 gap-24" p="t-10">
           <div>
             <LandingContentLogoMessage
               icon={<FileLogo />}
