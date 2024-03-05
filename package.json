@@ -23,6 +23,8 @@
   "devDependencies": {
     "@iconify-json/fa6-brands": "^1.1.18",
     "@iconify-json/flag": "^1.1.48",
+    "@iconify-json/la": "^1.1.8",
+    "@iconify-json/ph": "^1.1.11",
     "@iconify-json/radix-icons": "^1.1.14",
     "@iconify-json/svg-spinners": "^1.1.2",
     "@iconify-json/vaadin": "^1.1.9",

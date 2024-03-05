@@ -40,6 +40,12 @@ devDependencies:
   '@iconify-json/flag':
     specifier: ^1.1.48
     version: 1.1.48
+  '@iconify-json/la':
+    specifier: ^1.1.8
+    version: 1.1.8
+  '@iconify-json/ph':
+    specifier: ^1.1.11
+    version: 1.1.11
   '@iconify-json/radix-icons':
     specifier: ^1.1.14
     version: 1.1.14
@@ -725,6 +731,18 @@ packages:
 
   /@iconify-json/flag@1.1.48:
     resolution: {integrity: sha512-M83pP/Xc/UjxAwCUGn/d0uNulxW8Dm14eH1r49Mg3lmdpMgRSidRzpCEIRk9VMmxICAWbFMoFYcCJZqPeCS9HQ==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/la@1.1.8:
+    resolution: {integrity: sha512-67cXIkU4kg78OA52qcIzC5rIIHMf3K2rdl8GqiNgpiMbbX3o7n+yPh/0QWIIn8lDUQT6qT5d0ZkUCnwEYzxl2w==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/ph@1.1.11:
+    resolution: {integrity: sha512-izLvLZrU7WM03zNwNWNrAySv3i45hM3D3K6USjCGBSQMUG0HB8zxwrMf4O0leDrganmuQBH7Z0DWTgyH1ET/fg==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true
