@@ -15,8 +15,13 @@ type AppProps = {
 };
 
 function App(_props: AppProps) {
+  let demoRef: HTMLElement | undefined;
   const [filePassword, setFilePassword] = createSignal<string>();
   const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
+
+  const handleScroll = () => {
+    demoRef?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <main>
@@ -27,8 +32,9 @@ function App(_props: AppProps) {
         passwordSetter={setFilePassword}
       />
       <LandingHeader />
-      <LandingContent />
+      <LandingContent clickHandler={handleScroll} />
       <LandingDemo
+        ref={demoRef}
         filePassword={filePassword}
         setFilePassword={setFilePassword}
         setPasswordDialogIsOpen={setPasswordDialogIsOpen}

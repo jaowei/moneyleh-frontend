@@ -1,6 +1,10 @@
 export const MainLogo = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" class="w-80">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 500 500"
+      class="2xl:w-60 3xl:w-80"
+    >
       <g id="freepik--background-simple--inject-364">
         <path
           d="M329.22,43.77s-73.45-21.63-146,22.12S73.73,191.21,42,256.67,27.85,386.24,82.82,413.17s92.77-18.6,170.17-24.54,98.14,3.72,162.63-41.6,76.76-145.46,26.59-216.64S329.22,43.77,329.22,43.77Z"

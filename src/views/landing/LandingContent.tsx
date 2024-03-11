@@ -1,19 +1,22 @@
+import { Component } from "solid-js";
 import { BuildingLogo } from "../../components/BuildingLogo";
 import { FileLogo } from "../../components/FileLogo";
 import { GearLogo } from "../../components/GearLogo";
 import { LandingContentLogoMessage } from "../../components/LandingContentLogoMessage";
 import { MainLogo } from "../../components/MainLogo";
 
-export const LandingContent = () => {
+export const LandingContent: Component<{ clickHandler: () => void }> = (
+  props
+) => {
   return (
     <section>
       <div class="flex flex-col items-center">
-        <div class="flex flex-col items-center max-w-xl">
-          <div class="font-black pb-4" text=" slate-800 7xl center">
+        <div class="flex flex-col items-center 2xl:max-w-2xl 3xl:max-w-xl ">
+          <div class="font-black pb-4" text=" slate-800 2xl:5xl 3xl:7xl center">
             Simplify your personal finances
           </div>
           <MainLogo />
-          <div text="xl center">
+          <div text="2xl:lg 3xl:xl center">
             Simple tool that converts bank, credit card statements and more into
             a standardised format!
           </div>
@@ -45,6 +48,7 @@ export const LandingContent = () => {
           text="white md"
           font="sans bold"
           cursor="pointer"
+          onClick={() => props.clickHandler()}
         >
           Try it out
         </button>

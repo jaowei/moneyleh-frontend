@@ -2,7 +2,7 @@ export const FileLogo = () => {
   return (
     <svg
       viewBox="0 0 1024 1024"
-      class="icon w-24"
+      class="icon 2xl:w-20 3xl:w-24"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       fill="#000000"
