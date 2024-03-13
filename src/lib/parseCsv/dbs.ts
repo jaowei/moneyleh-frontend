@@ -1,5 +1,31 @@
 import { RowData } from "../../types";
 import { extendedDayjs } from "../../utils/dayjs";
+import { CSVParser } from "./parseCsv.types";
+
+const keywordsParentTagMap = new Map([
+  ["PAYLAH", "Paylah"],
+  ["BILL CCC", "Creditcard"],
+  ["PayNow", "Paynow"],
+]);
+
+const parseDBSNAVDescription = (description: string) => {
+  const accountStartIdx = description.lastIndexOf(":");
+  const accountNumber = description.slice(accountStartIdx + 2).trim();
+  let childTag = null;
+  let parentTag = null;
+
+  for (let keyword of keywordsParentTagMap.keys()) {
+    if (description.includes(keyword)) {
+      parentTag = keywordsParentTagMap.get(keyword);
+    }
+  }
+
+  return {
+    accountNumber,
+    parentTag,
+    childTag,
+  };
+};
 
 export const parseDBSFormat = (
   parsedContent: Papa.ParseResult<any>
@@ -24,6 +50,38 @@ export const parseDBSFormat = (
           currency,
           description: curr.slice(-4, -1).join(" "),
           amount,
+        });
+      }
+      return prev;
+    },
+    []
+  );
+};
+
+export const parseDBSNAVFormat: CSVParser = (parsedContent) => {
+  return parsedContent.data.reduce(
+    (prev: Array<RowData>, curr: Array<string>) => {
+      if (extendedDayjs(curr[0], "YYYY-MM-DD").isValid()) {
+        let amount;
+        if (curr[2] === "Money Out") {
+          amount = parseFloat(curr?.at(-1) ?? "0") * -1;
+        } else {
+          amount = parseFloat(curr?.at(-1) ?? "0");
+        }
+
+        const cleanDescription = curr[5].trimEnd();
+
+        const parsedDescription = parseDBSNAVDescription(cleanDescription);
+
+        prev.push({
+          date: curr[0],
+          currency: "SGD",
+          description: cleanDescription,
+          amount,
+          transactionCode: curr[1],
+          parentTag: parsedDescription.parentTag ?? curr[3],
+          childTag: curr[4],
+          account: parsedDescription.accountNumber,
         });
       }
       return prev;

@@ -2,7 +2,7 @@ import Papa from "papaparse";
 import { RowData } from "../../types";
 import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../constants";
 import toast from "solid-toast";
-import { parseDBSFormat } from "./dbs";
+import { parseDBSFormat, parseDBSNAVFormat } from "./dbs";
 import { parseHSBCFormat } from "./hsbc";
 import { parseIBKRFormat } from "./ibkr";
 
@@ -19,6 +19,8 @@ export const parseCSV = async (
       return parseHSBCFormat(parsedContent);
     case StatementFormatsEnum.IBKR_ACCOUNT:
       return parseIBKRFormat(parsedContent);
+    case StatementFormatsEnum.DBS_NAV_ACCOUNT:
+      return parseDBSNAVFormat(parsedContent);
     default:
       toast.error(INVALID_FORMAT_ERROR);
       break;

@@ -25,7 +25,12 @@ function App(_props: AppProps) {
 
   return (
     <main>
-      <Toaster position="bottom-right" />
+      <Toaster
+        position="bottom-left"
+        toastOptions={{
+          duration: 4000,
+        }}
+      />
       <PasswordDialog
         passwordDialogTrigger={passwordDialogIsOpen}
         passwordDialogTriggerSetter={setPasswordDialogIsOpen}

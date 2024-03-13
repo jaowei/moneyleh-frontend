@@ -1,7 +1,7 @@
 import { Accessor, JSX, Setter, createEffect, createSignal } from "solid-js";
 import { parsePDF } from "../lib/parsePdf/parsePdf";
 import { parseCSV } from "../lib/parseCsv/parseCsv";
-import { RowData } from "../types";
+import { ParsedResult } from "../types";
 import {
   ACCEPTED_FILE_TYPES,
   AcceptedMIMETypesEnum,
@@ -12,7 +12,7 @@ import toast from "solid-toast";
 import { parseExcel } from "../lib/parseExcel/parseExcel";
 
 interface FileInputProps {
-  dataSetter: Setter<Array<RowData> | undefined>;
+  dataSetter: Setter<ParsedResult | undefined>;
   fileNameSetter: Setter<string>;
   docFormat: Accessor<string>;
   password: Accessor<string | undefined>;
@@ -61,7 +61,7 @@ export const FileInput = (props: FileInputProps) => {
         toast.error(FILE_PROCESSING_ERROR);
         return;
       }
-      props.dataSetter(rowData);
+      props.dataSetter({ format: props.docFormat(), data: rowData });
       props.fileNameSetter(file?.name ?? "");
     } catch (error: any) {
       if (error?.name === "PasswordException") {

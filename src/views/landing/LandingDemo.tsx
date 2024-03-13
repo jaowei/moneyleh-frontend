@@ -1,6 +1,6 @@
 import { Accessor, createSignal, JSX, Setter } from "solid-js";
 import { FileInput, DataGrid, PrimaryButton } from "../../components";
-import { RowData } from "../../types";
+import { ParsedResult } from "../../types";
 import { StatementFormatsEnum } from "../../constants";
 import toast from "solid-toast";
 
@@ -12,13 +12,12 @@ interface LandingDemoProps {
 }
 
 export const LandingDemo = (props: LandingDemoProps) => {
-  let gridRef: any;
-
   const [fileName, setFileName] = createSignal("No file selected");
   const [docFormat, setDocFormat] = createSignal<string>(
     StatementFormatsEnum.DBS_CARD
   );
-  const [rowData, setRowData] = createSignal<Array<RowData>>();
+  const [parsedResult, setParsedResult] = createSignal<ParsedResult>();
+  const [gridRef, setGridRef] = createSignal<any>(null);
 
   const handleSelectChange: JSX.ChangeEventHandlerUnion<
     HTMLSelectElement,
@@ -38,7 +37,7 @@ export const LandingDemo = (props: LandingDemoProps) => {
     e.preventDefault();
     try {
       await navigator.clipboard.writeText(
-        gridRef.api.getDataAsCsv({
+        gridRef()?.api?.getDataAsCsv({
           columnSeparator: "\t",
           skipColumnHeaders: true,
         })
@@ -56,7 +55,7 @@ export const LandingDemo = (props: LandingDemoProps) => {
   > = async (e) => {
     e.preventDefault();
     try {
-      gridRef.api.exportDataAsCsv();
+      gridRef()?.api?.exportDataAsCsv();
       toast.success("Downloaded!");
     } catch (error) {
       toast.error("Failed to download, please try again.");
@@ -86,13 +85,14 @@ export const LandingDemo = (props: LandingDemoProps) => {
                 </optgroup>
                 <optgroup id="account" label="Accounts">
                   <option value="dbs">DBS - CSV</option>
+                  <option value="dbs-NAV">DBS NAV - CSV</option>
                   <option value="moomoo">MooMoo - PDF</option>
                   <option value="ibkr">IBKR - CSV</option>
                 </optgroup>
               </select>
             </div>
             <FileInput
-              dataSetter={setRowData}
+              dataSetter={setParsedResult}
               fileNameSetter={setFileName}
               docFormat={docFormat}
               password={props.filePassword}
@@ -102,7 +102,7 @@ export const LandingDemo = (props: LandingDemoProps) => {
             <div class="flex justify-between max-w-max mx-auto" p="b-4">
               <PrimaryButton
                 onClick={onClickCopyAll}
-                disabled={!rowData()?.length}
+                disabled={!parsedResult()?.data.length}
               >
                 <div class="flex flex-row items-center">
                   <div class="i-radix-icons-clipboard" />
@@ -111,7 +111,7 @@ export const LandingDemo = (props: LandingDemoProps) => {
               </PrimaryButton>
               <PrimaryButton
                 onClick={onClickDownload}
-                disabled={!rowData()?.length}
+                disabled={!parsedResult()?.data.length}
               >
                 <div class="flex flex-row items-center">
                   <div class="i-radix-icons-download" />
@@ -122,7 +122,11 @@ export const LandingDemo = (props: LandingDemoProps) => {
           </div>
         </div>
         <div class="flex-auto h-full">
-          <DataGrid ref={gridRef} rowData={rowData} />
+          <DataGrid
+            gridRef={gridRef}
+            gridRefSetter={setGridRef}
+            parsedResult={parsedResult}
+          />
         </div>
       </div>
     </section>
