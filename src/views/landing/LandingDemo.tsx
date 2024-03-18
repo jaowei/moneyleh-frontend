@@ -12,7 +12,6 @@ interface LandingDemoProps {
 }
 
 export const LandingDemo = (props: LandingDemoProps) => {
-  const [fileName, setFileName] = createSignal("No file selected");
   const [docFormat, setDocFormat] = createSignal<string>(
     StatementFormatsEnum.DBS_CARD
   );
@@ -65,8 +64,8 @@ export const LandingDemo = (props: LandingDemoProps) => {
   return (
     <section ref={props.ref}>
       <div class="flex flex-row px-6 gap-8 h-screen items-center pb-2 pt-10">
-        <div class="flex-none h-full">
-          <div class="flex flex-col gap-16">
+        <div class="flex-none h-full w-1/4">
+          <div class="flex flex-col gap-16 items-center">
             <div>
               <div class="pb-2" text="cyan-900">
                 Select your statement format:
@@ -93,7 +92,6 @@ export const LandingDemo = (props: LandingDemoProps) => {
             </div>
             <FileInput
               dataSetter={setParsedResult}
-              fileNameSetter={setFileName}
               docFormat={docFormat}
               password={props.filePassword}
               passwordDialogTriggerSetter={props.setPasswordDialogIsOpen}
