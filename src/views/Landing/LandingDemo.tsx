@@ -1,3 +1,7 @@
+import * as pdfjsLib from "pdfjs-dist";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
+
 import { Accessor, createSignal, JSX, Setter } from "solid-js";
 import { FileInput, DataGrid, PrimaryButton } from "../../components";
 import { ParsedResult } from "../../types";
@@ -11,7 +15,7 @@ interface LandingDemoProps {
   setPasswordDialogIsOpen: Setter<boolean>;
 }
 
-export const LandingDemo = (props: LandingDemoProps) => {
+const LandingDemo = (props: LandingDemoProps) => {
   const [docFormat, setDocFormat] = createSignal<string>(
     StatementFormatsEnum.DBS_CARD
   );
@@ -148,3 +152,5 @@ export const LandingDemo = (props: LandingDemoProps) => {
     </section>
   );
 };
+
+export default LandingDemo;

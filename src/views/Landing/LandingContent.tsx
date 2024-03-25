@@ -1,9 +1,10 @@
-import { Component } from "solid-js";
+import { Component, lazy } from "solid-js";
 import { BuildingLogo } from "../../components/BuildingLogo";
 import { FileLogo } from "../../components/FileLogo";
 import { GearLogo } from "../../components/GearLogo";
 import { LandingContentLogoMessage } from "../../components/LandingContentLogoMessage";
-import { MainLogo } from "../../components/MainLogo";
+
+const MainLogo = lazy(() => import("../../components/MainLogo"));
 
 export const LandingContent: Component<{ clickHandler: () => void }> = (
   props

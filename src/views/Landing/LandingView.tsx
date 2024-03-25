@@ -1,15 +1,12 @@
-import * as pdfjsLib from "pdfjs-dist";
-
-import { createSignal } from "solid-js";
+import { createSignal, lazy } from "solid-js";
 import { PasswordDialog } from "../../components/PasswordDialog";
 import { LandingContent } from "./LandingContent";
-import { LandingDemo } from "./LandingDemo";
-import { LandingFooter } from "./LandingFooter";
 import { LandingHeader } from "./LandingHeader";
+import { LandingFooter } from "./LandingFooter";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
+const DemoView = lazy(() => import("./LandingDemo"));
 
-export const LandingView = () => {
+const LandingView = () => {
   let demoRef: HTMLElement | undefined;
   const [filePassword, setFilePassword] = createSignal<string>();
   const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
@@ -21,7 +18,7 @@ export const LandingView = () => {
     <main>
       <LandingHeader />
       <LandingContent clickHandler={handleScroll} />
-      <LandingDemo
+      <DemoView
         ref={demoRef}
         filePassword={filePassword}
         setFilePassword={setFilePassword}
@@ -36,3 +33,5 @@ export const LandingView = () => {
     </main>
   );
 };
+
+export default LandingView;
