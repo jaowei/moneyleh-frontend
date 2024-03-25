@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@solidjs/router": "^0.13.0",
     "@sqlite.org/sqlite-wasm": "3.45.1-build1",
     "ag-grid-community": "~31.1.0",
     "ag-grid-solid": "~31.1.0",

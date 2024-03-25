@@ -45,11 +45,11 @@ export const LandingContent: Component<{ clickHandler: () => void }> = (
           class="mt-2 mb-10 rounded-xl h-3.5rem hover:bg-cyan-800 shadow"
           border="none"
           bg="cyan-900"
-          text="white md"
+          text="white lg"
           font="sans bold"
           cursor="pointer"
           animate="bounce"
-          p="x-16"
+          p="x-10"
           onClick={() => props.clickHandler()}
         >
           Try it out

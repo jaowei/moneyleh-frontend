@@ -87,7 +87,6 @@ export const LandingDemo = (props: LandingDemoProps) => {
                   <option value="dbs-NAV">DBS NAV - CSV</option>
                   <option value="moomoo">MooMoo - PDF</option>
                   <option value="ibkr">IBKR - CSV</option>
-                  <option value="syfe">Syfe - PDF</option>
                 </optgroup>
               </select>
             </div>
@@ -117,6 +116,24 @@ export const LandingDemo = (props: LandingDemoProps) => {
                   Download as CSV
                 </div>
               </PrimaryButton>
+            </div>
+            <div>
+              <a href="/app" class="no-underline">
+                <div
+                  class="flex flex-row items-center hover:animate-bounce rounded-xl"
+                  border="cyan-900 solid"
+                  p="2"
+                  bg="cyan-900"
+                >
+                  <div
+                    class="i-radix-icons:enter w-2rem h-2rem pr-2"
+                    text="white"
+                  />
+                  <div text="white xl" font="900">
+                    Try the app now!
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
         </div>

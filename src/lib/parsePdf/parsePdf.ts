@@ -5,6 +5,7 @@ import { parseDBSFormat } from "./dbs";
 import { parseCitiFormat } from "./citi";
 import { parseMoomooFormat } from "./moomoo";
 import { isTextItem } from "./parsePdf.types";
+import { parseSyfePDF } from "./syfe";
 
 const extractContent = async (doc: pdfjsLib.PDFDocumentProxy, sort = false) => {
   const result = [];
@@ -41,6 +42,8 @@ export const parsePDF = async (
     case StatementFormatsEnum.MOOMOO_ACCOUNT:
       return parseMoomooFormat(await extractContent(doc));
 
+    case StatementFormatsEnum.SYFE_ACCOUNT:
+      return parseSyfePDF(await extractContent(doc));
     default:
       toast.error(INVALID_FORMAT_ERROR);
       break;
