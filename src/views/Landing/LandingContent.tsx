@@ -1,8 +1,10 @@
 import { Component, lazy } from "solid-js";
-import { BuildingLogo } from "../../components/BuildingLogo";
-import { FileLogo } from "../../components/FileLogo";
-import { GearLogo } from "../../components/GearLogo";
-import { LandingContentLogoMessage } from "../../components/LandingContentLogoMessage";
+import {
+  LandingContentLogoMessage,
+  FileLogo,
+  BuildingLogo,
+  GearLogo,
+} from "../../components";
 
 const MainLogo = lazy(() => import("../../components/MainLogo"));
 
@@ -12,12 +14,15 @@ export const LandingContent: Component<{ clickHandler: () => void }> = (
   return (
     <section>
       <div class="flex flex-col items-center">
-        <div class="flex flex-col items-center 2xl:max-w-2xl 3xl:max-w-xl ">
-          <div class="font-black pb-4" text=" slate-800 2xl:5xl 3xl:7xl center">
+        <div class="flex flex-col items-center max-w-sm 2xl:max-w-2xl 3xl:max-w-xl ">
+          <div
+            class="font-black pb-4"
+            text=" slate-800 3xl 2xl:5xl 3xl:7xl center"
+          >
             Simplify your personal finances
           </div>
           <MainLogo />
-          <div text="2xl:lg 3xl:xl center">
+          <div text="md 2xl:lg 3xl:xl center">
             Simple tool that converts bank, credit card statements and more into
             a standardised format!
           </div>
@@ -43,7 +48,7 @@ export const LandingContent: Component<{ clickHandler: () => void }> = (
           </div>
         </div>
         <button
-          class="mt-2 mb-10 rounded-xl h-3.5rem hover:bg-cyan-800 shadow"
+          class="mt-6 mb-10 rounded-xl h-3.5rem hover:bg-cyan-800 shadow"
           border="none"
           bg="cyan-900"
           text="white lg"

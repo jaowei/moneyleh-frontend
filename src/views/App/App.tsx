@@ -1,8 +1,21 @@
-const App = () => {
-  new Worker("src/lib/workers/sqlite-worker.ts", {
-    type: "module",
-  });
-  return <h1>Hi welcome to dashboard</h1>;
+import { AppNav } from "./AppNav";
+import { ParentComponent } from "solid-js";
+
+const App: ParentComponent = (props) => {
+  return (
+    <main class="flex">
+      <aside class="w-56">
+        <div class="h-screen bg-slate-100">
+          <AppNav />
+        </div>
+      </aside>
+      <section class="w-full">
+        <div class="flex justify-center items-center h-screen">
+          {props.children}
+        </div>
+      </section>
+    </main>
+  );
 };
 
 export default App;

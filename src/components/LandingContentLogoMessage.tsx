@@ -11,7 +11,9 @@ export const LandingContentLogoMessage = (
   return (
     <div class="flex flex-col items-center max-w-sm">
       {props.icon}
-      <div class="font-medium text-center">{props.message}</div>
+      <div class="font-medium" text="center md">
+        {props.message}
+      </div>
     </div>
   );
 };

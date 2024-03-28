@@ -122,7 +122,7 @@ const LandingDemo = (props: LandingDemoProps) => {
               </PrimaryButton>
             </div>
             <div>
-              <a href="/app" class="no-underline">
+              <a href="/app/dashboard" class="no-underline">
                 <div
                   class="flex flex-row items-center hover:animate-bounce rounded-xl"
                   border="cyan-900 solid"
