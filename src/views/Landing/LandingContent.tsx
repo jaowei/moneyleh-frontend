@@ -43,12 +43,12 @@ export const LandingContent: Component<{ clickHandler: () => void }> = (
           <div>
             <LandingContentLogoMessage
               icon={<GearLogo />}
-              message="Coming soon, skip the spreadsheet and manage from the browser. Offline first, local only data to ensure privacy"
+              message="Ready to skip the spreadsheet? Try the offline first, local only app"
             />
           </div>
         </div>
         <button
-          class="mt-6 mb-10 rounded-xl h-3.5rem hover:bg-cyan-800 shadow"
+          class="mt-10 mb-10 rounded-xl h-3.5rem hover:bg-cyan-800 shadow"
           border="none"
           bg="cyan-900"
           text="white lg"

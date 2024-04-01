@@ -8,6 +8,7 @@ import { Router, Route } from "@solidjs/router";
 import { Toaster } from "solid-toast";
 import { lazy } from "solid-js";
 import { NotFound } from "./components";
+import { AppDataEntry } from "./views/App/AppDataEntry";
 
 const root = document.getElementById("root");
 
@@ -22,12 +23,13 @@ render(
         <Route path="/app" component={App}>
           <Route path="/dashboard" component={() => <div>Dashboard</div>} />
           <Route path="/accounts" component={() => <div>Accounts</div>} />
+          <Route path="/data-entry" component={AppDataEntry} />
           <Route
             path="/transactions"
             component={() => <div>Transactions</div>}
           />
         </Route>
-        <Route path="/*404" component={NotFound} />
+        <Route path="*404" component={NotFound} />
       </Router>
       <Toaster
         position="bottom-left"

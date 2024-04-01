@@ -5,6 +5,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import "./dataGrid.css";
 import { Accessor, Setter } from "solid-js";
 import { ParsedResult } from "../types";
+import { SizeColumnsToContentStrategy } from "ag-grid-community";
 
 interface DataGridProps {
   gridRef: Accessor<any>;
@@ -24,8 +25,8 @@ export const DataGrid = (props: DataGridProps) => {
     { field: "transactionCode", editable: true },
   ];
 
-  const autoSizeStrategy = {
-    type: "fitGridWidth",
+  const autoSizeStrategy: SizeColumnsToContentStrategy = {
+    type: "fitCellContents",
   };
 
   return (

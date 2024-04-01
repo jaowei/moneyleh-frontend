@@ -9,11 +9,7 @@ const App: ParentComponent = (props) => {
           <AppNav />
         </div>
       </aside>
-      <section class="w-full">
-        <div class="flex justify-center items-center h-screen">
-          {props.children}
-        </div>
-      </section>
+      <section class="w-full">{props.children}</section>
     </main>
   );
 };
