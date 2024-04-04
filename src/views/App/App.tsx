@@ -1,7 +1,9 @@
+import { sqlJsHandler } from "../../lib/storage/sqljs";
 import { AppNav } from "./AppNav";
 import { ParentComponent } from "solid-js";
 
 const App: ParentComponent = (props) => {
+  sqlJsHandler();
   return (
     <main class="flex">
       <aside class="w-56">

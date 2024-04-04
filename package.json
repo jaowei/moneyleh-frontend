@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "copy-assets": "cp ./node_modules/pdfjs-dist/build/pdf.worker.min.mjs ./public/",
+    "copy-assets": "bash copy-assets.sh",
     "dev": "vite",
     "build": "pnpm run copy-assets && tsc && vite build",
     "preview": "vite preview"
@@ -23,6 +23,7 @@
     "pdfjs-dist": "^4.0.379",
     "solid-js": "^1.8.16",
     "solid-toast": "^0.5.0",
+    "sql.js": "^1.10.2",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   },
   "devDependencies": {
@@ -35,6 +36,7 @@
     "@iconify-json/svg-spinners": "^1.1.2",
     "@iconify-json/vaadin": "^1.1.9",
     "@types/papaparse": "^5.3.14",
+    "@types/sql.js": "^1.4.9",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@unocss/preset-attributify": "^0.58.7",
     "@unocss/preset-icons": "^0.58.7",
