@@ -1,26 +1,44 @@
 import { For, JSX, Show, createEffect, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
-import initDb from "../../lib/storage/sqljs";
-import { selectAllFinancialEntitiesSql } from "../../lib/storage/sql/FinancialEntity";
+import { SqlValue } from "sql.js";
+import { Account, FinancialEntity } from "../../lib/storage";
+import initDB from "../../lib/storage/sqljs";
+
+const accountingRelationMap: Record<string, string> = {
+  cash: "asset",
+  investment: "asset",
+  creditCard: "liability",
+};
 
 export const AppDataEntry = () => {
-  const { database } = initDb;
+  const { database } = initDB;
   const [accountDetails, setAccountDetails] = createStore({
-    name: "",
-    type: "",
+    $name: "",
+    $type: "cash",
+    $financialEntityId: 1,
+    $startingBalance: 0,
   });
-  const [entities, setEntities] = createSignal<Array<any>>();
+  const [entities, setEntities] = createSignal<SqlValue[][]>();
 
   createEffect(() => {
     const db = database();
     if (db) {
-      setEntities(db.exec(selectAllFinancialEntitiesSql)[0].values);
+      const values = db.exec(FinancialEntity.queries.selectAll)[0].values;
+      setEntities(values);
     }
   });
 
   const handleSubmit: JSX.EventHandlerUnion<HTMLFormElement, Event> = (e) => {
     e.preventDefault();
-    console.log("submittt");
+    const db = database();
+    console.log("submittt", accountDetails);
+    const accountData = {
+      ...accountDetails,
+      $accountingRelation: accountingRelationMap[accountDetails.$type],
+    };
+    if (db) {
+      Account.insertOne?.(db, accountData);
+    }
   };
 
   return (
@@ -32,17 +50,26 @@ export const AppDataEntry = () => {
               type="text"
               name="accountName"
               placeholder="Account Name"
-              onInput={(e) => setAccountDetails("name", e.target.value)}
+              onInput={(e) => setAccountDetails("$name", e.target.value)}
             />
-            <select onChange={(e) => setAccountDetails("type", e.target.value)}>
+            <select
+              onChange={(e) => setAccountDetails("$type", e.target.value)}
+            >
               <option value="cash">Cash</option>
               <option value="investment">Investment</option>
               <option value="creditCard">Credit Card</option>
             </select>
-            <select>
+            <select
+              onChange={(e) =>
+                setAccountDetails(
+                  "$financialEntityId",
+                  e.target.selectedIndex + 1
+                )
+              }
+            >
               <For each={entities()}>
                 {(val) => {
-                  const name = typeof val[1] === "string" ? val[1] : "N/A";
+                  const name = typeof val[2] === "string" ? val[2] : "N/A";
                   return (
                     <option value={name.toLowerCase().replaceAll(" ", "")}>
                       {name}
@@ -51,7 +78,17 @@ export const AppDataEntry = () => {
                 }}
               </For>
             </select>
-            <input type="number" placeholder="0.0" step="0.01" />
+            <input
+              type="number"
+              value="0.0"
+              step="0.01"
+              onChange={(e) =>
+                setAccountDetails(
+                  "$startingBalance",
+                  parseFloat(e.target.value)
+                )
+              }
+            />
             <button type="submit">Create Account</button>
           </div>
         </form>

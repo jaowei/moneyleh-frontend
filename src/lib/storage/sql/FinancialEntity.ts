@@ -1,12 +1,11 @@
-import { Database } from "sql.js";
+import { DatabaseModel } from "../../../types";
 
-export const createFinancialEntitySql =
-  "CREATE TABLE financialEntity (id int, name char, createdAt text, isDeleted boolean);";
-
-export const insertFinancialEntitySql =
-  "INSERT INTO financialEntity VALUES (?, ?, ?, ?);";
-
-export const selectAllFinancialEntitiesSql = "SELECT * FROM financialEntity;";
+export type FinancialEntityModel = {
+  id: string;
+  createdAt: string;
+  name: string;
+  isDeleted: boolean;
+};
 
 export const financialEntities = [
   "DBS",
@@ -22,11 +21,22 @@ export const financialEntities = [
   "Tiger Brokers",
 ];
 
-export const initFETable = (db: Database) => {
-  db.run(createFinancialEntitySql);
-  const stmt = db.prepare(insertFinancialEntitySql);
-  for (let i = 0; i < financialEntities.length; i++) {
-    stmt.bind([i + 1, financialEntities[i], new Date().toISOString(), 0]);
-    stmt.step();
-  }
+const FinancialEntity: DatabaseModel = {
+  queries: {
+    createTable:
+      "CREATE TABLE financialEntity (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char, isDeleted boolean);",
+    insertOne: "INSERT INTO financialEntity(name) VALUES (?);",
+    selectAll: "SELECT * FROM financialEntity;",
+  },
+  initTable(db) {
+    db.run(this.queries.createTable);
+    const stmt = db.prepare(this.queries.insertOne);
+    for (let i = 0; i < financialEntities.length; i++) {
+      stmt.bind([financialEntities[i]]);
+      stmt.step();
+    }
+    stmt.free();
+  },
 };
+
+export { FinancialEntity };

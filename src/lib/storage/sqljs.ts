@@ -2,7 +2,7 @@ import initSqlJs, { Database } from "sql.js";
 
 import sqlJsWasmUrl from "/sql-wasm.wasm?url";
 import { createResource, createRoot } from "solid-js";
-import { initFETable } from "./sql/FinancialEntity";
+import { Account, FinancialEntity } from "./sql";
 
 const initialiseOpfsFile = async () => {
   const opfsRoot = await navigator.storage.getDirectory();
@@ -31,12 +31,12 @@ const mountDB = async () => {
     if (!data.size) {
       console.log("Initialising DB");
       const emptyDB = new SQL.Database();
-      initFETable(emptyDB);
-      const res = emptyDB.exec("SELECT * FROM financialEntity");
-      console.log(res);
+      FinancialEntity.initTable(emptyDB);
+      Account.initTable(emptyDB);
       await persistDB(emptyDB);
       return emptyDB;
     } else {
+      console.log("Restoring DB from system");
       const arrBuffer = await data.arrayBuffer();
       const view = new Uint8Array(arrBuffer);
       return new SQL.Database(view);
