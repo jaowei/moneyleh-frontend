@@ -2,7 +2,13 @@ import initSqlJs, { Database } from "sql.js";
 
 import sqlJsWasmUrl from "/sql-wasm.wasm?url";
 import { createResource, createRoot } from "solid-js";
-import { Account, FinancialEntity } from "./sql";
+import {
+  Account,
+  FinancialEntity,
+  FinancialTransaction,
+  TransactionMethod,
+  TransactionType,
+} from "./sql";
 
 const initialiseOpfsFile = async () => {
   const opfsRoot = await navigator.storage.getDirectory();
@@ -24,6 +30,14 @@ export const persistDB = async (db: Database) => {
   await writableStream.close();
 };
 
+const initTables = (db: Database) => {
+  FinancialEntity.initTable(db);
+  Account.initTable(db);
+  TransactionMethod.initTable(db);
+  TransactionType.initTable(db);
+  FinancialTransaction.initTable(db);
+};
+
 const mountDB = async () => {
   try {
     const SQL = await initSqlJs({ locateFile: () => sqlJsWasmUrl });
@@ -31,8 +45,7 @@ const mountDB = async () => {
     if (!data.size) {
       console.log("Initialising DB");
       const emptyDB = new SQL.Database();
-      FinancialEntity.initTable(emptyDB);
-      Account.initTable(emptyDB);
+      initTables(emptyDB);
       await persistDB(emptyDB);
       return emptyDB;
     } else {
