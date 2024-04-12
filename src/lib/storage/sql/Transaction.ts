@@ -8,14 +8,16 @@ export type TransactionModel = {
   amount: number;
   transactionMethodId: string;
   transactionTypeId: string;
-  debitAccountId: string;
-  creditAccountId: string;
+  transactionCategoryId: string;
+  transactionSubCategoryId: string;
+  accountId: string;
+  isInternal: boolean;
 };
 
 const FinancialTransaction: DatabaseModel = {
   queries: {
     createTable:
-      "CREATE TABLE financialTransaction (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, transactionDate char, description char, amount int, transactionMethodId int, transactionTypeId int, debitAccountId int, creditAccountId int, FOREIGN KEY(transactionMethodId) REFERENCES transactionMethod(id), FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id), FOREIGN KEY(debitAccountId) REFERENCES account(id), FOREIGN KEY(creditAccountId) REFERENCES account(id));",
+      "CREATE TABLE financialTransaction (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, transactionDate char, description char, amount int, transactionMethodId int, transactionTypeId int, accountId int, isInternal boolean, FOREIGN KEY(transactionMethodId) REFERENCES transactionMethod(id), FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id), FOREIGN KEY(accountId) REFERENCES account(id));",
     insertOne: "",
     selectAll: "",
   },

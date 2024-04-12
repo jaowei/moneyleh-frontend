@@ -23,7 +23,7 @@ export const AppDataEntry = () => {
   createEffect(() => {
     const db = database();
     if (db) {
-      const values = db.exec(FinancialEntity.queries.selectAll)[0].values;
+      const values = db.exec(FinancialEntity.queries.selectAll)[0]?.values;
       setEntities(values);
     }
   });

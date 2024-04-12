@@ -11,23 +11,6 @@ export type AccountModel = {
   startingBalance: number;
 };
 
-const defaultAccounts = [
-  {
-    $name: "Expense",
-    $type: "default",
-    $accountingRelation: "Expense",
-    $startingBalance: 0,
-    $financialEntityId: null,
-  },
-  {
-    $name: "Income",
-    $type: "default",
-    $accountingRelation: "Revenue",
-    $startingBalance: 0,
-    $financialEntityId: null,
-  },
-];
-
 const Account: DatabaseModel = {
   queries: {
     createTable:
@@ -38,12 +21,6 @@ const Account: DatabaseModel = {
   },
   initTable(db) {
     db.run(this.queries.createTable);
-    const stmt = db.prepare(this.queries.insertOne);
-    for (let i = 0; i < defaultAccounts.length; i++) {
-      stmt.bind(defaultAccounts[i]);
-      stmt.step();
-    }
-    stmt.free();
   },
   insertOne(db, data) {
     const stmt = db.prepare(this.queries.insertOne);

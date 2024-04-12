@@ -1,4 +1,5 @@
 import { DatabaseModel } from "../../../types";
+import { databaseSeeder } from "../utils";
 
 export type FinancialEntityModel = {
   id: string;
@@ -31,11 +32,7 @@ const FinancialEntity: DatabaseModel = {
   initTable(db) {
     db.run(this.queries.createTable);
     const stmt = db.prepare(this.queries.insertOne);
-    for (let i = 0; i < financialEntities.length; i++) {
-      stmt.bind([financialEntities[i]]);
-      stmt.step();
-    }
-    stmt.free();
+    databaseSeeder(stmt, financialEntities);
   },
 };
 

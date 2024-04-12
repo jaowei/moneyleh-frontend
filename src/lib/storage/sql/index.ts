@@ -3,3 +3,4 @@ export * from "./FinancialEntity";
 export * from "./Transaction";
 export * from "./TransactionMethod";
 export * from "./TransactionType";
+export * from "./TransactionCategory";
