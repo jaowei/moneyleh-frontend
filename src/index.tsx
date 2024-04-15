@@ -7,8 +7,7 @@ import "virtual:uno.css";
 import { Router, Route } from "@solidjs/router";
 import { Toaster } from "solid-toast";
 import { lazy } from "solid-js";
-import { NotFound } from "./components";
-import { AppDataEntry } from "./views/App/AppDataEntry";
+import { ComingSoon, NotFound } from "./components";
 
 const root = document.getElementById("root");
 
@@ -21,13 +20,10 @@ render(
       <Router>
         <Route path="/" component={Landing} />
         <Route path="/app" component={App}>
-          <Route path="/dashboard" component={() => <div>Dashboard</div>} />
-          <Route path="/accounts" component={() => <div>Accounts</div>} />
-          <Route path="/data-entry" component={AppDataEntry} />
-          <Route
-            path="/transactions"
-            component={() => <div>Transactions</div>}
-          />
+          <Route path="/dashboard" component={ComingSoon} />
+          <Route path="/accounts" component={ComingSoon} />
+          <Route path="/data-entry" component={ComingSoon} />
+          <Route path="/transactions" component={ComingSoon} />
         </Route>
         <Route path="*404" component={NotFound} />
       </Router>

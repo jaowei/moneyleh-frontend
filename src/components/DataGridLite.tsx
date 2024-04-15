@@ -79,6 +79,16 @@ export const DataGridLite = () => {
     meta: {
       updateData: (rowIndex, columnId, value) => {
         console.log(rowIndex, columnId, value);
+        const currData = data();
+
+        setData(
+          currData.map((row) => {
+            return {
+              ...row,
+              [columnId]: value,
+            };
+          })
+        );
       },
     },
   });
