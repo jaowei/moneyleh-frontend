@@ -3,6 +3,7 @@ import { createStore } from "solid-js/store";
 import { SqlValue } from "sql.js";
 import { Account, FinancialEntity } from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
+import { DataGridLite } from "../../components";
 
 const accountingRelationMap: Record<string, string> = {
   cash: "asset",
@@ -94,6 +95,7 @@ export const AppDataEntry = () => {
         </form>
       </Show>
       <div>Accounts</div>
+      <DataGridLite />
     </div>
   );
 };

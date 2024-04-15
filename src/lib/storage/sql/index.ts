@@ -1,6 +1,6 @@
 export * from "./Account";
 export * from "./FinancialEntity";
-export * from "./Transaction";
+export * from "./FinancialTransaction";
 export * from "./TransactionMethod";
 export * from "./TransactionType";
 export * from "./TransactionCategory";
