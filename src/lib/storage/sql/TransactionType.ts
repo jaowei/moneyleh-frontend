@@ -8,6 +8,14 @@ export type TransactionTypeModel = {
 };
 
 const baseTransactionTypes = [
+  "Insurance",
+  "Transportation",
+  "Shopping",
+  "Dining",
+  "Groceries",
+  "Healthcare",
+  "Fitness",
+  "Travel",
   "Transfer",
   "Salary",
   "Bonus",

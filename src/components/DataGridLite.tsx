@@ -1,4 +1,4 @@
-import { For, createEffect, createSignal } from "solid-js";
+import { Accessor, For, createEffect, createSignal } from "solid-js";
 import {
   RowData,
   createColumnHelper,
@@ -7,11 +7,16 @@ import {
   getCoreRowModel,
 } from "@tanstack/solid-table";
 import { FinancialTransactionModel } from "../lib/storage";
+import { ParsedResult } from "../types";
 
 declare module "@tanstack/solid-table" {
   interface TableMeta<TData extends RowData> {
     updateData: (rowIndex: number, columnId: string, value: unknown) => void;
   }
+}
+
+interface DataGridLiteProps {
+  rowData: Accessor<ParsedResult<FinancialTransactionModel> | undefined>;
 }
 
 const columnHelper = createColumnHelper<Partial<FinancialTransactionModel>>();
@@ -47,27 +52,22 @@ const defaultColumns = [
     header: "Transaction Method",
   }),
   columnHelper.accessor("transactionTypeId", { header: "Transaction Type" }),
-  columnHelper.accessor("transactionCategoryId", {
+  columnHelper.accessor("transactionSubTypeId", {
     header: "Transaction Category",
-  }),
-  columnHelper.accessor("transactionSubCategoryId", {
-    header: "Transaction Sub-Category",
   }),
 ];
 
-export const DataGridLite = () => {
-  const [data, setData] = createSignal<Partial<FinancialTransactionModel>[]>([
-    {
-      transactionDate: "1/1/2000",
-      description: "",
-      amount: 0,
-      currency: "SGD",
-      transactionMethodId: "cash",
-      transactionTypeId: "cash",
-      transactionCategoryId: "",
-      transactionSubCategoryId: "",
-    },
-  ]);
+export const DataGridLite = (props: DataGridLiteProps) => {
+  const [data, setData] = createSignal<Partial<FinancialTransactionModel>[]>(
+    []
+  );
+
+  createEffect(() => {
+    const incomingData = props?.rowData()?.data;
+    if (incomingData) {
+      setData(incomingData);
+    }
+  });
 
   const table = createSolidTable({
     get data() {

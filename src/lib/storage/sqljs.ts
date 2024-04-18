@@ -6,9 +6,8 @@ import {
   Account,
   FinancialEntity,
   FinancialTransaction,
-  TransactionCategory,
   TransactionMethod,
-  TransactionSubCategory,
+  TransactionSubType,
   TransactionType,
 } from "./sql";
 
@@ -37,9 +36,8 @@ const initTables = (db: Database) => {
   Account.initTable(db);
   TransactionMethod.initTable(db);
   TransactionType.initTable(db);
+  TransactionSubType.initTable(db);
   FinancialTransaction.initTable(db);
-  TransactionCategory.initTable(db);
-  TransactionSubCategory.initTable(db);
 };
 
 const mountDB = async () => {

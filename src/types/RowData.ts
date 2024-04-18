@@ -9,7 +9,7 @@ export type RowData = {
   account?: string;
 };
 
-export type ParsedResult = {
+export type ParsedResult<T> = {
   format: string;
-  data: Array<RowData>;
+  data: Array<T>;
 };

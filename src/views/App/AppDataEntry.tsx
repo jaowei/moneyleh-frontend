@@ -1,9 +1,20 @@
 import { For, JSX, Show, createEffect, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import { SqlValue } from "sql.js";
-import { Account, FinancialEntity } from "../../lib/storage";
+import {
+  Account,
+  FinancialEntity,
+  FinancialTransactionModel,
+} from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
-import { DataGridLite } from "../../components";
+import {
+  DataGridLite,
+  FileInput,
+  PasswordDialog,
+  StatementFormatSelector,
+} from "../../components";
+import { StatementFormatsEnum } from "../../constants";
+import { ParsedResult } from "../../types";
 
 const accountingRelationMap: Record<string, string> = {
   cash: "asset",
@@ -20,6 +31,13 @@ export const AppDataEntry = () => {
     $startingBalance: 0,
   });
   const [entities, setEntities] = createSignal<SqlValue[][]>();
+  const [docFormat, setDocFormat] = createSignal<string>(
+    StatementFormatsEnum.DBS_CARD
+  );
+  const [parsedResult, setParsedResult] =
+    createSignal<ParsedResult<FinancialTransactionModel>>();
+  const [filePassword, setFilePassword] = createSignal<string>();
+  const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
 
   createEffect(() => {
     const db = database();
@@ -42,8 +60,21 @@ export const AppDataEntry = () => {
     }
   };
 
+  const handleDocSelector = (
+    event: Event & {
+      currentTarget: HTMLSelectElement;
+      target: HTMLSelectElement;
+    }
+  ) => {
+    const selectedIdx = event?.target?.selectedIndex;
+    const option = event?.target?.options[selectedIdx];
+    const optGroup = option.parentElement;
+    const category = optGroup?.getAttribute("id");
+    setDocFormat(`${option.value}-${category}`);
+  };
+
   return (
-    <div class="flex flex-col w-full h-full">
+    <div class="flex flex-col w-full h-full gap-10">
       <Show when={!database.loading} fallback={<div>Loading....</div>}>
         <form onSubmit={handleSubmit}>
           <div class="flex gap-6">
@@ -95,7 +126,26 @@ export const AppDataEntry = () => {
         </form>
       </Show>
       <div>Accounts</div>
-      <DataGridLite />
+      <div>
+        <FileInput
+          dataSetter={setParsedResult}
+          docFormat={docFormat}
+          password={filePassword}
+          passwordDialogTriggerSetter={setPasswordDialogIsOpen}
+          passwordSetter={setFilePassword}
+        />
+      </div>
+      <div>
+        <StatementFormatSelector handleChange={handleDocSelector} />
+      </div>
+      <div>
+        <DataGridLite rowData={parsedResult} />
+      </div>
+      <PasswordDialog
+        passwordDialogTrigger={passwordDialogIsOpen}
+        passwordDialogTriggerSetter={setPasswordDialogIsOpen}
+        passwordSetter={setFilePassword}
+      />
     </div>
   );
 };

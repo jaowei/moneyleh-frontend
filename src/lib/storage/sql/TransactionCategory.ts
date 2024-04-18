@@ -1,32 +1,15 @@
 import { DatabaseModel } from "../../../types";
 import { databaseSeeder } from "../utils";
 
-export type TransactionCategoryModel = {
+export type TransactionSubTypesModel = {
   id: string;
   createdAt: string;
   name: string;
+  transactionTypeId: string;
 };
-
-export type TransactionSubCategoryModel = {
-  id: string;
-  createdAt: string;
-  name: string;
-  transactionCategoryId: string;
-};
-
-const baseTransactionCategories = [
-  "Insurance",
-  "Transportation",
-  "Shopping",
-  "Dining",
-  "Groceries",
-  "Healthcare",
-  "Fitness",
-  "Travel",
-];
 
 // Corresponds to the 8 base categories above
-const baseTransactionSubCategories = [
+const baseTransactionSubTypes = [
   ["Term Life", 1],
   ["Whole Life", 1],
   ["Accident", 1],
@@ -62,33 +45,19 @@ const baseTransactionSubCategories = [
   ["Meals", 8],
 ];
 
-const TransactionCategory: DatabaseModel = {
+const TransactionSubType: DatabaseModel = {
   queries: {
     createTable:
-      "CREATE TABLE transactionCategory(id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char);",
-    insertOne: "INSERT INTO transactionCategory(name) VALUES (?)",
-    selectAll: "",
-  },
-  initTable(db) {
-    db.run(this.queries.createTable);
-    const stmt = db.prepare(this.queries.insertOne);
-    databaseSeeder(stmt, baseTransactionCategories);
-  },
-};
-
-const TransactionSubCategory: DatabaseModel = {
-  queries: {
-    createTable:
-      "CREATE TABLE transactionSubCategory (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char, transactionCategoryId int, FOREIGN KEY(transactionCategoryId) REFERENCES transactionCategory(id));",
+      "CREATE TABLE transactionSubType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char, transactionTypeId int, FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id));",
     insertOne:
-      "INSERT INTO transactionSubCategory(name, transactionCategoryId) VALUES (?, ?)",
+      "INSERT INTO transactionSubType(name, transactionCategoryId) VALUES (?, ?)",
     selectAll: "",
   },
   initTable(db) {
     db.run(this.queries.createTable);
     const stmt = db.prepare(this.queries.insertOne);
-    databaseSeeder(stmt, baseTransactionSubCategories);
+    databaseSeeder(stmt, baseTransactionSubTypes);
   },
 };
 
-export { TransactionCategory, TransactionSubCategory };
+export { TransactionSubType };

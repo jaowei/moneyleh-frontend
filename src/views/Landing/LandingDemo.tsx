@@ -3,8 +3,13 @@ import * as pdfjsLib from "pdfjs-dist";
 pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
 
 import { Accessor, createSignal, JSX, Setter } from "solid-js";
-import { FileInput, DataGrid, PrimaryButton } from "../../components";
-import { ParsedResult } from "../../types";
+import {
+  FileInput,
+  DataGrid,
+  PrimaryButton,
+  StatementFormatSelector,
+} from "../../components";
+import { ParsedResult, RowData } from "../../types";
 import { StatementFormatsEnum } from "../../constants";
 import toast from "solid-toast";
 
@@ -19,15 +24,17 @@ const LandingDemo = (props: LandingDemoProps) => {
   const [docFormat, setDocFormat] = createSignal<string>(
     StatementFormatsEnum.DBS_CARD
   );
-  const [parsedResult, setParsedResult] = createSignal<ParsedResult>();
+  const [parsedResult, setParsedResult] = createSignal<ParsedResult<RowData>>();
   const [gridRef, setGridRef] = createSignal<any>(null);
 
-  const handleSelectChange: JSX.ChangeEventHandlerUnion<
-    HTMLSelectElement,
-    Event
-  > = (event) => {
-    const selectedIdx = event.target.selectedIndex;
-    const option = event.target.options[selectedIdx];
+  const handleSelectChange = (
+    event: Event & {
+      currentTarget: HTMLSelectElement;
+      target: HTMLSelectElement;
+    }
+  ) => {
+    const selectedIdx = event?.target?.selectedIndex;
+    const option = event?.target?.options[selectedIdx];
     const optGroup = option.parentElement;
     const category = optGroup?.getAttribute("id");
     setDocFormat(`${option.value}-${category}`);
@@ -74,25 +81,7 @@ const LandingDemo = (props: LandingDemoProps) => {
               <div class="pb-2" text="cyan-900">
                 Select your statement format:
               </div>
-              <select
-                class="w-full max-w-xs rounded shadow-lg"
-                cursor="pointer"
-                p="y-1 l-2"
-                onChange={handleSelectChange}
-              >
-                <optgroup id="creditcard" label="Credit Card Statements">
-                  <option value="dbs">DBS - PDF</option>
-                  <option value="citi">Citibank - PDF</option>
-                  <option value="uob">UOB - XLS</option>
-                  <option value="hsbc">HSBC - CSV</option>
-                </optgroup>
-                <optgroup id="account" label="Accounts">
-                  <option value="dbs">DBS - CSV</option>
-                  <option value="dbs-NAV">DBS NAV - CSV</option>
-                  <option value="moomoo">MooMoo - PDF</option>
-                  <option value="ibkr">IBKR - CSV</option>
-                </optgroup>
-              </select>
+              <StatementFormatSelector handleChange={handleSelectChange} />
             </div>
             <FileInput
               dataSetter={setParsedResult}

@@ -78,7 +78,6 @@ export const parseCitiFormat: PDFParser = (textData) => {
         headerCoord = currentCoord;
       }
       if (!statementYear) statementYear = getYear(rowString, row);
-      console.log(rowString, statementYear);
       if (isValidCitiRow(row, headerCoord)) {
         const parsedData = parseRow(rowString, statementYear);
         result.push(parsedData);

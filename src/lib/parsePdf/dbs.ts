@@ -1,7 +1,9 @@
+import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 import { RowData } from "../../types";
 import { extendedDayjs } from "../../utils/dayjs";
 import { PDFParser, isTextItem } from "./parsePdf.types";
 import { isInSameRow } from "./utils";
+import { FinancialTransactionModel } from "../storage";
 
 const filterTextData = (text: string): boolean => {
   if (
@@ -23,7 +25,7 @@ const getYear = (text: string): string => {
   return "";
 };
 
-const parseRow = (row: Array<string>, year: string): RowData => {
+const parseDemoRow = (row: Array<string>, year: string): RowData => {
   const lastItem = row.at(-1)?.replace(",", "");
   let parsedAmount = parseFloat(lastItem ?? "0.0");
   if (lastItem === "CR") {
@@ -41,7 +43,33 @@ const parseRow = (row: Array<string>, year: string): RowData => {
   };
 };
 
-export const parseDBSFormat: PDFParser = (textData) => {
+const parseAppRow = (
+  row: Array<string>,
+  year: string
+): FinancialTransactionModel => {
+  const lastItem = row.at(-1)?.replace(",", "");
+  let parsedAmount = parseFloat(lastItem ?? "0.0");
+  if (lastItem === "CR") {
+    const secondLastItem = row.at(-2)?.replace(",", "");
+    parsedAmount = parseFloat(secondLastItem ?? "0.0") * -1;
+  }
+
+  const date = year ? row.at(0) + " " + year : row.at(0);
+
+  return {
+    transactionDate: date ?? "",
+    currency: "SGD",
+    description: row.at(1) ?? "",
+    amount: parsedAmount,
+    transactionMethodId: "5", // set as card as uob statement is for cards
+    transactionTypeId: "1", //  map using pre configured keywords
+    transactionSubTypeId: "1", //  map using pre configured keywords
+    accountId: "", // to get from top level
+    isInternal: false, // false until marked true by user
+  };
+};
+
+const parseDBSFormat: PDFParser = (textData, rowParser) => {
   let statementYear: string = "";
   let headerCoord = 0;
   let prevIdx: number = 0;
@@ -76,7 +104,7 @@ export const parseDBSFormat: PDFParser = (textData) => {
       row.push(text);
     } else {
       if (row.length >= 3) {
-        const parsedData = parseRow(row, statementYear);
+        const parsedData = rowParser?.(row, statementYear);
         result.push(parsedData);
       }
       row = [text];
@@ -86,4 +114,16 @@ export const parseDBSFormat: PDFParser = (textData) => {
   }
 
   return result;
+};
+
+export const parseDBSDemoFormat = (
+  data: Array<TextItem | TextMarkedContent>
+) => {
+  return parseDBSFormat(data, parseDemoRow);
+};
+
+export const parseDBSAppFormat = (
+  data: Array<TextItem | TextMarkedContent>
+) => {
+  return parseDBSFormat(data, parseAppRow);
 };

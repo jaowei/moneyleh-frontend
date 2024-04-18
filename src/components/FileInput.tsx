@@ -11,15 +11,15 @@ import {
 import toast from "solid-toast";
 import { parseExcel } from "../lib/parseExcel/parseExcel";
 
-interface FileInputProps {
-  dataSetter: Setter<ParsedResult | undefined>;
+interface FileInputProps<T> {
+  dataSetter: Setter<ParsedResult<T> | undefined>;
   docFormat: Accessor<string>;
   password: Accessor<string | undefined>;
   passwordDialogTriggerSetter: Setter<boolean>;
   passwordSetter: Setter<string | undefined>;
 }
 
-export const FileInput = (props: FileInputProps) => {
+export function FileInput<T>(props: FileInputProps<T>) {
   const [fileName, setFileName] = createSignal("No file selected");
   const [savedFile, setSavedFile] = createSignal<File>();
 
@@ -61,7 +61,7 @@ export const FileInput = (props: FileInputProps) => {
         toast.error(FILE_PROCESSING_ERROR);
         return;
       }
-      props.dataSetter({ format: props.docFormat(), data: rowData });
+      props.dataSetter({ format: props.docFormat(), data: rowData as any });
       setFileName(file?.name ?? "");
     } catch (error: any) {
       if (error?.name === "PasswordException") {
@@ -129,4 +129,4 @@ export const FileInput = (props: FileInputProps) => {
       </p>
     </div>
   );
-};
+}

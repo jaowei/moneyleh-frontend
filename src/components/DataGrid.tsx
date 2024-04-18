@@ -4,13 +4,13 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "./dataGrid.css";
 import { Accessor, Setter } from "solid-js";
-import { ParsedResult } from "../types";
+import { ParsedResult, RowData } from "../types";
 import { SizeColumnsToContentStrategy } from "ag-grid-community";
 
 interface DataGridProps {
   gridRef: Accessor<any>;
   gridRefSetter: Setter<any>;
-  parsedResult: Accessor<ParsedResult | undefined>;
+  parsedResult: Accessor<ParsedResult<RowData> | undefined>;
 }
 
 export const DataGrid = (props: DataGridProps) => {

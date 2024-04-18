@@ -1,9 +1,10 @@
 import { RowData } from "../../types";
 import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../constants";
 import toast from "solid-toast";
-import { read } from "xlsx";
-import { parseUOBFormat } from "./uob";
+import { WorkBook, read, utils } from "xlsx";
+import { appUOBFormat, demoUOBFormat, parseUOBFormat } from "./uob";
 
+// To Deprecate
 export const parseExcel = async (
   file: File,
   statementFormat: string
@@ -20,4 +21,33 @@ export const parseExcel = async (
       toast.error(INVALID_FORMAT_ERROR);
       break;
   }
+};
+
+export const ExcelFileParser = {
+  async decodeFile(file: File) {
+    const workbook = read(await file.arrayBuffer());
+    const numSheets = workbook.SheetNames.length;
+    if (numSheets == 0) {
+      toast.error("No sheets detected");
+    }
+    return await this.extractContent(workbook);
+  },
+  async extractContent(workbook: WorkBook) {
+    return utils.sheet_to_json<any>(workbook.Sheets[workbook.SheetNames[0]], {
+      header: 1,
+    });
+  },
+  async safeParseContent(data: Array<any>, parser: (data: Array<any>) => {}) {
+    try {
+      parser(data);
+    } catch (error) {
+      toast.error(INVALID_FORMAT_ERROR);
+    }
+  },
+  demoParsers: {
+    [StatementFormatsEnum.UOB_CARD]: demoUOBFormat,
+  },
+  appParsers: {
+    [StatementFormatsEnum.UOB_CARD]: appUOBFormat,
+  },
 };
