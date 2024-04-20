@@ -1,11 +1,15 @@
 import * as pdfjsLib from "pdfjs-dist";
 import toast from "solid-toast";
 import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../constants";
-import { parseDBSAppFormat, parseDBSDemoFormat } from "./dbs";
-import { parseCitiFormat } from "./citi";
-import { parseMoomooFormat } from "./moomoo";
 import { isTextItem } from "./parsePdf.types";
-import { parseSyfePDF } from "./syfe";
+import {
+  parseCitiAppFormat,
+  parseCitiDemoFormat,
+  parseDBSAppFormat,
+  parseDBSDemoFormat,
+  parseMoomooFormat,
+  parseSyfePDF,
+} from "./formats";
 
 const extractContent = async (doc: pdfjsLib.PDFDocumentProxy, sort = false) => {
   const result = [];
@@ -37,7 +41,7 @@ export const parsePDF = async (
       return parseDBSDemoFormat(await extractContent(doc));
 
     case StatementFormatsEnum.CITI_CARD:
-      return parseCitiFormat(await extractContent(doc));
+      return parseCitiDemoFormat(await extractContent(doc));
 
     case StatementFormatsEnum.MOOMOO_ACCOUNT:
       return parseMoomooFormat(await extractContent(doc));
@@ -81,11 +85,12 @@ export const PDFFileParser = {
   },
   demoParsers: {
     [StatementFormatsEnum.DBS_CARD]: parseDBSDemoFormat,
-    [StatementFormatsEnum.CITI_CARD]: parseCitiFormat,
+    [StatementFormatsEnum.CITI_CARD]: parseCitiDemoFormat,
     [StatementFormatsEnum.MOOMOO_ACCOUNT]: parseMoomooFormat,
     [StatementFormatsEnum.SYFE_ACCOUNT]: parseSyfePDF,
   },
   appParsers: {
     [StatementFormatsEnum.DBS_CARD]: parseDBSAppFormat,
+    [StatementFormatsEnum.CITI_CARD]: parseCitiAppFormat,
   },
 };

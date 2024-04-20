@@ -1,7 +1,7 @@
 import { TextItem } from "pdfjs-dist/types/src/display/api";
-import { PDFParser, isTextItem } from "./parsePdf.types";
-import { isInSameRow } from "./utils";
-import { extendedDayjs } from "../../utils/dayjs";
+import { PDFParser, isTextItem } from "../parsePdf.types";
+import { isInSameRow } from "../utils";
+import { extendedDayjs } from "../../../utils/dayjs";
 
 const filterTextData = (text: string): boolean => {
   if (!text || text === " ") {

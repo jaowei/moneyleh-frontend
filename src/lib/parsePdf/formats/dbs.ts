@@ -1,9 +1,9 @@
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
-import { RowData } from "../../types";
-import { extendedDayjs } from "../../utils/dayjs";
-import { PDFParser, isTextItem } from "./parsePdf.types";
-import { isInSameRow } from "./utils";
-import { FinancialTransactionModel } from "../storage";
+import { RowData } from "../../../types";
+import { extendedDayjs } from "../../../utils/dayjs";
+import { PDFParser, isTextItem } from "../parsePdf.types";
+import { isInSameRow } from "../utils";
+import { FinancialTransactionModel } from "../../storage";
 
 const filterTextData = (text: string): boolean => {
   if (
@@ -25,15 +25,24 @@ const getYear = (text: string): string => {
   return "";
 };
 
-const parseDemoRow = (row: Array<string>, year: string): RowData => {
+const extractAmount = (row: Array<string> | string) => {
   const lastItem = row.at(-1)?.replace(",", "");
   let parsedAmount = parseFloat(lastItem ?? "0.0");
   if (lastItem === "CR") {
     const secondLastItem = row.at(-2)?.replace(",", "");
     parsedAmount = parseFloat(secondLastItem ?? "0.0") * -1;
   }
+  return parsedAmount;
+};
 
-  const date = year ? row.at(0) + " " + year : row.at(0);
+const extractDate = (row: Array<string> | string, year: string) => {
+  return year ? row.at(0) + " " + year : row.at(0);
+};
+
+const parseDemoRow = (row: Array<string> | string, year: string): RowData => {
+  const parsedAmount = extractAmount(row);
+
+  const date = extractDate(row, year);
 
   return {
     date: date ?? "",
@@ -44,17 +53,12 @@ const parseDemoRow = (row: Array<string>, year: string): RowData => {
 };
 
 const parseAppRow = (
-  row: Array<string>,
+  row: Array<string> | string,
   year: string
 ): FinancialTransactionModel => {
-  const lastItem = row.at(-1)?.replace(",", "");
-  let parsedAmount = parseFloat(lastItem ?? "0.0");
-  if (lastItem === "CR") {
-    const secondLastItem = row.at(-2)?.replace(",", "");
-    parsedAmount = parseFloat(secondLastItem ?? "0.0") * -1;
-  }
+  const parsedAmount = extractAmount(row);
 
-  const date = year ? row.at(0) + " " + year : row.at(0);
+  const date = extractDate(row, year);
 
   return {
     transactionDate: date ?? "",

@@ -9,5 +9,5 @@ export const isTextItem = (
 
 export type PDFParser = (
   textData: Array<TextItem | TextMarkedContent>,
-  rowParser?: (row: Array<string>, year: string) => any
+  rowParser?: (row: Array<string> | string, year: string) => any
 ) => Array<RowData>;

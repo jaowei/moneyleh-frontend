@@ -2,6 +2,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 import { RowData } from "../types";
 
+// Deprecated
 export const parsePDF = async (file: File) => {
   const allPagesTextData: Array<TextItem | TextMarkedContent> = [];
   const fileUrl = URL.createObjectURL(file);
@@ -15,6 +16,7 @@ export const parsePDF = async (file: File) => {
   return allPagesTextData;
 };
 
+// Deprecated
 export const sendPDFText = async (
   PDFTextData: Array<TextItem | TextMarkedContent>,
   layoutType: string
