@@ -1,3 +1,4 @@
+import { RowData } from "../../../../types";
 import { extendedDayjs } from "../../../../utils/dayjs";
 import { CSVParser } from "../parseCsv.types";
 
@@ -40,37 +41,39 @@ const convertDateFormat = (date: string) => {
   return extendedDayjs(date).format("DD/MM/YYYY");
 };
 
-export const parseIBKRFormat: CSVParser = (parsedContent) => {
-  console.log(parsedContent);
+export const parseIBKRFormat: CSVParser<RowData> = (parsedContent) => {
   let currentStatementCode: string | null | undefined;
   let tableHeaderMap: Map<string, number>;
-  return parsedContent.data.reduce((prev: Array<any>, curr: Array<string>) => {
-    currentStatementCode = handleStatementCode(curr, currentStatementCode);
-    if (curr.length === 3) return prev;
-    switch (currentStatementCode) {
-      case StatementCodeEnum.STATEMENT_OF_FUNDS:
-        if (!tableHeaderMap.size) {
-          tableHeaderMap = mapTableHeader(curr, [
-            "Date",
-            "CurrencyPrimary",
-            "ActivityDescription",
-            "Amount",
-          ]);
-        } else {
-          prev.push({
-            date: convertDateFormat(curr[tableHeaderMap.get("Date") ?? 0]),
-            currency: curr[tableHeaderMap.get("CurrencyPrimary") ?? 0],
-            description: curr[tableHeaderMap.get("ActivityDescription") ?? 0],
-            amount: parseFloat(curr[tableHeaderMap.get("Amount") ?? 0]),
-          });
-        }
-        break;
-      default:
-        break;
-    }
-    if (!currentStatementCode) {
-      tableHeaderMap = new Map();
-    }
-    return prev;
-  }, []);
+  return parsedContent.data.reduce(
+    (prev: Array<RowData>, curr: Array<string>) => {
+      currentStatementCode = handleStatementCode(curr, currentStatementCode);
+      if (curr.length === 3) return prev;
+      switch (currentStatementCode) {
+        case StatementCodeEnum.STATEMENT_OF_FUNDS:
+          if (!tableHeaderMap.size) {
+            tableHeaderMap = mapTableHeader(curr, [
+              "Date",
+              "CurrencyPrimary",
+              "ActivityDescription",
+              "Amount",
+            ]);
+          } else {
+            prev.push({
+              date: convertDateFormat(curr[tableHeaderMap.get("Date") ?? 0]),
+              currency: curr[tableHeaderMap.get("CurrencyPrimary") ?? 0],
+              description: curr[tableHeaderMap.get("ActivityDescription") ?? 0],
+              amount: parseFloat(curr[tableHeaderMap.get("Amount") ?? 0]),
+            });
+          }
+          break;
+        default:
+          break;
+      }
+      if (!currentStatementCode) {
+        tableHeaderMap = new Map();
+      }
+      return prev;
+    },
+    []
+  );
 };
