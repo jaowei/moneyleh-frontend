@@ -1,6 +1,6 @@
 import * as pdfjsLib from "pdfjs-dist";
 import toast from "solid-toast";
-import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../constants";
+import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../../constants";
 import { isTextItem } from "./parsePdf.types";
 import {
   parseCitiAppFormat,
@@ -78,9 +78,10 @@ export const PDFFileParser = {
   },
   async safeParseContent(data: Array<any>, parser: (data: Array<any>) => {}) {
     try {
-      parser(data);
+      return parser(data);
     } catch (error) {
       toast.error(INVALID_FORMAT_ERROR);
+      return null;
     }
   },
   demoParsers: {
@@ -88,9 +89,9 @@ export const PDFFileParser = {
     [StatementFormatsEnum.CITI_CARD]: parseCitiDemoFormat,
     [StatementFormatsEnum.MOOMOO_ACCOUNT]: parseMoomooFormat,
     [StatementFormatsEnum.SYFE_ACCOUNT]: parseSyfePDF,
-  },
+  } as Record<string, any>,
   appParsers: {
     [StatementFormatsEnum.DBS_CARD]: parseDBSAppFormat,
     [StatementFormatsEnum.CITI_CARD]: parseCitiAppFormat,
-  },
+  } as Record<string, any>,
 };

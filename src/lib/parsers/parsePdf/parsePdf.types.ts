@@ -1,5 +1,5 @@
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
-import { RowData } from "../../types";
+import { RowData } from "../../../types";
 
 export const isTextItem = (
   item: TextItem | TextMarkedContent

@@ -1,5 +1,5 @@
-import { RowData } from "../../types";
-import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../constants";
+import { RowData } from "../../../types";
+import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../../constants";
 import toast from "solid-toast";
 import { WorkBook, read, utils } from "xlsx";
 import { appUOBFormat, demoUOBFormat, parseUOBFormat } from "./uob";
@@ -39,15 +39,16 @@ export const ExcelFileParser = {
   },
   async safeParseContent(data: Array<any>, parser: (data: Array<any>) => {}) {
     try {
-      parser(data);
+      return parser(data);
     } catch (error) {
       toast.error(INVALID_FORMAT_ERROR);
+      return null;
     }
   },
   demoParsers: {
     [StatementFormatsEnum.UOB_CARD]: demoUOBFormat,
-  },
+  } as Record<string, any>,
   appParsers: {
     [StatementFormatsEnum.UOB_CARD]: appUOBFormat,
-  },
+  } as Record<string, any>,
 };

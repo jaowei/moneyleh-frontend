@@ -1,9 +1,9 @@
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
-import { RowData } from "../../../types";
-import { extendedDayjs } from "../../../utils/dayjs";
+import { RowData } from "../../../../types";
+import { extendedDayjs } from "../../../../utils/dayjs";
 import { PDFParser, isTextItem } from "../parsePdf.types";
-import { isInSameRow } from "../utils";
-import { FinancialTransactionModel } from "../../storage";
+import { FinancialTransactionModel } from "../../../storage";
+import { isInSameRow } from "../../utils";
 
 const getYear = (text: string, row: string[]): string => {
   if (text.includes("Statement Date")) {

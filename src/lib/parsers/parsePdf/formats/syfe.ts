@@ -1,6 +1,6 @@
-import { extendedDayjs } from "../../../utils/dayjs";
+import { extendedDayjs } from "../../../../utils/dayjs";
+import { isInSameRow } from "../../utils";
 import { PDFParser, isTextItem } from "../parsePdf.types";
-import { isInSameRow } from "../utils";
 
 const filterTextData = (text: string) => {
   if (!text || text === " ") {

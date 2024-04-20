@@ -1,4 +1,4 @@
-import { RowData } from "../../types";
+import { RowData } from "../../../../types";
 
 export const parseHSBCFormat = (
   parsedContent: Papa.ParseResult<any>

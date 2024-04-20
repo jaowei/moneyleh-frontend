@@ -1,6 +1,11 @@
-import { Accessor, JSX, Setter, createEffect, createSignal } from "solid-js";
-import { parsePDF } from "../lib/parsePdf/parsePdf";
-import { parseCSV } from "../lib/parseCsv/parseCsv";
+import {
+  Accessor,
+  JSX,
+  Setter,
+  createEffect,
+  createMemo,
+  createSignal,
+} from "solid-js";
 import { ParsedResult } from "../types";
 import {
   ACCEPTED_FILE_TYPES,
@@ -9,7 +14,8 @@ import {
   INVALID_FORMAT_ERROR,
 } from "../constants";
 import toast from "solid-toast";
-import { parseExcel } from "../lib/parseExcel/parseExcel";
+import { CSVFileParser, ExcelFileParser, PDFFileParser } from "../lib/parsers";
+import { useLocation } from "@solidjs/router";
 
 interface FileInputProps<T> {
   dataSetter: Setter<ParsedResult<T> | undefined>;
@@ -22,6 +28,24 @@ interface FileInputProps<T> {
 export function FileInput<T>(props: FileInputProps<T>) {
   const [fileName, setFileName] = createSignal("No file selected");
   const [savedFile, setSavedFile] = createSignal<File>();
+
+  const location = useLocation();
+
+  const parsers = createMemo(() => {
+    if (location.pathname.includes("app")) {
+      return {
+        [AcceptedMIMETypesEnum.CSV]: CSVFileParser.appParsers,
+        [AcceptedMIMETypesEnum.PDF]: PDFFileParser.appParsers,
+        [AcceptedMIMETypesEnum.XLS]: ExcelFileParser.appParsers,
+      };
+    } else {
+      return {
+        [AcceptedMIMETypesEnum.CSV]: CSVFileParser.demoParsers,
+        [AcceptedMIMETypesEnum.PDF]: PDFFileParser.demoParsers,
+        [AcceptedMIMETypesEnum.XLS]: ExcelFileParser.demoParsers,
+      };
+    }
+  });
 
   createEffect(() => {
     const file = savedFile();
@@ -45,13 +69,34 @@ export function FileInput<T>(props: FileInputProps<T>) {
       let rowData;
       switch (file?.type) {
         case AcceptedMIMETypesEnum.PDF:
-          rowData = await parsePDF(file, props.docFormat(), props.password());
+          const fileDataPDF = await PDFFileParser.decodeFile(
+            file,
+            props.password()
+          );
+          const fileParserPDF =
+            parsers()[AcceptedMIMETypesEnum.PDF][props.docFormat()];
+          rowData = await PDFFileParser.safeParseContent(
+            fileDataPDF,
+            fileParserPDF
+          );
           break;
         case AcceptedMIMETypesEnum.CSV:
-          rowData = await parseCSV(file, props.docFormat());
+          const fileDataCSV = await CSVFileParser.decodeFile(file);
+          const fileParserCSV =
+            parsers()[AcceptedMIMETypesEnum.CSV][props.docFormat()];
+          rowData = await CSVFileParser.safeParseContent(
+            fileDataCSV,
+            fileParserCSV
+          );
           break;
         case AcceptedMIMETypesEnum.XLS:
-          rowData = await parseExcel(file, props.docFormat());
+          const fileDataXLS = await ExcelFileParser.decodeFile(file);
+          const fileParserXLS =
+            parsers()[AcceptedMIMETypesEnum.XLS][props.docFormat()];
+          rowData = await ExcelFileParser.safeParseContent(
+            fileDataXLS,
+            fileParserXLS
+          );
           break;
         default:
           toast.error(INVALID_FORMAT_ERROR);

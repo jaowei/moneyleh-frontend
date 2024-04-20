@@ -1,7 +1,7 @@
 import { WorkBook, utils } from "xlsx";
-import { RowData } from "../../types";
-import { extendedDayjs } from "../../utils/dayjs";
-import { FinancialTransactionModel } from "../storage";
+import { RowData } from "../../../types";
+import { extendedDayjs } from "../../../utils/dayjs";
+import { FinancialTransactionModel } from "../../storage";
 
 // To Deprecate
 export const parseUOBFormat = (workbook: WorkBook): Array<RowData> => {

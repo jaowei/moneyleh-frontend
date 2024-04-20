@@ -1,5 +1,5 @@
-import { extendedDayjs } from "../../utils/dayjs";
-import { CSVParser } from "./parseCsv.types";
+import { extendedDayjs } from "../../../../utils/dayjs";
+import { CSVParser } from "../parseCsv.types";
 
 enum StatementCodeEnum {
   TRANSACTIONS = "TRNT",
