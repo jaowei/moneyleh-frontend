@@ -32,4 +32,4 @@ const TransactionMethod: DatabaseModel = {
   },
 };
 
-export { TransactionMethod };
+export { TransactionMethod, baseTransactionMethods };

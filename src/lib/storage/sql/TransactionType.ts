@@ -43,4 +43,4 @@ const TransactionType: DatabaseModel = {
   },
 };
 
-export { TransactionType };
+export { TransactionType, baseTransactionTypes };

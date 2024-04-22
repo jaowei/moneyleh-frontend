@@ -9,7 +9,7 @@ export type FinancialTransactionModel = {
   currency: string;
   transactionMethodId: string;
   transactionTypeId: string;
-  transactionSubTypeId: string;
+  transactionSubTypeId?: string;
   accountId: string;
   isInternal: boolean;
 };

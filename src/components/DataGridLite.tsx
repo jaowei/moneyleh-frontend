@@ -53,7 +53,7 @@ const defaultColumns = [
   }),
   columnHelper.accessor("transactionTypeId", { header: "Transaction Type" }),
   columnHelper.accessor("transactionSubTypeId", {
-    header: "Transaction Category",
+    header: "Transaction Sub Type",
   }),
 ];
 

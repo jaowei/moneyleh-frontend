@@ -1,6 +1,7 @@
 import { RowData } from "../../../../types";
 import { extendedDayjs } from "../../../../utils/dayjs";
 import { FinancialTransactionModel } from "../../../storage";
+import { descriptionToTags } from "../../description";
 import { CSVParser } from "../parseCsv.types";
 
 const keywordsParentTagMap = new Map([
@@ -107,14 +108,17 @@ export const parseDBSAppFormat: CSVParser<FinancialTransactionModel> = (
         } else if (creditAmt) {
           amount = parseFloat(creditAmt);
         }
+        const description = curr.slice(-4, -1).join(" ");
+        const { transactionMethod, transactionType, transactionSubType } =
+          descriptionToTags(description);
         prev.push({
           transactionDate: curr[0],
           currency,
-          description: curr.slice(-4, -1).join(" "),
+          description,
           amount,
-          transactionMethodId: "5", // set as card as uob statement is for cards
-          transactionTypeId: "1", //  map using pre configured keywords
-          transactionSubTypeId: "1", //  map using pre configured keywords
+          transactionMethodId: transactionMethod,
+          transactionTypeId: transactionType,
+          transactionSubTypeId: transactionSubType,
           accountId: "", // to get from top level
           isInternal: false, // false until marked true by user
         });
