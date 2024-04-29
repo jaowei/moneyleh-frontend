@@ -22,7 +22,7 @@ interface DataGridLiteProps {
 const columnHelper = createColumnHelper<Partial<FinancialTransactionModel>>();
 
 const defaultColumns = [
-  columnHelper.accessor("transactionDate", {
+  columnHelper.accessor("$transactionDate", {
     header: "Transaction Date",
     cell: (props) => {
       const [value, setValue] = createSignal();
@@ -45,14 +45,14 @@ const defaultColumns = [
       );
     },
   }),
-  columnHelper.accessor("description", { header: "Description" }),
-  columnHelper.accessor("amount", { header: "Amount" }),
-  columnHelper.accessor("currency", { header: "Currency" }),
-  columnHelper.accessor("transactionMethodId", {
+  columnHelper.accessor("$description", { header: "Description" }),
+  columnHelper.accessor("$amount", { header: "Amount" }),
+  columnHelper.accessor("$currency", { header: "Currency" }),
+  columnHelper.accessor("$transactionMethodId", {
     header: "Transaction Method",
   }),
-  columnHelper.accessor("transactionTypeId", { header: "Transaction Type" }),
-  columnHelper.accessor("transactionSubTypeId", {
+  columnHelper.accessor("$transactionTypeId", { header: "Transaction Type" }),
+  columnHelper.accessor("$transactionSubTypeId", {
     header: "Transaction Sub Type",
   }),
 ];

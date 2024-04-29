@@ -10,6 +10,7 @@ import { ParsedResult } from "../types";
 import {
   ACCEPTED_FILE_TYPES,
   AcceptedMIMETypesEnum,
+  EMPTY_PARSED_RESULT,
   FILE_PROCESSING_ERROR,
   INVALID_FORMAT_ERROR,
 } from "../constants";
@@ -18,7 +19,7 @@ import { CSVFileParser, ExcelFileParser, PDFFileParser } from "../lib/parsers";
 import { useLocation } from "@solidjs/router";
 
 interface FileInputProps<T> {
-  dataSetter: Setter<ParsedResult<T> | undefined>;
+  dataSetter: Setter<ParsedResult<T>>;
   docFormat: Accessor<string>;
   password: Accessor<string | undefined>;
   passwordDialogTriggerSetter: Setter<boolean>;
@@ -118,7 +119,7 @@ export function FileInput<T>(props: FileInputProps<T>) {
 
   const handleDrop = async (e: DragEvent) => {
     e.preventDefault();
-    props.dataSetter(undefined);
+    props.dataSetter(EMPTY_PARSED_RESULT);
     setFileName("");
     const file = e.dataTransfer?.files[0];
     handleFileType(file);
@@ -128,7 +129,7 @@ export function FileInput<T>(props: FileInputProps<T>) {
     HTMLInputElement,
     InputEvent
   > = async (event) => {
-    props.dataSetter(undefined);
+    props.dataSetter(EMPTY_PARSED_RESULT);
     setFileName("");
     const file = event.target.files?.[0];
     handleFileType(file);

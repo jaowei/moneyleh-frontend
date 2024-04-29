@@ -18,7 +18,7 @@ const baseTransactionMethods = [
   "Card - Recurring",
 ];
 
-const TransactionMethod: DatabaseModel = {
+const TransactionMethod: DatabaseModel<TransactionMethodModel> = {
   queries: {
     createTable:
       "CREATE TABLE transactionMethod (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char);",

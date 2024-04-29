@@ -29,7 +29,7 @@ const baseTransactionTypes = [
   "Rebates & Payouts",
 ];
 
-const TransactionType: DatabaseModel = {
+const TransactionType: DatabaseModel<TransactionTypeModel> = {
   queries: {
     createTable:
       "CREATE TABLE transactionType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char);",

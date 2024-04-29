@@ -3,7 +3,7 @@ import { RowData } from "../../../../types";
 import { extendedDayjs } from "../../../../utils/dayjs";
 import { PDFParser, isTextItem } from "../parsePdf.types";
 import { FinancialTransactionModel } from "../../../storage";
-import { isInSameRow } from "../../utils";
+import { isInSameRow, mapToFinancialTransaction } from "../../utils";
 
 const getYear = (text: string, row: string[]): string => {
   if (text.includes("Statement Date")) {
@@ -68,7 +68,7 @@ const parseAppRow = (
 
   const { amount, description } = extractAmountAndDescription(row);
 
-  return {
+  return mapToFinancialTransaction({
     transactionDate: parsedDate,
     currency: "SGD",
     description,
@@ -78,7 +78,7 @@ const parseAppRow = (
     transactionSubTypeId: "1", //  map using pre configured keywords
     accountId: "", // to get from top level
     isInternal: false, // false until marked true by user
-  };
+  });
 };
 
 const parseCitiFormat: PDFParser = (textData, rowParser) => {

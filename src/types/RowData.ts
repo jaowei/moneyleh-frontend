@@ -12,4 +12,5 @@ export type RowData = {
 export type ParsedResult<T> = {
   format: string;
   data: Array<T>;
+  accountId?: string;
 };

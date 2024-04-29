@@ -45,12 +45,12 @@ const baseTransactionSubTypes = [
   ["Meals", 8],
 ];
 
-const TransactionSubType: DatabaseModel = {
+const TransactionSubType: DatabaseModel<TransactionSubTypesModel> = {
   queries: {
     createTable:
       "CREATE TABLE transactionSubType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char, transactionTypeId int, FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id));",
     insertOne:
-      "INSERT INTO transactionSubType(name, transactionCategoryId) VALUES (?, ?)",
+      "INSERT INTO transactionSubType(name, transactionTypeId) VALUES (?, ?)",
     selectAll: "",
   },
   initTable(db) {

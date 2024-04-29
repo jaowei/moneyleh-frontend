@@ -10,7 +10,7 @@ import {
   StatementFormatSelector,
 } from "../../components";
 import { ParsedResult, RowData } from "../../types";
-import { StatementFormatsEnum } from "../../constants";
+import { EMPTY_PARSED_RESULT, StatementFormatsEnum } from "../../constants";
 import toast from "solid-toast";
 
 interface LandingDemoProps {
@@ -24,7 +24,8 @@ const LandingDemo = (props: LandingDemoProps) => {
   const [docFormat, setDocFormat] = createSignal<string>(
     StatementFormatsEnum.DBS_CARD
   );
-  const [parsedResult, setParsedResult] = createSignal<ParsedResult<RowData>>();
+  const [parsedResult, setParsedResult] =
+    createSignal<ParsedResult<RowData>>(EMPTY_PARSED_RESULT);
   const [gridRef, setGridRef] = createSignal<any>(null);
 
   const handleSelectChange = (

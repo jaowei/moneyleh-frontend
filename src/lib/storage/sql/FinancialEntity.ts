@@ -22,7 +22,7 @@ export const financialEntities = [
   "Tiger Brokers",
 ];
 
-const FinancialEntity: DatabaseModel = {
+const FinancialEntity: DatabaseModel<FinancialEntityModel> = {
   queries: {
     createTable:
       "CREATE TABLE financialEntity (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char, isDeleted boolean);",

@@ -4,6 +4,7 @@ import { SqlValue } from "sql.js";
 import {
   Account,
   FinancialEntity,
+  FinancialTransaction,
   FinancialTransactionModel,
 } from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
@@ -11,10 +12,20 @@ import {
   DataGridLite,
   FileInput,
   PasswordDialog,
+  PrimaryButton,
   StatementFormatSelector,
 } from "../../components";
-import { StatementFormatsEnum } from "../../constants";
+import { EMPTY_PARSED_RESULT, StatementFormatsEnum } from "../../constants";
 import { ParsedResult } from "../../types";
+import toast from "solid-toast";
+
+type formInformation = {
+  entities: SqlValue[][];
+  accounts: SqlValue[][];
+  transactionMethods: SqlValue[][];
+  transactionTypes: SqlValue[][];
+  transactionSubTypes: SqlValue[][];
+};
 
 const accountingRelationMap: Record<string, string> = {
   cash: "asset",
@@ -27,23 +38,31 @@ export const AppDataEntry = () => {
   const [accountDetails, setAccountDetails] = createStore({
     $name: "",
     $type: "cash",
-    $financialEntityId: 1,
+    $financialEntityId: "1",
     $startingBalance: 0,
   });
-  const [entities, setEntities] = createSignal<SqlValue[][]>();
+  const [formInfo, setFormInfo] = createStore<formInformation>({
+    entities: [],
+    accounts: [],
+    transactionMethods: [],
+    transactionTypes: [],
+    transactionSubTypes: [],
+  });
   const [docFormat, setDocFormat] = createSignal<string>(
     StatementFormatsEnum.DBS_CARD
   );
   const [parsedResult, setParsedResult] =
-    createSignal<ParsedResult<FinancialTransactionModel>>();
+    createSignal<ParsedResult<FinancialTransactionModel>>(EMPTY_PARSED_RESULT);
   const [filePassword, setFilePassword] = createSignal<string>();
   const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
+  const [accountId, setAccountId] = createSignal<string>();
 
   createEffect(() => {
     const db = database();
     if (db) {
       const values = db.exec(FinancialEntity.queries.selectAll)[0]?.values;
-      setEntities(values);
+      setFormInfo("accounts", Account.selectAll?.(db) ?? []);
+      setFormInfo("entities", values);
     }
   });
 
@@ -56,7 +75,21 @@ export const AppDataEntry = () => {
       $accountingRelation: accountingRelationMap[accountDetails.$type],
     };
     if (db) {
-      Account.insertOne?.(db, accountData);
+      try {
+        const id = Account.insertOne?.(db, accountData);
+        if (id) {
+          console.log(id);
+          setAccountId(id[0]);
+          toast.success(`Successfully created account with id ${id}`, {
+            position: "top-center",
+          });
+        } else {
+          throw new Error();
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Error inserting into DB", { position: "top-center" });
+      }
     }
   };
 
@@ -71,6 +104,33 @@ export const AppDataEntry = () => {
     const optGroup = option.parentElement;
     const category = optGroup?.getAttribute("id");
     setDocFormat(`${option.value}-${category}`);
+  };
+
+  const handleSubmitTransactions = () => {
+    console.log(parsedResult(), accountId());
+    if (!accountId()) {
+      toast.error("Please select an account");
+      return;
+    }
+    const db = database();
+    const results = parsedResult();
+    if (db && results.data.length) {
+      try {
+        FinancialTransaction?.insertMany?.(db, results.data);
+        setParsedResult(EMPTY_PARSED_RESULT);
+        toast.success(
+          `Successfully created added transactions to account ${accountDetails.$name}`,
+          {
+            position: "top-center",
+          }
+        );
+      } catch (error) {
+        console.log(error);
+        toast.error("Error inserting into DB", { position: "top-center" });
+      }
+    } else {
+      toast.error("Error with DB / No data", { position: "top-center" });
+    }
   };
 
   return (
@@ -95,11 +155,11 @@ export const AppDataEntry = () => {
               onChange={(e) =>
                 setAccountDetails(
                   "$financialEntityId",
-                  e.target.selectedIndex + 1
+                  `${e.target.selectedIndex + 1}`
                 )
               }
             >
-              <For each={entities()}>
+              <For each={formInfo.entities}>
                 {(val) => {
                   const name = typeof val[2] === "string" ? val[2] : "N/A";
                   return (
@@ -140,6 +200,11 @@ export const AppDataEntry = () => {
       </div>
       <div>
         <DataGridLite rowData={parsedResult} />
+      </div>
+      <div>
+        <PrimaryButton onClick={handleSubmitTransactions}>
+          Submit transactions
+        </PrimaryButton>
       </div>
       <PasswordDialog
         passwordDialogTrigger={passwordDialogIsOpen}
