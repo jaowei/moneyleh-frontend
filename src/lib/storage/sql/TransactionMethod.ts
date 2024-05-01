@@ -7,15 +7,24 @@ export type TransactionMethodModel = {
   name: string;
 };
 
+export const TransactionMethods = {
+  paynow: "Paynow",
+  paylah: "Paylah",
+  fast: "FAST Transfer",
+  giro: "GIRO",
+  cardPhysical: "Card - Physical",
+  cardOnline: "Card - Online",
+  cardInstallment: "Card - Installment",
+} as const;
+
 const baseTransactionMethods = [
-  "Paynow",
-  "Paylah",
-  "FAST Transfer",
-  "GIRO",
-  "Card - Physical",
-  "Card - Online",
-  "Card - Installment",
-  "Card - Recurring",
+  TransactionMethods.paynow,
+  TransactionMethods.paylah,
+  TransactionMethods.fast,
+  TransactionMethods.giro,
+  TransactionMethods.cardPhysical,
+  TransactionMethods.cardOnline,
+  TransactionMethods.cardInstallment,
 ];
 
 const TransactionMethod: DatabaseModel<TransactionMethodModel> = {

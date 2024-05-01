@@ -46,11 +46,16 @@ export const parseDBSDemoFormat: CSVParser<RowData> = (parsedContent) => {
         } else if (creditAmt) {
           amount = parseFloat(creditAmt);
         }
+        const description = curr.slice(-4, -1).join(" ");
+        const { transactionMethod, transactionType } =
+          descriptionToTags(description);
         prev.push({
           date: curr[0],
           currency,
-          description: curr.slice(-4, -1).join(" "),
+          description,
           amount,
+          transactionCode: transactionMethod,
+          parentTag: transactionType,
         });
       }
       return prev;

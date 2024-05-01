@@ -4,6 +4,7 @@ import { extendedDayjs } from "../../../../utils/dayjs";
 import { PDFParser, isTextItem } from "../parsePdf.types";
 import { FinancialTransactionModel } from "../../../storage";
 import { isInSameRow, mapToFinancialTransaction } from "../../utils";
+import { descriptionToTags } from "../../description";
 
 const filterTextData = (text: string): boolean => {
   if (
@@ -44,11 +45,19 @@ const parseDemoRow = (row: Array<string> | string, year: string): RowData => {
 
   const date = extractDate(row, year);
 
+  const description = row.at(1) ?? "";
+
+  const { transactionMethod, transactionType, transactionSubType } =
+    descriptionToTags(description);
+
   return {
     date: date ?? "",
     currency: "SGD",
-    description: row.at(1) ?? "",
+    description,
     amount: parsedAmount,
+    transactionCode: transactionMethod,
+    parentTag: transactionType,
+    childTag: transactionSubType,
   };
 };
 
@@ -60,14 +69,19 @@ const parseAppRow = (
 
   const date = extractDate(row, year);
 
+  const description = row.at(1) ?? "";
+
+  const { transactionMethod, transactionType, transactionSubType } =
+    descriptionToTags(description);
+
   return mapToFinancialTransaction({
     transactionDate: date ?? "",
     currency: "SGD",
     description: row.at(1) ?? "",
     amount: parsedAmount,
-    transactionMethodId: "5", // set as card as uob statement is for cards
-    transactionTypeId: "1", //  map using pre configured keywords
-    transactionSubTypeId: "1", //  map using pre configured keywords
+    transactionMethodId: transactionMethod, // set as card as uob statement is for cards
+    transactionTypeId: transactionType, //  map using pre configured keywords
+    transactionSubTypeId: transactionSubType, //  map using pre configured keywords
     accountId: "", // to get from top level
     isInternal: false, // false until marked true by user
   });
