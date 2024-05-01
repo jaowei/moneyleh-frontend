@@ -55,14 +55,17 @@ const baseTransactionTypes = [
 const TransactionType: DatabaseModel<TransactionTypeModel> = {
   queries: {
     createTable:
-      "CREATE TABLE transactionType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char);",
+      "CREATE TABLE transactionType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE);",
     insertOne: "INSERT INTO transactionType(name) VALUES (?)",
-    selectAll: "",
+    selectAll: "SELECT * FROM transactionType;",
   },
   initTable(db) {
     db.run(this.queries.createTable);
     const stmt = db.prepare(this.queries.insertOne);
     databaseSeeder(stmt, baseTransactionTypes);
+  },
+  selectAll(db) {
+    return db.exec(this.queries.selectAll)[0]?.values;
   },
 };
 

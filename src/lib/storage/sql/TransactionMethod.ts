@@ -30,14 +30,17 @@ const baseTransactionMethods = [
 const TransactionMethod: DatabaseModel<TransactionMethodModel> = {
   queries: {
     createTable:
-      "CREATE TABLE transactionMethod (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char);",
+      "CREATE TABLE transactionMethod (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE);",
     insertOne: "INSERT INTO transactionMethod(name) VALUES (?)",
-    selectAll: "",
+    selectAll: "SELECT * FROM transactionMethod;",
   },
   initTable(db) {
     db.run(this.queries.createTable);
     const stmt = db.prepare(this.queries.insertOne);
     databaseSeeder(stmt, baseTransactionMethods);
+  },
+  selectAll(db) {
+    return db.exec(this.queries.selectAll)[0]?.values;
   },
 };
 

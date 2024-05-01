@@ -25,7 +25,7 @@ export const financialEntities = [
 const FinancialEntity: DatabaseModel<FinancialEntityModel> = {
   queries: {
     createTable:
-      "CREATE TABLE financialEntity (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char, isDeleted boolean);",
+      "CREATE TABLE financialEntity (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, isDeleted boolean);",
     insertOne: "INSERT INTO financialEntity(name) VALUES (?);",
     selectAll: "SELECT * FROM financialEntity;",
   },
@@ -33,6 +33,9 @@ const FinancialEntity: DatabaseModel<FinancialEntityModel> = {
     db.run(this.queries.createTable);
     const stmt = db.prepare(this.queries.insertOne);
     databaseSeeder(stmt, financialEntities);
+  },
+  selectAll(db) {
+    return db.exec(this.queries.selectAll)[0]?.values;
   },
 };
 

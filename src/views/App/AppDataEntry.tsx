@@ -6,6 +6,9 @@ import {
   FinancialEntity,
   FinancialTransaction,
   FinancialTransactionModel,
+  TransactionMethod,
+  TransactionSubType,
+  TransactionType,
 } from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
 import {
@@ -18,8 +21,9 @@ import {
 import { EMPTY_PARSED_RESULT, StatementFormatsEnum } from "../../constants";
 import { ParsedResult } from "../../types";
 import toast from "solid-toast";
+import { financialTransactionsMapper } from "../../lib/storage/utils";
 
-type formInformation = {
+export type formInformation = {
   entities: SqlValue[][];
   accounts: SqlValue[][];
   transactionMethods: SqlValue[][];
@@ -60,16 +64,23 @@ export const AppDataEntry = () => {
   createEffect(() => {
     const db = database();
     if (db) {
-      const values = db.exec(FinancialEntity.queries.selectAll)[0]?.values;
+      setFormInfo("entities", FinancialEntity.selectAll?.(db) ?? []);
       setFormInfo("accounts", Account.selectAll?.(db) ?? []);
-      setFormInfo("entities", values);
+      setFormInfo(
+        "transactionMethods",
+        TransactionMethod.selectAll?.(db) ?? []
+      );
+      setFormInfo("transactionTypes", TransactionType.selectAll?.(db) ?? []);
+      setFormInfo(
+        "transactionSubTypes",
+        TransactionSubType.selectAll?.(db) ?? []
+      );
     }
   });
 
   const handleSubmit: JSX.EventHandlerUnion<HTMLFormElement, Event> = (e) => {
     e.preventDefault();
     const db = database();
-    console.log("submittt", accountDetails);
     const accountData = {
       ...accountDetails,
       $accountingRelation: accountingRelationMap[accountDetails.$type],
@@ -107,7 +118,6 @@ export const AppDataEntry = () => {
   };
 
   const handleSubmitTransactions = () => {
-    console.log(parsedResult(), accountId());
     if (!accountId()) {
       toast.error("Please select an account");
       return;
@@ -116,6 +126,7 @@ export const AppDataEntry = () => {
     const results = parsedResult();
     if (db && results.data.length) {
       try {
+        financialTransactionsMapper(results.data, formInfo, accountId()!);
         FinancialTransaction?.insertMany?.(db, results.data);
         setParsedResult(EMPTY_PARSED_RESULT);
         toast.success(

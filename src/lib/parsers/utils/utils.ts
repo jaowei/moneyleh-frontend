@@ -9,8 +9,6 @@ export const isInSameRow = (
 };
 
 export const mapToFinancialTransaction = ({
-  id,
-  createdAt,
   transactionDate,
   description,
   amount,
@@ -21,8 +19,6 @@ export const mapToFinancialTransaction = ({
   accountId,
   isInternal,
 }: FinancialTransactionMapParams) => ({
-  $id: id,
-  $createdAt: createdAt,
   $transactionDate: transactionDate,
   $description: description,
   $amount: amount,

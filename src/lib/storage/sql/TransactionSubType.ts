@@ -90,15 +90,18 @@ const baseTransactionSubTypes = [
 const TransactionSubType: DatabaseModel<TransactionSubTypesModel> = {
   queries: {
     createTable:
-      "CREATE TABLE transactionSubType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char, transactionTypeId int, FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id));",
+      "CREATE TABLE transactionSubType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, transactionTypeId int, FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id));",
     insertOne:
       "INSERT INTO transactionSubType(name, transactionTypeId) VALUES (?, ?)",
-    selectAll: "",
+    selectAll: "SELECT * FROM transactionSubType;",
   },
   initTable(db) {
     db.run(this.queries.createTable);
     const stmt = db.prepare(this.queries.insertOne);
     databaseSeeder(stmt, baseTransactionSubTypes);
+  },
+  selectAll(db) {
+    return db.exec(this.queries.selectAll)[0]?.values;
   },
 };
 
