@@ -1,9 +1,9 @@
-import { formInformation } from "../../../views/App/AppDataEntry";
+import { staticInfo } from "../../../views/App/AppDataEntry";
 import { FinancialTransactionModel } from "../sql";
 
 export const financialTransactionsMapper = (
   data: FinancialTransactionModel[],
-  databaseInfo: formInformation,
+  databaseInfo: staticInfo,
   accountId: string
 ) => {
   for (let row of data) {

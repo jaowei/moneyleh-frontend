@@ -1,9 +1,17 @@
-import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 import { RowData } from "../../../../types";
 import { extendedDayjs } from "../../../../utils/dayjs";
-import { PDFParser, isTextItem } from "../parsePdf.types";
+import {
+  PDFParser,
+  PDFParserData,
+  RowParserData,
+  isTextItem,
+} from "../parsePdf.types";
 import { FinancialTransactionModel } from "../../../storage";
-import { isInSameRow, mapToFinancialTransaction } from "../../utils";
+import {
+  accountTypeConverter,
+  isInSameRow,
+  mapToFinancialTransaction,
+} from "../../utils";
 import { descriptionToTags } from "../../description";
 
 const filterTextData = (text: string): boolean => {
@@ -40,7 +48,8 @@ const extractDate = (row: Array<string> | string, year: string) => {
   return year ? row.at(0) + " " + year : row.at(0);
 };
 
-const parseDemoRow = (row: Array<string> | string, year: string): RowData => {
+const parseDemoRow = (data: RowParserData): RowData => {
+  const { row, year } = data;
   const parsedAmount = extractAmount(row);
 
   const date = extractDate(row, year);
@@ -61,10 +70,8 @@ const parseDemoRow = (row: Array<string> | string, year: string): RowData => {
   };
 };
 
-const parseAppRow = (
-  row: Array<string> | string,
-  year: string
-): FinancialTransactionModel => {
+const parseAppRow = (data: RowParserData): FinancialTransactionModel => {
+  const { row, year, accountId, accountType } = data;
   const parsedAmount = extractAmount(row);
 
   const date = extractDate(row, year);
@@ -74,20 +81,24 @@ const parseAppRow = (
   const { transactionMethod, transactionType, transactionSubType } =
     descriptionToTags(description);
 
+  const method = transactionMethod || accountTypeConverter(accountType);
+
   return mapToFinancialTransaction({
     transactionDate: date ?? "",
     currency: "SGD",
     description: row.at(1) ?? "",
     amount: parsedAmount,
-    transactionMethodId: transactionMethod, // set as card as uob statement is for cards
-    transactionTypeId: transactionType, //  map using pre configured keywords
-    transactionSubTypeId: transactionSubType, //  map using pre configured keywords
-    accountId: "", // to get from top level
+    transactionMethodId: method,
+    transactionTypeId: transactionType,
+    transactionSubTypeId: transactionSubType,
+    accountId: accountId ?? "",
     isInternal: false, // false until marked true by user
   });
 };
 
-const parseDBSFormat: PDFParser = (textData, rowParser) => {
+const parseDBSFormat: PDFParser = (data, rowParser) => {
+  const { textData, accountId, accountType } = data;
+  if (!textData) return [];
   let statementYear: string = "";
   let headerCoord = 0;
   let prevIdx: number = 0;
@@ -122,7 +133,12 @@ const parseDBSFormat: PDFParser = (textData, rowParser) => {
       row.push(text);
     } else {
       if (row.length >= 3) {
-        const parsedData = rowParser?.(row, statementYear);
+        const parsedData = rowParser?.({
+          row,
+          year: statementYear,
+          accountId,
+          accountType,
+        });
         result.push(parsedData);
       }
       row = [text];
@@ -134,14 +150,10 @@ const parseDBSFormat: PDFParser = (textData, rowParser) => {
   return result;
 };
 
-export const parseDBSDemoFormat = (
-  data: Array<TextItem | TextMarkedContent>
-) => {
+export const parseDBSDemoFormat = (data: PDFParserData) => {
   return parseDBSFormat(data, parseDemoRow);
 };
 
-export const parseDBSAppFormat = (
-  data: Array<TextItem | TextMarkedContent>
-) => {
+export const parseDBSAppFormat = (data: PDFParserData) => {
   return parseDBSFormat(data, parseAppRow);
 };

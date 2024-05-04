@@ -1,3 +1,7 @@
+import * as pdfjsLib from "pdfjs-dist";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
+
 import {
   Accessor,
   JSX,
@@ -17,13 +21,15 @@ import {
 import toast from "solid-toast";
 import { CSVFileParser, ExcelFileParser, PDFFileParser } from "../lib/parsers";
 import { useLocation } from "@solidjs/router";
+import { formInfo } from "../views/App/AppDataEntry";
 
 interface FileInputProps<T> {
   dataSetter: Setter<ParsedResult<T>>;
-  docFormat: Accessor<string>;
   password: Accessor<string | undefined>;
   passwordDialogTriggerSetter: Setter<boolean>;
   passwordSetter: Setter<string | undefined>;
+  docFormat?: Accessor<string>;
+  formInfo?: formInfo;
 }
 
 export function FileInput<T>(props: FileInputProps<T>) {
@@ -68,23 +74,27 @@ export function FileInput<T>(props: FileInputProps<T>) {
   const handleFileType = async (file: File | undefined) => {
     try {
       let rowData;
+      const format = props?.docFormat?.() || props?.formInfo?.docFormat;
+      if (!format) throw new Error();
       switch (file?.type) {
         case AcceptedMIMETypesEnum.PDF:
           const fileDataPDF = await PDFFileParser.decodeFile(
             file,
             props.password()
           );
-          const fileParserPDF =
-            parsers()[AcceptedMIMETypesEnum.PDF][props.docFormat()];
+          const fileParserPDF = parsers()[AcceptedMIMETypesEnum.PDF][format];
           rowData = await PDFFileParser.safeParseContent(
-            fileDataPDF,
+            {
+              textData: fileDataPDF,
+              accountId: props?.formInfo?.accountId,
+              accountType: props?.formInfo?.type,
+            },
             fileParserPDF
           );
           break;
         case AcceptedMIMETypesEnum.CSV:
           const fileDataCSV = await CSVFileParser.decodeFile(file);
-          const fileParserCSV =
-            parsers()[AcceptedMIMETypesEnum.CSV][props.docFormat()];
+          const fileParserCSV = parsers()[AcceptedMIMETypesEnum.CSV][format];
           rowData = await CSVFileParser.safeParseContent(
             fileDataCSV,
             fileParserCSV
@@ -92,8 +102,7 @@ export function FileInput<T>(props: FileInputProps<T>) {
           break;
         case AcceptedMIMETypesEnum.XLS:
           const fileDataXLS = await ExcelFileParser.decodeFile(file);
-          const fileParserXLS =
-            parsers()[AcceptedMIMETypesEnum.XLS][props.docFormat()];
+          const fileParserXLS = parsers()[AcceptedMIMETypesEnum.XLS][format];
           rowData = await ExcelFileParser.safeParseContent(
             fileDataXLS,
             fileParserXLS
@@ -107,13 +116,14 @@ export function FileInput<T>(props: FileInputProps<T>) {
         toast.error(FILE_PROCESSING_ERROR);
         return;
       }
-      props.dataSetter({ format: props.docFormat(), data: rowData as any });
+      props.dataSetter({ format, data: rowData as any });
       setFileName(file?.name ?? "");
     } catch (error: any) {
       if (error?.name === "PasswordException") {
         props.passwordDialogTriggerSetter(true);
         setSavedFile(file);
       }
+      toast.error(FILE_PROCESSING_ERROR);
     }
   };
 

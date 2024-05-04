@@ -1,4 +1,8 @@
-import { FinancialTransactionMapParams } from "../../storage";
+import { AccountTypes } from "../../../constants";
+import {
+  FinancialTransactionMapParams,
+  TransactionMethods,
+} from "../../storage";
 
 export const isInSameRow = (
   prevCoord: number,
@@ -29,3 +33,10 @@ export const mapToFinancialTransaction = ({
   $accountId: accountId,
   $isInternal: +isInternal, // convert to number
 });
+
+export const accountTypeConverter = (accountType?: string) => {
+  if (accountType === AccountTypes.CREDITCARD) {
+    return TransactionMethods.cardPhysical;
+  }
+  return "";
+};

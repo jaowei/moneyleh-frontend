@@ -1,7 +1,7 @@
 import * as pdfjsLib from "pdfjs-dist";
 import toast from "solid-toast";
 import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../../constants";
-import { isTextItem } from "./parsePdf.types";
+import { PDFParserData, isTextItem } from "./parsePdf.types";
 import {
   parseCitiAppFormat,
   parseCitiDemoFormat,
@@ -24,7 +24,7 @@ const extractContent = async (doc: pdfjsLib.PDFDocumentProxy, sort = false) => {
     }
     result.push(...pageTextContent.items);
   }
-  return result;
+  return { textData: result };
 };
 
 export const parsePDF = async (
@@ -56,10 +56,14 @@ export const parsePDF = async (
 
 export const PDFFileParser = {
   async decodeFile(file: File, password?: string) {
-    const fileUrl = URL.createObjectURL(file);
-    const loadingTask = pdfjsLib.getDocument({ url: fileUrl, password });
-    const doc = await loadingTask.promise;
-    return await this.extractContent(doc);
+    try {
+      const fileUrl = URL.createObjectURL(file);
+      const loadingTask = pdfjsLib.getDocument({ url: fileUrl, password });
+      const doc = await loadingTask.promise;
+      return await this.extractContent(doc);
+    } catch (error) {
+      toast.error("Error parsing file...");
+    }
   },
   async extractContent(doc: pdfjsLib.PDFDocumentProxy, sort = false) {
     const result = [];
@@ -76,7 +80,10 @@ export const PDFFileParser = {
     }
     return result;
   },
-  async safeParseContent(data: Array<any>, parser: (data: Array<any>) => {}) {
+  async safeParseContent(
+    data: PDFParserData,
+    parser: (data: PDFParserData) => {}
+  ) {
     try {
       return parser(data);
     } catch (error) {

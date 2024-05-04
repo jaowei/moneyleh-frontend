@@ -22,13 +22,23 @@ import { EMPTY_PARSED_RESULT, StatementFormatsEnum } from "../../constants";
 import { ParsedResult } from "../../types";
 import toast from "solid-toast";
 import { financialTransactionsMapper } from "../../lib/storage/utils";
+import { AccountTypes } from "../../constants/accountTypes";
 
-export type formInformation = {
+export type staticInfo = {
   entities: SqlValue[][];
   accounts: SqlValue[][];
   transactionMethods: SqlValue[][];
   transactionTypes: SqlValue[][];
   transactionSubTypes: SqlValue[][];
+};
+
+export type formInfo = {
+  name: string;
+  type: string;
+  financialEntityId: string;
+  startingBalance: number;
+  docFormat: string;
+  accountId: string;
 };
 
 const accountingRelationMap: Record<string, string> = {
@@ -39,22 +49,21 @@ const accountingRelationMap: Record<string, string> = {
 
 export const AppDataEntry = () => {
   const { database } = initDB;
-  const [accountDetails, setAccountDetails] = createStore({
-    $name: "",
-    $type: "cash",
-    $financialEntityId: "1",
-    $startingBalance: 0,
+  const [formInfo, setFormInfo] = createStore<formInfo>({
+    name: "",
+    type: "cash",
+    financialEntityId: "1",
+    startingBalance: 0,
+    docFormat: StatementFormatsEnum.DBS_CARD as string,
+    accountId: "",
   });
-  const [formInfo, setFormInfo] = createStore<formInformation>({
+  const [staticInfo, setStaticInfo] = createStore<staticInfo>({
     entities: [],
     accounts: [],
     transactionMethods: [],
     transactionTypes: [],
     transactionSubTypes: [],
   });
-  const [docFormat, setDocFormat] = createSignal<string>(
-    StatementFormatsEnum.DBS_CARD
-  );
   const [parsedResult, setParsedResult] =
     createSignal<ParsedResult<FinancialTransactionModel>>(EMPTY_PARSED_RESULT);
   const [filePassword, setFilePassword] = createSignal<string>();
@@ -64,14 +73,14 @@ export const AppDataEntry = () => {
   createEffect(() => {
     const db = database();
     if (db) {
-      setFormInfo("entities", FinancialEntity.selectAll?.(db) ?? []);
-      setFormInfo("accounts", Account.selectAll?.(db) ?? []);
-      setFormInfo(
+      setStaticInfo("entities", FinancialEntity.selectAll?.(db) ?? []);
+      setStaticInfo("accounts", Account.selectAll?.(db) ?? []);
+      setStaticInfo(
         "transactionMethods",
         TransactionMethod.selectAll?.(db) ?? []
       );
-      setFormInfo("transactionTypes", TransactionType.selectAll?.(db) ?? []);
-      setFormInfo(
+      setStaticInfo("transactionTypes", TransactionType.selectAll?.(db) ?? []);
+      setStaticInfo(
         "transactionSubTypes",
         TransactionSubType.selectAll?.(db) ?? []
       );
@@ -82,8 +91,11 @@ export const AppDataEntry = () => {
     e.preventDefault();
     const db = database();
     const accountData = {
-      ...accountDetails,
-      $accountingRelation: accountingRelationMap[accountDetails.$type],
+      $name: formInfo.name,
+      $type: formInfo.type,
+      $financialEntityId: formInfo.financialEntityId,
+      $startingBalance: formInfo.startingBalance,
+      $accountingRelation: accountingRelationMap[formInfo.type],
     };
     if (db) {
       try {
@@ -114,7 +126,7 @@ export const AppDataEntry = () => {
     const option = event?.target?.options[selectedIdx];
     const optGroup = option.parentElement;
     const category = optGroup?.getAttribute("id");
-    setDocFormat(`${option.value}-${category}`);
+    setFormInfo("docFormat", `${option.value}-${category}`);
   };
 
   const handleSubmitTransactions = () => {
@@ -126,11 +138,11 @@ export const AppDataEntry = () => {
     const results = parsedResult();
     if (db && results.data.length) {
       try {
-        financialTransactionsMapper(results.data, formInfo, accountId()!);
+        financialTransactionsMapper(results.data, staticInfo, accountId()!);
         FinancialTransaction?.insertMany?.(db, results.data);
         setParsedResult(EMPTY_PARSED_RESULT);
         toast.success(
-          `Successfully created added transactions to account ${accountDetails.$name}`,
+          `Successfully created added transactions to account ${formInfo.name}`,
           {
             position: "top-center",
           }
@@ -153,24 +165,22 @@ export const AppDataEntry = () => {
               type="text"
               name="accountName"
               placeholder="Account Name"
-              onInput={(e) => setAccountDetails("$name", e.target.value)}
+              onInput={(e) => setFormInfo("name", e.target.value)}
             />
-            <select
-              onChange={(e) => setAccountDetails("$type", e.target.value)}
-            >
-              <option value="cash">Cash</option>
-              <option value="investment">Investment</option>
-              <option value="creditCard">Credit Card</option>
+            <select onChange={(e) => setFormInfo("type", e.target.value)}>
+              <option value={AccountTypes.CASH}>Cash</option>
+              <option value={AccountTypes.INVESTMENT}>Investment</option>
+              <option value={AccountTypes.CREDITCARD}>Credit Card</option>
             </select>
             <select
               onChange={(e) =>
-                setAccountDetails(
-                  "$financialEntityId",
+                setFormInfo(
+                  "financialEntityId",
                   `${e.target.selectedIndex + 1}`
                 )
               }
             >
-              <For each={formInfo.entities}>
+              <For each={staticInfo.entities}>
                 {(val) => {
                   const name = typeof val[2] === "string" ? val[2] : "N/A";
                   return (
@@ -186,24 +196,39 @@ export const AppDataEntry = () => {
               value="0.0"
               step="0.01"
               onChange={(e) =>
-                setAccountDetails(
-                  "$startingBalance",
-                  parseFloat(e.target.value)
-                )
+                setFormInfo("startingBalance", parseFloat(e.target.value))
               }
             />
             <button type="submit">Create Account</button>
           </div>
         </form>
       </Show>
+      <select
+        onChange={(e) => {
+          const accountId = e.target.value;
+          const accountIdIdx = parseInt(accountId) - 1;
+          if (accountId) {
+            setAccountId(accountId);
+            setFormInfo("type", staticInfo.accounts[accountIdIdx][3] as string);
+          }
+        }}
+      >
+        <option value={""}>select existing account</option>
+        <For each={staticInfo.accounts}>
+          {(account) => {
+            const name = typeof account[2] === "string" ? account[2] : "N/A";
+            return <option value={account[0] as string}>{name}</option>;
+          }}
+        </For>
+      </select>
       <div>Accounts</div>
       <div>
         <FileInput
           dataSetter={setParsedResult}
-          docFormat={docFormat}
           password={filePassword}
           passwordDialogTriggerSetter={setPasswordDialogIsOpen}
           passwordSetter={setFilePassword}
+          formInfo={formInfo}
         />
       </div>
       <div>

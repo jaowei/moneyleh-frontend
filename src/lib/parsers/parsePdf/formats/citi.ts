@@ -1,7 +1,11 @@
-import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 import { RowData } from "../../../../types";
 import { extendedDayjs } from "../../../../utils/dayjs";
-import { PDFParser, isTextItem } from "../parsePdf.types";
+import {
+  PDFParser,
+  PDFParserData,
+  RowParserData,
+  isTextItem,
+} from "../parsePdf.types";
 import { FinancialTransactionModel } from "../../../storage";
 import { isInSameRow, mapToFinancialTransaction } from "../../utils";
 
@@ -45,7 +49,8 @@ const extractAmountAndDescription = (row: string) => {
   return { amount, description };
 };
 
-const parseDemoRow = (row: string | string[], year: string): RowData => {
+const parseDemoRow = (data: RowParserData): RowData => {
+  const { row, year } = data;
   if (Array.isArray(row)) throw new Error("Invalid row type");
   const parsedDate = extractDate(row, year);
 
@@ -59,10 +64,8 @@ const parseDemoRow = (row: string | string[], year: string): RowData => {
   };
 };
 
-const parseAppRow = (
-  row: string | string[],
-  year: string
-): FinancialTransactionModel => {
+const parseAppRow = (data: RowParserData): FinancialTransactionModel => {
+  const { row, year } = data;
   if (Array.isArray(row)) throw new Error("Invalid row type");
   const parsedDate = extractDate(row, year);
 
@@ -81,7 +84,9 @@ const parseAppRow = (
   });
 };
 
-const parseCitiFormat: PDFParser = (textData, rowParser) => {
+const parseCitiFormat: PDFParser = (data, rowParser) => {
+  const { textData, accountId, accountType } = data;
+  if (!textData) return [];
   let statementYear: string = "";
   let headerCoord = 0;
   let prevIdx: number = 0;
@@ -112,7 +117,12 @@ const parseCitiFormat: PDFParser = (textData, rowParser) => {
       }
       if (!statementYear) statementYear = getYear(rowString, row);
       if (isValidCitiRow(row, headerCoord)) {
-        const parsedData = rowParser?.(rowString, statementYear);
+        const parsedData = rowParser?.({
+          row: rowString,
+          year: statementYear,
+          accountId,
+          accountType,
+        });
         result.push(parsedData);
       }
       row = [text];
@@ -124,14 +134,10 @@ const parseCitiFormat: PDFParser = (textData, rowParser) => {
   return result;
 };
 
-export const parseCitiDemoFormat = (
-  data: Array<TextItem | TextMarkedContent>
-) => {
+export const parseCitiDemoFormat = (data: PDFParserData) => {
   return parseCitiFormat(data, parseDemoRow);
 };
 
-export const parseCitiAppFormat = (
-  data: Array<TextItem | TextMarkedContent>
-) => {
+export const parseCitiAppFormat = (data: PDFParserData) => {
   return parseCitiFormat(data, parseAppRow);
 };

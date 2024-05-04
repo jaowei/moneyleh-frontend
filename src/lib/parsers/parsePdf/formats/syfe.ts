@@ -17,7 +17,9 @@ const getYear = (text: string) => {
   return "";
 };
 
-export const parseSyfePDF: PDFParser = (textData) => {
+export const parseSyfePDF: PDFParser = (data) => {
+  const { textData } = data;
+  if (!textData) return [];
   let statementYear: string = "";
   // let headerCoord = 0;
   let prevIdx: number = 0;

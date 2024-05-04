@@ -60,7 +60,9 @@ const parseRowPositionValues = (row: Array<string>, endDate: string) => {
   };
 };
 
-export const parseMoomooFormat: PDFParser = (textData) => {
+export const parseMoomooFormat: PDFParser = (data) => {
+  const { textData } = data;
+  if (!textData) return [];
   let row: Array<string> = [];
   let result = [];
   let startKey;
