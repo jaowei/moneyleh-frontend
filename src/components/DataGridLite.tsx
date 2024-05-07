@@ -6,7 +6,7 @@ import {
   flexRender,
   getCoreRowModel,
 } from "@tanstack/solid-table";
-import { FinancialTransactionModel } from "../lib/storage";
+import { FinancialTransactionView } from "../lib/storage";
 import { ParsedResult } from "../types";
 
 declare module "@tanstack/solid-table" {
@@ -16,13 +16,13 @@ declare module "@tanstack/solid-table" {
 }
 
 interface DataGridLiteProps {
-  rowData: Accessor<ParsedResult<FinancialTransactionModel> | undefined>;
+  rowData: Accessor<ParsedResult<FinancialTransactionView> | undefined>;
 }
 
-const columnHelper = createColumnHelper<Partial<FinancialTransactionModel>>();
+const columnHelper = createColumnHelper<Partial<FinancialTransactionView>>();
 
 const defaultColumns = [
-  columnHelper.accessor("$transactionDate", {
+  columnHelper.accessor("transactionDate", {
     header: "Transaction Date",
     cell: (props) => {
       const [value, setValue] = createSignal();
@@ -38,6 +38,7 @@ const defaultColumns = [
       };
       return (
         <input
+          class="w-full h-full bg-transparent text-gray-500 border border-transparent px-3 py-2.5"
           value={value() as string}
           onBlur={onBlur}
           onChange={(e) => setValue(e.target.value)}
@@ -45,22 +46,23 @@ const defaultColumns = [
       );
     },
   }),
-  columnHelper.accessor("$description", { header: "Description" }),
-  columnHelper.accessor("$amount", { header: "Amount" }),
-  columnHelper.accessor("$currency", { header: "Currency" }),
-  columnHelper.accessor("$transactionMethodId", {
+  columnHelper.accessor("description", {
+    header: "Description",
+    cell: (info) => <div class="">{info.getValue()}</div>,
+  }),
+  columnHelper.accessor("amount", { header: "Amount" }),
+  columnHelper.accessor("currency", { header: "Currency" }),
+  columnHelper.accessor("transactionMethod", {
     header: "Transaction Method",
   }),
-  columnHelper.accessor("$transactionTypeId", { header: "Transaction Type" }),
-  columnHelper.accessor("$transactionSubTypeId", {
+  columnHelper.accessor("transactionType", { header: "Transaction Type" }),
+  columnHelper.accessor("transactionSubType", {
     header: "Transaction Sub Type",
   }),
 ];
 
 export const DataGridLite = (props: DataGridLiteProps) => {
-  const [data, setData] = createSignal<Partial<FinancialTransactionModel>[]>(
-    []
-  );
+  const [data, setData] = createSignal<Partial<FinancialTransactionView>[]>([]);
 
   createEffect(() => {
     const incomingData = props?.rowData()?.data;
@@ -80,29 +82,22 @@ export const DataGridLite = (props: DataGridLiteProps) => {
       updateData: (rowIndex, columnId, value) => {
         console.log(rowIndex, columnId, value);
         const currData = data();
-
-        setData(
-          currData.map((row) => {
-            return {
-              ...row,
-              [columnId]: value,
-            };
-          })
-        );
+        currData[rowIndex] = { ...currData[rowIndex], [columnId]: value };
+        setData(currData);
       },
     },
   });
 
   return (
     <div>
-      <table>
-        <thead>
+      <table class="border-collapse border-gray-300 rounded-md">
+        <thead class="bg-gray-100">
           <For each={table.getHeaderGroups()}>
             {(headerGroup) => (
               <tr>
                 <For each={headerGroup.headers}>
                   {(header) => (
-                    <th class="border border-slate-900">
+                    <th class="py-2 px-4 text-gray-600 font-semibold">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -116,13 +111,13 @@ export const DataGridLite = (props: DataGridLiteProps) => {
             )}
           </For>
         </thead>
-        <tbody>
+        <tbody class="text-gray-500 text-sm">
           <For each={table.getRowModel().rows}>
             {(row) => (
-              <tr>
+              <tr border="b t-0 l-0 r-0 solid">
                 <For each={row.getVisibleCells()}>
                   {(cell) => (
-                    <td>
+                    <td class="py-2 px-4">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

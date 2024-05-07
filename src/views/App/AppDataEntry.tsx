@@ -1,14 +1,10 @@
-import { For, JSX, Show, createEffect, createSignal } from "solid-js";
+import { For, JSX, Show, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
-import { SqlValue } from "sql.js";
 import {
   Account,
-  FinancialEntity,
   FinancialTransaction,
   FinancialTransactionModel,
-  TransactionMethod,
-  TransactionSubType,
-  TransactionType,
+  FinancialTransactionView,
 } from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
 import {
@@ -23,14 +19,6 @@ import { ParsedResult } from "../../types";
 import toast from "solid-toast";
 import { financialTransactionsMapper } from "../../lib/storage/utils";
 import { AccountTypes } from "../../constants/accountTypes";
-
-export type staticInfo = {
-  entities: SqlValue[][];
-  accounts: SqlValue[][];
-  transactionMethods: SqlValue[][];
-  transactionTypes: SqlValue[][];
-  transactionSubTypes: SqlValue[][];
-};
 
 export type formInfo = {
   name: string;
@@ -48,7 +36,7 @@ const accountingRelationMap: Record<string, string> = {
 };
 
 export const AppDataEntry = () => {
-  const { database } = initDB;
+  const { database, staticInfo } = initDB;
   const [formInfo, setFormInfo] = createStore<formInfo>({
     name: "",
     type: "cash",
@@ -57,35 +45,11 @@ export const AppDataEntry = () => {
     docFormat: StatementFormatsEnum.DBS_CARD as string,
     accountId: "",
   });
-  const [staticInfo, setStaticInfo] = createStore<staticInfo>({
-    entities: [],
-    accounts: [],
-    transactionMethods: [],
-    transactionTypes: [],
-    transactionSubTypes: [],
-  });
   const [parsedResult, setParsedResult] =
-    createSignal<ParsedResult<FinancialTransactionModel>>(EMPTY_PARSED_RESULT);
+    createSignal<ParsedResult<FinancialTransactionView>>(EMPTY_PARSED_RESULT);
   const [filePassword, setFilePassword] = createSignal<string>();
   const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
   const [accountId, setAccountId] = createSignal<string>();
-
-  createEffect(() => {
-    const db = database();
-    if (db) {
-      setStaticInfo("entities", FinancialEntity.selectAll?.(db) ?? []);
-      setStaticInfo("accounts", Account.selectAll?.(db) ?? []);
-      setStaticInfo(
-        "transactionMethods",
-        TransactionMethod.selectAll?.(db) ?? []
-      );
-      setStaticInfo("transactionTypes", TransactionType.selectAll?.(db) ?? []);
-      setStaticInfo(
-        "transactionSubTypes",
-        TransactionSubType.selectAll?.(db) ?? []
-      );
-    }
-  });
 
   const handleSubmit: JSX.EventHandlerUnion<HTMLFormElement, Event> = (e) => {
     e.preventDefault();
@@ -138,8 +102,12 @@ export const AppDataEntry = () => {
     const results = parsedResult();
     if (db && results.data.length) {
       try {
-        financialTransactionsMapper(results.data, staticInfo, accountId()!);
-        FinancialTransaction?.insertMany?.(db, results.data);
+        const convertedData = financialTransactionsMapper(
+          results.data,
+          staticInfo,
+          accountId()!
+        );
+        FinancialTransaction?.insertMany?.(db, convertedData);
         setParsedResult(EMPTY_PARSED_RESULT);
         toast.success(
           `Successfully created added transactions to account ${formInfo.name}`,

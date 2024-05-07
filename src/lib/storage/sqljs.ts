@@ -1,7 +1,7 @@
-import initSqlJs, { Database } from "sql.js";
+import initSqlJs, { Database, SqlValue } from "sql.js";
 
 import sqlJsWasmUrl from "/sql-wasm.wasm?url";
-import { createResource, createRoot } from "solid-js";
+import { createEffect, createResource, createRoot } from "solid-js";
 import {
   Account,
   FinancialEntity,
@@ -10,6 +10,7 @@ import {
   TransactionSubType,
   TransactionType,
 } from "./sql";
+import { createStore } from "solid-js/store";
 
 const initialiseOpfsFile = async () => {
   const opfsRoot = await navigator.storage.getDirectory();
@@ -61,10 +62,43 @@ const mountDB = async () => {
   }
 };
 
+export type staticInfo = {
+  entities: SqlValue[][];
+  accounts: SqlValue[][];
+  transactionMethods: SqlValue[][];
+  transactionTypes: SqlValue[][];
+  transactionSubTypes: SqlValue[][];
+};
+
 const createLocalDB = () => {
   const [database] = createResource(mountDB);
 
-  return { database };
+  const [staticInfo, setStaticInfo] = createStore<staticInfo>({
+    entities: [],
+    accounts: [],
+    transactionMethods: [],
+    transactionTypes: [],
+    transactionSubTypes: [],
+  });
+
+  createEffect(() => {
+    const db = database();
+    if (db) {
+      setStaticInfo("entities", FinancialEntity.selectAll?.(db) ?? []);
+      setStaticInfo("accounts", Account.selectAll?.(db) ?? []);
+      setStaticInfo(
+        "transactionMethods",
+        TransactionMethod.selectAll?.(db) ?? []
+      );
+      setStaticInfo("transactionTypes", TransactionType.selectAll?.(db) ?? []);
+      setStaticInfo(
+        "transactionSubTypes",
+        TransactionSubType.selectAll?.(db) ?? []
+      );
+    }
+  });
+
+  return { database, staticInfo };
 };
 
 export default createRoot(createLocalDB);

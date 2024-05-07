@@ -6,12 +6,8 @@ import {
   RowParserData,
   isTextItem,
 } from "../parsePdf.types";
-import { FinancialTransactionModel } from "../../../storage";
-import {
-  accountTypeConverter,
-  isInSameRow,
-  mapToFinancialTransaction,
-} from "../../utils";
+import { FinancialTransactionView } from "../../../storage";
+import { accountTypeConverter, isInSameRow } from "../../utils";
 import { descriptionToTags } from "../../description";
 
 const filterTextData = (text: string): boolean => {
@@ -70,7 +66,7 @@ const parseDemoRow = (data: RowParserData): RowData => {
   };
 };
 
-const parseAppRow = (data: RowParserData): FinancialTransactionModel => {
+const parseAppRow = (data: RowParserData): FinancialTransactionView => {
   const { row, year, accountId, accountType } = data;
   const parsedAmount = extractAmount(row);
 
@@ -83,17 +79,17 @@ const parseAppRow = (data: RowParserData): FinancialTransactionModel => {
 
   const method = transactionMethod || accountTypeConverter(accountType);
 
-  return mapToFinancialTransaction({
+  return {
     transactionDate: date ?? "",
     currency: "SGD",
     description: row.at(1) ?? "",
     amount: parsedAmount,
-    transactionMethodId: method,
-    transactionTypeId: transactionType,
-    transactionSubTypeId: transactionSubType,
-    accountId: accountId ?? "",
+    transactionMethod: method,
+    transactionType: transactionType,
+    transactionSubType: transactionSubType,
+    account: accountId ?? "",
     isInternal: false, // false until marked true by user
-  });
+  };
 };
 
 const parseDBSFormat: PDFParser = (data, rowParser) => {

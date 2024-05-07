@@ -9,6 +9,7 @@ import { Toaster } from "solid-toast";
 import { lazy } from "solid-js";
 import { ComingSoon, NotFound } from "./components";
 import { AppDataEntry } from "./views/App/AppDataEntry";
+import { Transactions } from "./views/App/Transactions";
 
 const root = document.getElementById("root");
 
@@ -24,7 +25,7 @@ render(
           <Route path="/dashboard" component={ComingSoon} />
           <Route path="/accounts" component={ComingSoon} />
           <Route path="/data-entry" component={AppDataEntry} />
-          <Route path="/transactions" component={ComingSoon} />
+          <Route path="/transactions" component={Transactions} />
         </Route>
         <Route path="*404" component={NotFound} />
       </Router>

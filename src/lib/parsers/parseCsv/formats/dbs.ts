@@ -1,8 +1,10 @@
 import { RowData } from "../../../../types";
 import { extendedDayjs } from "../../../../utils/dayjs";
-import { FinancialTransactionModel } from "../../../storage";
+import {
+  FinancialTransactionModel,
+  FinancialTransactionView,
+} from "../../../storage";
 import { descriptionToTags } from "../../description";
-import { mapToFinancialTransaction } from "../../utils";
 import { CSVParser } from "../parseCsv.types";
 
 const keywordsParentTagMap = new Map([
@@ -101,7 +103,7 @@ export const parseDBSAppFormat: CSVParser<FinancialTransactionModel> = (
 ) => {
   let currency = "SGD";
   return parsedContent.data.reduce(
-    (prev: Array<FinancialTransactionModel>, curr: Array<string>) => {
+    (prev: Array<FinancialTransactionView>, curr: Array<string>) => {
       if (curr[0] === "Currency:") {
         currency = curr[1].slice(0, 4);
       }
@@ -117,19 +119,17 @@ export const parseDBSAppFormat: CSVParser<FinancialTransactionModel> = (
         const description = curr.slice(-4, -1).join(" ");
         const { transactionMethod, transactionType, transactionSubType } =
           descriptionToTags(description);
-        prev.push(
-          mapToFinancialTransaction({
-            transactionDate: curr[0],
-            currency,
-            description,
-            amount,
-            transactionMethodId: transactionMethod,
-            transactionTypeId: transactionType,
-            transactionSubTypeId: transactionSubType,
-            accountId: "", // to get from top level
-            isInternal: false, // false until marked true by user
-          })
-        );
+        prev.push({
+          transactionDate: curr[0],
+          currency,
+          description,
+          amount,
+          transactionMethod: transactionMethod,
+          transactionType: transactionType,
+          transactionSubType: transactionSubType,
+          account: "", // to get from top level
+          isInternal: false, // false until marked true by user
+        });
       }
       return prev;
     },
@@ -141,7 +141,7 @@ export const parseDBSNAVAppFormat: CSVParser<FinancialTransactionModel> = (
   parsedContent
 ) => {
   return parsedContent.data.reduce(
-    (prev: Array<FinancialTransactionModel>, curr: Array<string>) => {
+    (prev: Array<FinancialTransactionView>, curr: Array<string>) => {
       if (extendedDayjs(curr[0], "YYYY-MM-DD").isValid()) {
         let amount;
         if (curr[2] === "Money Out") {
@@ -154,19 +154,17 @@ export const parseDBSNAVAppFormat: CSVParser<FinancialTransactionModel> = (
 
         const parsedDescription = parseDBSNAVDescription(cleanDescription);
 
-        prev.push(
-          mapToFinancialTransaction({
-            transactionDate: curr[0],
-            currency: "SGD",
-            description: cleanDescription,
-            amount,
-            transactionMethodId: curr[1],
-            transactionTypeId: parsedDescription.parentTag ?? curr[3],
-            transactionSubTypeId: curr[4],
-            accountId: parsedDescription.accountNumber,
-            isInternal: false, // false until marked true by user
-          })
-        );
+        prev.push({
+          transactionDate: curr[0],
+          currency: "SGD",
+          description: cleanDescription,
+          amount,
+          transactionMethod: curr[1],
+          transactionType: parsedDescription.parentTag ?? curr[3],
+          transactionSubType: curr[4],
+          account: parsedDescription.accountNumber,
+          isInternal: false, // false until marked true by user
+        });
       }
       return prev;
     },

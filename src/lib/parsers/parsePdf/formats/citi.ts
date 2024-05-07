@@ -6,8 +6,8 @@ import {
   RowParserData,
   isTextItem,
 } from "../parsePdf.types";
-import { FinancialTransactionModel } from "../../../storage";
-import { isInSameRow, mapToFinancialTransaction } from "../../utils";
+import { FinancialTransactionView } from "../../../storage";
+import { isInSameRow } from "../../utils";
 
 const getYear = (text: string, row: string[]): string => {
   if (text.includes("Statement Date")) {
@@ -64,24 +64,24 @@ const parseDemoRow = (data: RowParserData): RowData => {
   };
 };
 
-const parseAppRow = (data: RowParserData): FinancialTransactionModel => {
+const parseAppRow = (data: RowParserData): FinancialTransactionView => {
   const { row, year } = data;
   if (Array.isArray(row)) throw new Error("Invalid row type");
   const parsedDate = extractDate(row, year);
 
   const { amount, description } = extractAmountAndDescription(row);
 
-  return mapToFinancialTransaction({
+  return {
     transactionDate: parsedDate,
     currency: "SGD",
     description,
     amount,
-    transactionMethodId: "5", // set as card as uob statement is for cards
-    transactionTypeId: "1", //  map using pre configured keywords
-    transactionSubTypeId: "1", //  map using pre configured keywords
-    accountId: "", // to get from top level
+    transactionMethod: "5", // set as card as uob statement is for cards
+    transactionType: "1", //  map using pre configured keywords
+    transactionSubType: "1", //  map using pre configured keywords
+    account: "", // to get from top level
     isInternal: false, // false until marked true by user
-  });
+  };
 };
 
 const parseCitiFormat: PDFParser = (data, rowParser) => {
