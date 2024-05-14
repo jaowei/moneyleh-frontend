@@ -3,7 +3,6 @@ import { createStore } from "solid-js/store";
 import {
   Account,
   FinancialTransaction,
-  FinancialTransactionModel,
   FinancialTransactionView,
 } from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
