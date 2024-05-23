@@ -1,6 +1,6 @@
 import { createEffect, createSignal } from "solid-js";
-import initDB from "../../lib/storage/sqljs";
-import { FinancialTransaction } from "../../lib/storage";
+import initDB from "../../../lib/storage/sqljs";
+import { FinancialTransaction } from "../../../lib/storage";
 
 export const Transactions = () => {
   const { database, staticInfo } = initDB;

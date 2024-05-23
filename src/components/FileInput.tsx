@@ -21,7 +21,7 @@ import {
 import toast from "solid-toast";
 import { CSVFileParser, ExcelFileParser, PDFFileParser } from "../lib/parsers";
 import { useLocation } from "@solidjs/router";
-import { formInfo } from "../views/App/AppDataEntry";
+import { formInfo } from "../views/App/DataEntry";
 
 interface FileInputProps<T> {
   dataSetter: Setter<ParsedResult<T>>;

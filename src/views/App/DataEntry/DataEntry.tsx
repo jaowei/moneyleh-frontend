@@ -4,20 +4,21 @@ import {
   Account,
   FinancialTransaction,
   FinancialTransactionView,
-} from "../../lib/storage";
-import initDB from "../../lib/storage/sqljs";
+} from "../../../lib/storage";
+import initDB from "../../../lib/storage/sqljs";
 import {
   DataGridLite,
   FileInput,
+  Input,
   PasswordDialog,
   PrimaryButton,
   StatementFormatSelector,
-} from "../../components";
-import { EMPTY_PARSED_RESULT, StatementFormatsEnum } from "../../constants";
-import { ParsedResult } from "../../types";
+} from "../../../components";
+import { EMPTY_PARSED_RESULT, StatementFormatsEnum } from "../../../constants";
+import { ParsedResult } from "../../../types";
 import toast from "solid-toast";
-import { financialTransactionsMapper } from "../../lib/storage/utils";
-import { AccountTypes } from "../../constants/accountTypes";
+import { financialTransactionsMapper } from "../../../lib/storage/utils";
+import { AccountTypes } from "../../../constants/accountTypes";
 
 export type formInfo = {
   name: string;
@@ -34,7 +35,7 @@ const accountingRelationMap: Record<string, string> = {
   creditCard: "liability",
 };
 
-export const AppDataEntry = () => {
+export const DataEntry = () => {
   const { database, staticInfo } = initDB;
   const [formInfo, setFormInfo] = createStore<formInfo>({
     name: "",
@@ -128,7 +129,7 @@ export const AppDataEntry = () => {
       <Show when={!database.loading} fallback={<div>Loading....</div>}>
         <form onSubmit={handleSubmit}>
           <div class="flex gap-6">
-            <input
+            <Input
               type="text"
               name="accountName"
               placeholder="Account Name"
@@ -158,7 +159,7 @@ export const AppDataEntry = () => {
                 }}
               </For>
             </select>
-            <input
+            <Input
               type="number"
               value="0.0"
               step="0.01"

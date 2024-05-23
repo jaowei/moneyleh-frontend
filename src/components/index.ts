@@ -13,3 +13,4 @@ export * from "./PasswordDialog";
 export * from "./PrimaryButton";
 export * from "./Spinner";
 export * from "./StatementFormatSelector";
+export * from "./Input";

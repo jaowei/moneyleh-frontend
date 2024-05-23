@@ -20,7 +20,7 @@ const NavItem: ParentComponent<{ href: string; isSelected: boolean }> = (
   );
 };
 
-export const AppNav = () => {
+export const Nav = () => {
   const [currentTab, setCurrentTab] = createSignal();
   const location = useLocation();
   createEffect(() => {
