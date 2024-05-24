@@ -177,7 +177,7 @@ export function FileInput<T>(props: FileInputProps<T>) {
           </label>
         </div>
         <div class="pt-4 flex justify-center">
-          <div font="semibold">{fileName()}</div>
+          <div font="semibold truncate">{fileName()}</div>
         </div>
       </div>
       <p text="xs red" m="y-1">

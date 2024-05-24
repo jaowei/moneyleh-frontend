@@ -1,7 +1,6 @@
-import { For, JSX, Show, createSignal } from "solid-js";
+import { For, Show, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import {
-  Account,
   FinancialTransaction,
   FinancialTransactionView,
 } from "../../../lib/storage";
@@ -9,16 +8,16 @@ import initDB from "../../../lib/storage/sqljs";
 import {
   DataGridLite,
   FileInput,
-  Input,
   PasswordDialog,
   PrimaryButton,
+  Select,
   StatementFormatSelector,
 } from "../../../components";
 import { EMPTY_PARSED_RESULT, StatementFormatsEnum } from "../../../constants";
 import { ParsedResult } from "../../../types";
 import toast from "solid-toast";
 import { financialTransactionsMapper } from "../../../lib/storage/utils";
-import { AccountTypes } from "../../../constants/accountTypes";
+import { AccountForm } from "./AccountForm";
 
 export type formInfo = {
   name: string;
@@ -27,12 +26,6 @@ export type formInfo = {
   startingBalance: number;
   docFormat: string;
   accountId: string;
-};
-
-const accountingRelationMap: Record<string, string> = {
-  cash: "asset",
-  investment: "asset",
-  creditCard: "liability",
 };
 
 export const DataEntry = () => {
@@ -49,36 +42,6 @@ export const DataEntry = () => {
     createSignal<ParsedResult<FinancialTransactionView>>(EMPTY_PARSED_RESULT);
   const [filePassword, setFilePassword] = createSignal<string>();
   const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
-  const [accountId, setAccountId] = createSignal<string>();
-
-  const handleSubmit: JSX.EventHandlerUnion<HTMLFormElement, Event> = (e) => {
-    e.preventDefault();
-    const db = database();
-    const accountData = {
-      $name: formInfo.name,
-      $type: formInfo.type,
-      $financialEntityId: formInfo.financialEntityId,
-      $startingBalance: formInfo.startingBalance,
-      $accountingRelation: accountingRelationMap[formInfo.type],
-    };
-    if (db) {
-      try {
-        const id = Account.insertOne?.(db, accountData);
-        if (id) {
-          console.log(id);
-          setAccountId(id[0]);
-          toast.success(`Successfully created account with id ${id}`, {
-            position: "top-center",
-          });
-        } else {
-          throw new Error();
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error("Error inserting into DB", { position: "top-center" });
-      }
-    }
-  };
 
   const handleDocSelector = (
     event: Event & {
@@ -94,7 +57,7 @@ export const DataEntry = () => {
   };
 
   const handleSubmitTransactions = () => {
-    if (!accountId()) {
+    if (!formInfo.accountId) {
       toast.error("Please select an account");
       return;
     }
@@ -105,7 +68,7 @@ export const DataEntry = () => {
         const convertedData = financialTransactionsMapper(
           results.data,
           staticInfo,
-          accountId()!
+          formInfo.accountId!
         );
         FinancialTransaction?.insertMany?.(db, convertedData);
         setParsedResult(EMPTY_PARSED_RESULT);
@@ -126,71 +89,37 @@ export const DataEntry = () => {
 
   return (
     <div class="flex flex-col w-full h-full gap-10">
-      <Show when={!database.loading} fallback={<div>Loading....</div>}>
-        <form onSubmit={handleSubmit}>
-          <div class="flex gap-6">
-            <Input
-              type="text"
-              name="accountName"
-              placeholder="Account Name"
-              onInput={(e) => setFormInfo("name", e.target.value)}
-            />
-            <select onChange={(e) => setFormInfo("type", e.target.value)}>
-              <option value={AccountTypes.CASH}>Cash</option>
-              <option value={AccountTypes.INVESTMENT}>Investment</option>
-              <option value={AccountTypes.CREDITCARD}>Credit Card</option>
-            </select>
-            <select
-              onChange={(e) =>
+      <div class="flex flex-col gap-6 p-6 items-center">
+        <Show when={!database.loading} fallback={<div>Loading....</div>}>
+          <AccountForm formInfo={formInfo} setFormInfo={setFormInfo} />
+        </Show>
+        or
+        <div class="w-full max-w-sm">
+          <Select
+            onChange={(e) => {
+              const accountId = e.target.value;
+              const accountIdIdx = parseInt(accountId) - 1;
+              if (accountId) {
+                setFormInfo("accountId", accountId);
                 setFormInfo(
-                  "financialEntityId",
-                  `${e.target.selectedIndex + 1}`
-                )
+                  "type",
+                  staticInfo.accounts[accountIdIdx][3] as string
+                );
               }
-            >
-              <For each={staticInfo.entities}>
-                {(val) => {
-                  const name = typeof val[2] === "string" ? val[2] : "N/A";
-                  return (
-                    <option value={name.toLowerCase().replaceAll(" ", "")}>
-                      {name}
-                    </option>
-                  );
-                }}
-              </For>
-            </select>
-            <Input
-              type="number"
-              value="0.0"
-              step="0.01"
-              onChange={(e) =>
-                setFormInfo("startingBalance", parseFloat(e.target.value))
-              }
-            />
-            <button type="submit">Create Account</button>
-          </div>
-        </form>
-      </Show>
-      <select
-        onChange={(e) => {
-          const accountId = e.target.value;
-          const accountIdIdx = parseInt(accountId) - 1;
-          if (accountId) {
-            setAccountId(accountId);
-            setFormInfo("type", staticInfo.accounts[accountIdIdx][3] as string);
-          }
-        }}
-      >
-        <option value={""}>select existing account</option>
-        <For each={staticInfo.accounts}>
-          {(account) => {
-            const name = typeof account[2] === "string" ? account[2] : "N/A";
-            return <option value={account[0] as string}>{name}</option>;
-          }}
-        </For>
-      </select>
-      <div>Accounts</div>
-      <div>
+            }}
+          >
+            <option value={""}>select existing account</option>
+            <For each={staticInfo.accounts}>
+              {(account) => {
+                const name =
+                  typeof account[2] === "string" ? account[2] : "N/A";
+                return <option value={account[0] as string}>{name}</option>;
+              }}
+            </For>
+          </Select>
+        </div>
+      </div>
+      <div class="flex gap-6 p-6 justify-center items-center">
         <FileInput
           dataSetter={setParsedResult}
           password={filePassword}
@@ -198,15 +127,18 @@ export const DataEntry = () => {
           passwordSetter={setFilePassword}
           formInfo={formInfo}
         />
+        <div class="w-full max-w-sm">
+          <StatementFormatSelector handleChange={handleDocSelector} />
+        </div>
       </div>
-      <div>
-        <StatementFormatSelector handleChange={handleDocSelector} />
-      </div>
-      <div>
+      <div class="flex flex-col gap-6 p-6 items-center">
         <DataGridLite rowData={parsedResult} />
       </div>
-      <div>
-        <PrimaryButton onClick={handleSubmitTransactions}>
+      <div class="flex flex-col gap-6 p-6 items-center">
+        <PrimaryButton
+          onClick={handleSubmitTransactions}
+          disabled={!parsedResult().data.length}
+        >
           Submit transactions
         </PrimaryButton>
       </div>

@@ -27,5 +27,10 @@ export default defineConfig({
       "2xl": "1536px",
       "3xl": "1800px",
     },
+    colors: {
+      cyan: {
+        850: "#1F6F8D",
+      },
+    },
   },
 });

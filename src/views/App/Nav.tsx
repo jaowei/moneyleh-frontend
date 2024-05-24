@@ -12,7 +12,7 @@ const NavItem: ParentComponent<{ href: string; isSelected: boolean }> = (
         text="cyan-900 lg"
         font="400"
         bg={props.isSelected ? "slate-3" : "none"}
-        p="1"
+        p="y-2 x-4"
       >
         {props.children}
       </div>

@@ -1,34 +1,20 @@
-import { JSX, ParentComponent, mergeProps } from "solid-js";
+import { JSX, ParentComponent, splitProps } from "solid-js";
 
-interface PrimaryButtonProps
-  extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
-  onClick?: (
-    e: MouseEvent & {
-      currentTarget: HTMLButtonElement;
-      target: Element;
-    }
-  ) => void;
-  disabled?: boolean;
-}
-
-export const PrimaryButton: ParentComponent<PrimaryButtonProps> = (props) => {
-  const mergedProps = mergeProps(
-    {
-      text: "white sm",
-      p: "y-1 x-2",
-    },
-    props
-  );
+export const PrimaryButton: ParentComponent<
+  JSX.ButtonHTMLAttributes<HTMLButtonElement>
+> = (props) => {
+  const [buttonState, rest] = splitProps(props, ["disabled"]);
   return (
     <button
-      class={`rounded font-sans ${mergedProps.disabled ? "" : "hover:bg-cyan-700"}`}
+      class={`rounded-lg font-sans w-full max-w-36 ${buttonState.disabled ? "" : "hover:bg-cyan-900"}`}
       border="~ solid black"
-      onClick={(e) => mergedProps?.onClick?.(e)}
-      disabled={mergedProps?.disabled}
-      bg={mergedProps?.disabled ? "gray-500" : "cyan-900"}
-      cursor={mergedProps?.disabled ? "not-allowed" : "pointer"}
-      text={mergedProps.text}
-      p={mergedProps.p}
+      text="white sm"
+      font="medium"
+      p="y-2 x-5"
+      disabled={buttonState?.disabled}
+      bg={buttonState?.disabled ? "gray-500" : "cyan-850"}
+      cursor={buttonState?.disabled ? "not-allowed" : "pointer"}
+      {...rest}
     >
       {props?.children}
     </button>

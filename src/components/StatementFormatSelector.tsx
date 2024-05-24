@@ -1,3 +1,5 @@
+import { Select } from "./Select";
+
 interface StatementFormatSelectorProps {
   handleChange: (
     e: Event & {
@@ -11,12 +13,7 @@ export const StatementFormatSelector = (
   props: StatementFormatSelectorProps
 ) => {
   return (
-    <select
-      class="w-full max-w-xs rounded shadow-lg"
-      cursor="pointer"
-      p="y-1 l-2"
-      onChange={(e) => props.handleChange(e)}
-    >
+    <Select onChange={(e) => props.handleChange(e)}>
       <optgroup id="creditcard" label="Credit Card Statements">
         <option value="dbs">DBS - PDF</option>
         <option value="citi">Citibank - PDF</option>
@@ -29,6 +26,6 @@ export const StatementFormatSelector = (
         <option value="moomoo">MooMoo - PDF</option>
         <option value="ibkr">IBKR - CSV</option>
       </optgroup>
-    </select>
+    </Select>
   );
 };

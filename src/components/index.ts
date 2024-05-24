@@ -14,3 +14,4 @@ export * from "./PrimaryButton";
 export * from "./Spinner";
 export * from "./StatementFormatSelector";
 export * from "./Input";
+export * from "./Select";

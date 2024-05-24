@@ -215,7 +215,7 @@ export const DataGridLite = (props: DataGridLiteProps) => {
                             </Switch>
                           </div>
                           <div
-                            class="w-2 h-6 bg-red"
+                            class="w-1 h-6 bg-gray-200"
                             style={{
                               transform:
                                 table.options.columnResizeMode === "onEnd" &&
