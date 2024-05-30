@@ -8,6 +8,7 @@ import initDB from "../../../lib/storage/sqljs";
 import {
   DataGridLite,
   FileInput,
+  FormField,
   PasswordDialog,
   PrimaryButton,
   Select,
@@ -95,28 +96,30 @@ export const DataEntry = () => {
         </Show>
         or
         <div class="w-full max-w-sm">
-          <Select
-            onChange={(e) => {
-              const accountId = e.target.value;
-              const accountIdIdx = parseInt(accountId) - 1;
-              if (accountId) {
-                setFormInfo("accountId", accountId);
-                setFormInfo(
-                  "type",
-                  staticInfo.accounts[accountIdIdx][3] as string
-                );
-              }
-            }}
-          >
-            <option value={""}>select existing account</option>
-            <For each={staticInfo.accounts}>
-              {(account) => {
-                const name =
-                  typeof account[2] === "string" ? account[2] : "N/A";
-                return <option value={account[0] as string}>{name}</option>;
+          <FormField>
+            <Select
+              onChange={(e) => {
+                const accountId = e.target.value;
+                const accountIdIdx = parseInt(accountId) - 1;
+                if (accountId) {
+                  setFormInfo("accountId", accountId);
+                  setFormInfo(
+                    "type",
+                    staticInfo.accounts[accountIdIdx][3] as string
+                  );
+                }
               }}
-            </For>
-          </Select>
+            >
+              <option value={""}>select existing account</option>
+              <For each={staticInfo.accounts}>
+                {(account) => {
+                  const name =
+                    typeof account[2] === "string" ? account[2] : "N/A";
+                  return <option value={account[0] as string}>{name}</option>;
+                }}
+              </For>
+            </Select>
+          </FormField>
         </div>
       </div>
       <div class="flex gap-6 p-6 justify-center items-center">

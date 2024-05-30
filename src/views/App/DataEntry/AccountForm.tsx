@@ -1,6 +1,12 @@
 import { For, JSX } from "solid-js";
-import { Input, PrimaryButton, Select } from "../../../components";
-import { SetStoreFunction } from "solid-js/store";
+import {
+  FormField,
+  Input,
+  PrimaryButton,
+  Select,
+  checkValid,
+} from "../../../components";
+import { SetStoreFunction, createStore } from "solid-js/store";
 import { formInfo } from "./DataEntry";
 import { AccountTypes } from "../../../constants";
 import initDB from "../../../lib/storage/sqljs";
@@ -20,6 +26,14 @@ const accountingRelationMap: Record<string, string> = {
 
 export const AccountForm = (props: AccountFormProps) => {
   const { database, staticInfo } = initDB;
+  const [errors, setErrors] = createStore<Record<string, any>>({});
+
+  const accountNameAlreadyExists = ({ value }: { value: any }) => {
+    const exists = staticInfo.accounts.find((account) => {
+      return account[2] === value;
+    });
+    return exists && `Name: "${value}" is already being used`;
+  };
 
   const handleSubmit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = (e) => {
     e.preventDefault();
@@ -49,46 +63,66 @@ export const AccountForm = (props: AccountFormProps) => {
   };
   return (
     <form onSubmit={handleSubmit}>
-      <div class="flex gap-6 h-10">
-        <Input
-          type="text"
-          name="accountName"
-          placeholder="Account Name"
-          onInput={(e) => props.setFormInfo("name", e.target.value)}
-        />
-        <Select onChange={(e) => props.setFormInfo("type", e.target.value)}>
-          <option value={AccountTypes.CASH}>Cash</option>
-          <option value={AccountTypes.INVESTMENT}>Investment</option>
-          <option value={AccountTypes.CREDITCARD}>Credit Card</option>
-        </Select>
-        <Select
-          onChange={(e) =>
-            props.setFormInfo(
-              "financialEntityId",
-              `${e.target.selectedIndex + 1}`
-            )
-          }
+      <div class="flex gap-6 items-end">
+        <FormField
+          formLabel="Account Name"
+          formMessage={errors.accountName ?? ""}
         >
-          <For each={staticInfo.entities}>
-            {(val) => {
-              const name = typeof val[2] === "string" ? val[2] : "N/A";
-              return (
-                <option value={name.toLowerCase().replaceAll(" ", "")}>
-                  {name}
-                </option>
-              );
+          <Input
+            type="text"
+            name="accountName"
+            placeholder="Account Name"
+            onBlur={(e) => {
+              console.log("out of focus", e.target.name);
+              checkValid(e, [accountNameAlreadyExists], setErrors);
             }}
-          </For>
-        </Select>
-        <Input
-          type="number"
-          value="0.0"
-          step="0.01"
-          onChange={(e) =>
-            props.setFormInfo("startingBalance", parseFloat(e.target.value))
-          }
-        />
-        <PrimaryButton type="submit">Create Account</PrimaryButton>
+            onInput={(e) => props.setFormInfo("name", e.target.value)}
+            required
+          />
+        </FormField>
+        <FormField formLabel="Account Type">
+          <Select onChange={(e) => props.setFormInfo("type", e.target.value)}>
+            <option value={AccountTypes.CASH}>Cash</option>
+            <option value={AccountTypes.INVESTMENT}>Investment</option>
+            <option value={AccountTypes.CREDITCARD}>Credit Card</option>
+          </Select>
+        </FormField>
+        <FormField formLabel="Financial Entity (Company)">
+          <Select
+            onChange={(e) =>
+              props.setFormInfo(
+                "financialEntityId",
+                `${e.target.selectedIndex + 1}`
+              )
+            }
+          >
+            <For each={staticInfo.entities}>
+              {(val) => {
+                const name = typeof val[2] === "string" ? val[2] : "N/A";
+                return (
+                  <option value={name.toLowerCase().replaceAll(" ", "")}>
+                    {name}
+                  </option>
+                );
+              }}
+            </For>
+          </Select>
+        </FormField>
+        <FormField formLabel="Initial Account Balance">
+          <Input
+            type="number"
+            value="0.0"
+            step="0.01"
+            onChange={(e) =>
+              props.setFormInfo("startingBalance", parseFloat(e.target.value))
+            }
+          />
+        </FormField>
+        <FormField>
+          <PrimaryButton type="submit" disabled={!props.formInfo.name}>
+            Create Account
+          </PrimaryButton>
+        </FormField>
       </div>
     </form>
   );
