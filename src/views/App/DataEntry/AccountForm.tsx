@@ -37,6 +37,9 @@ export const AccountForm = (props: AccountFormProps) => {
 
   const handleSubmit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = (e) => {
     e.preventDefault();
+    if (errors.accountName) {
+      return;
+    }
     const db = database();
     const accountData = {
       $name: props.formInfo.name,
