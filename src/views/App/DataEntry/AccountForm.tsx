@@ -60,13 +60,18 @@ export const AccountForm = (props: AccountFormProps) => {
           throw new Error();
         }
       } catch (error) {
+        console.log(error);
         toast.error("Error inserting into DB", { position: "top-center" });
       }
     }
   };
   return (
     <form onSubmit={handleSubmit}>
-      <div class="flex gap-6 items-end">
+      <fieldset
+        class="flex gap-6 items-end"
+        border="none"
+        disabled={!!props.formInfo.accountId}
+      >
         <FormField
           formLabel="Account Name"
           formMessage={errors.accountName ?? ""}
@@ -76,7 +81,6 @@ export const AccountForm = (props: AccountFormProps) => {
             name="accountName"
             placeholder="Account Name"
             onBlur={(e) => {
-              console.log("out of focus", e.target.name);
               checkValid(e, [accountNameAlreadyExists], setErrors);
             }}
             onInput={(e) => props.setFormInfo("name", e.target.value)}
@@ -122,11 +126,18 @@ export const AccountForm = (props: AccountFormProps) => {
           />
         </FormField>
         <FormField>
-          <PrimaryButton type="submit" disabled={!props.formInfo.name}>
+          <PrimaryButton
+            type="submit"
+            disabled={
+              !props.formInfo.name ||
+              !!props.formInfo.accountId ||
+              !!errors.accountName
+            }
+          >
             Create Account
           </PrimaryButton>
         </FormField>
-      </div>
+      </fieldset>
     </form>
   );
 };

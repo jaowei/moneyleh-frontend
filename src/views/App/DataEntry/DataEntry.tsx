@@ -89,15 +89,16 @@ export const DataEntry = () => {
   };
 
   return (
-    <div class="flex flex-col w-full h-full gap-10">
+    <div class="flex flex-col w-full h-full">
       <div class="flex flex-col gap-6 p-6 items-center">
         <Show when={!database.loading} fallback={<div>Loading....</div>}>
           <AccountForm formInfo={formInfo} setFormInfo={setFormInfo} />
         </Show>
         or
         <div class="w-full max-w-sm">
-          <FormField>
+          <FormField formLabel="Select an existing account:">
             <Select
+              disabled={!!formInfo.accountId}
               onChange={(e) => {
                 const accountId = e.target.value;
                 const accountIdIdx = parseInt(accountId) - 1;
@@ -107,6 +108,14 @@ export const DataEntry = () => {
                     "type",
                     staticInfo.accounts[accountIdIdx][3] as string
                   );
+                  setFormInfo(
+                    "name",
+                    staticInfo.accounts[accountIdIdx][2] as string
+                  );
+                } else {
+                  setFormInfo("accountId", "");
+                  setFormInfo("type", "");
+                  setFormInfo("name", "");
                 }
               }}
             >
@@ -122,7 +131,22 @@ export const DataEntry = () => {
           </FormField>
         </div>
       </div>
-      <div class="flex gap-6 p-6 justify-center items-center">
+      <div class="flex gap-10 p-6 justify-center items-center">
+        <div class="flex flex-col gap-6">
+          <div class="flex flex-col gap-2">
+            You are entering transactions for account:
+            <div
+              class="text-md font-bold text-gray-8 text-center rounded-xl leading-7"
+              border="2 solid gray-2"
+            >
+              {" "}
+              {formInfo.accountId ? formInfo.name : "---"}
+            </div>
+          </div>
+          <FormField formLabel="Select Statement Format:">
+            <StatementFormatSelector handleChange={handleDocSelector} />
+          </FormField>
+        </div>
         <FileInput
           dataSetter={setParsedResult}
           password={filePassword}
@@ -130,9 +154,6 @@ export const DataEntry = () => {
           passwordSetter={setFilePassword}
           formInfo={formInfo}
         />
-        <div class="w-full max-w-sm">
-          <StatementFormatSelector handleChange={handleDocSelector} />
-        </div>
       </div>
       <div class="flex flex-col gap-6 p-6 items-center">
         <DataGridLite rowData={parsedResult} />

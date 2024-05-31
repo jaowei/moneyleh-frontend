@@ -155,6 +155,7 @@ export function FileInput<T>(props: FileInputProps<T>) {
         accept={ACCEPTED_FILE_TYPES}
       />
       <div
+        class="rounded-xl"
         border="2 dashed cyan-900"
         p="y-6 x-4"
         onDragLeave={onDragEnterHandler}
