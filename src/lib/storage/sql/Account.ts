@@ -22,13 +22,13 @@ const Account: DatabaseModel<AccountModel> = {
   initTable(db) {
     db.run(this.queries.createTable);
   },
-  insertOne(db, data) {
+  async insertOne(db, data) {
     const stmt = db.prepare(this.queries.insertOne);
     stmt.bind(data);
     stmt.step();
     const id = stmt.get();
     stmt.free();
-    persistDB(db);
+    await persistDB(db);
     return id;
   },
   selectAll(db) {

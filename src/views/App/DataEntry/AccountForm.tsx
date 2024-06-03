@@ -25,7 +25,7 @@ const accountingRelationMap: Record<string, string> = {
 };
 
 export const AccountForm = (props: AccountFormProps) => {
-  const { database, staticInfo } = initDB;
+  const { database, staticInfo, refetch } = initDB;
   const [errors, setErrors] = createStore<Record<string, any>>({});
 
   const accountNameAlreadyExists = ({ value }: { value: any }) => {
@@ -35,7 +35,9 @@ export const AccountForm = (props: AccountFormProps) => {
     return exists && `Name: "${value}" is already being used`;
   };
 
-  const handleSubmit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = (e) => {
+  const handleSubmit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = async (
+    e
+  ) => {
     e.preventDefault();
     if (errors.accountName) {
       return;
@@ -50,14 +52,15 @@ export const AccountForm = (props: AccountFormProps) => {
     };
     if (db) {
       try {
-        const id = Account.insertOne?.(db, accountData);
+        const id = await Account.insertOne?.(db, accountData);
         if (id) {
           props.setFormInfo("accountId", id[0]);
           toast.success(`Successfully created account with id ${id}`, {
             position: "top-center",
           });
+          refetch();
         } else {
-          throw new Error();
+          toast.error("Error inserting into DB", { position: "top-center" });
         }
       } catch (error) {
         console.log(error);
@@ -68,75 +71,79 @@ export const AccountForm = (props: AccountFormProps) => {
   return (
     <form onSubmit={handleSubmit}>
       <fieldset
-        class="flex gap-6 items-end"
+        class="ps-0 pe-0 p-0 m-0 ms-0 me-0"
         border="none"
         disabled={!!props.formInfo.accountId}
       >
-        <FormField
-          formLabel="Account Name"
-          formMessage={errors.accountName ?? ""}
-        >
-          <Input
-            type="text"
-            name="accountName"
-            placeholder="Account Name"
-            onBlur={(e) => {
-              checkValid(e, [accountNameAlreadyExists], setErrors);
-            }}
-            onInput={(e) => props.setFormInfo("name", e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField formLabel="Account Type">
-          <Select onChange={(e) => props.setFormInfo("type", e.target.value)}>
-            <option value={AccountTypes.CASH}>Cash</option>
-            <option value={AccountTypes.INVESTMENT}>Investment</option>
-            <option value={AccountTypes.CREDITCARD}>Credit Card</option>
-          </Select>
-        </FormField>
-        <FormField formLabel="Financial Entity (Company)">
-          <Select
-            onChange={(e) =>
-              props.setFormInfo(
-                "financialEntityId",
-                `${e.target.selectedIndex + 1}`
-              )
-            }
+        <div class="grid grid-cols-2 gap-4">
+          <FormField
+            formLabel="Account Name"
+            formMessage={errors.accountName ?? ""}
           >
-            <For each={staticInfo.entities}>
-              {(val) => {
-                const name = typeof val[2] === "string" ? val[2] : "N/A";
-                return (
-                  <option value={name.toLowerCase().replaceAll(" ", "")}>
-                    {name}
-                  </option>
-                );
+            <Input
+              type="text"
+              name="accountName"
+              placeholder="Account Name"
+              onBlur={(e) => {
+                checkValid(e, [accountNameAlreadyExists], setErrors);
               }}
-            </For>
-          </Select>
-        </FormField>
-        <FormField formLabel="Initial Account Balance">
-          <Input
-            type="number"
-            value="0.0"
-            step="0.01"
-            onChange={(e) =>
-              props.setFormInfo("startingBalance", parseFloat(e.target.value))
-            }
-          />
-        </FormField>
-        <FormField>
-          <PrimaryButton
-            type="submit"
-            disabled={
-              !props.formInfo.name ||
-              !!props.formInfo.accountId ||
-              !!errors.accountName
-            }
-          >
-            Create Account
-          </PrimaryButton>
-        </FormField>
+              onInput={(e) => props.setFormInfo("name", e.target.value)}
+              required
+            />
+          </FormField>
+          <FormField formLabel="Account Type">
+            <Select onChange={(e) => props.setFormInfo("type", e.target.value)}>
+              <option value={AccountTypes.CASH}>Cash</option>
+              <option value={AccountTypes.INVESTMENT}>Investment</option>
+              <option value={AccountTypes.CREDITCARD}>Credit Card</option>
+            </Select>
+          </FormField>
+          <FormField formLabel="Financial Entity (Company)">
+            <Select
+              onChange={(e) =>
+                props.setFormInfo(
+                  "financialEntityId",
+                  `${e.target.selectedIndex + 1}`
+                )
+              }
+            >
+              <For each={staticInfo.entities}>
+                {(val) => {
+                  const name = typeof val[2] === "string" ? val[2] : "N/A";
+                  return (
+                    <option value={name.toLowerCase().replaceAll(" ", "")}>
+                      {name}
+                    </option>
+                  );
+                }}
+              </For>
+            </Select>
+          </FormField>
+          <FormField formLabel="Initial Account Balance">
+            <Input
+              type="number"
+              value="0.0"
+              step="0.01"
+              onChange={(e) =>
+                props.setFormInfo("startingBalance", parseFloat(e.target.value))
+              }
+            />
+          </FormField>
+          <div class="col-span-2">
+            <FormField>
+              <PrimaryButton
+                type="submit"
+                disabled={
+                  !props.formInfo.name ||
+                  !!props.formInfo.accountId ||
+                  !!errors.accountName
+                }
+              >
+                Create Account
+              </PrimaryButton>
+            </FormField>
+          </div>
+        </div>
       </fieldset>
     </form>
   );

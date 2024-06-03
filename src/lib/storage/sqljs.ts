@@ -30,6 +30,7 @@ export const persistDB = async (db: Database) => {
   const writableStream = await fileHandle.createWritable();
   await writableStream.write(blob);
   await writableStream.close();
+  console.log("Persisted DB");
 };
 
 const initTables = (db: Database) => {
@@ -71,7 +72,7 @@ export type staticInfo = {
 };
 
 const createLocalDB = () => {
-  const [database] = createResource(mountDB);
+  const [database, { refetch }] = createResource(mountDB);
 
   const [staticInfo, setStaticInfo] = createStore<staticInfo>({
     entities: [],
@@ -84,6 +85,7 @@ const createLocalDB = () => {
   createEffect(() => {
     const db = database();
     if (db) {
+      console.log("setting static info", Account.selectAll?.(db));
       setStaticInfo("entities", FinancialEntity.selectAll?.(db) ?? []);
       setStaticInfo("accounts", Account.selectAll?.(db) ?? []);
       setStaticInfo(
@@ -98,7 +100,7 @@ const createLocalDB = () => {
     }
   });
 
-  return { database, staticInfo };
+  return { database, staticInfo, refetch };
 };
 
 export default createRoot(createLocalDB);

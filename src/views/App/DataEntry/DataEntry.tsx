@@ -88,72 +88,76 @@ export const DataEntry = () => {
     }
   };
 
+  const [showAccountForm, setShowAccountForm] = createSignal(false);
+
   return (
     <div class="flex flex-col w-full h-full">
-      <div class="flex flex-col gap-6 p-6 items-center">
-        <Show when={!database.loading} fallback={<div>Loading....</div>}>
-          <AccountForm formInfo={formInfo} setFormInfo={setFormInfo} />
-        </Show>
-        or
-        <div class="w-full max-w-sm">
-          <FormField formLabel="Select an existing account:">
-            <Select
-              disabled={!!formInfo.accountId}
-              onChange={(e) => {
-                const accountId = e.target.value;
-                const accountIdIdx = parseInt(accountId) - 1;
-                if (accountId) {
-                  setFormInfo("accountId", accountId);
-                  setFormInfo(
-                    "type",
-                    staticInfo.accounts[accountIdIdx][3] as string
-                  );
-                  setFormInfo(
-                    "name",
-                    staticInfo.accounts[accountIdIdx][2] as string
-                  );
-                } else {
-                  setFormInfo("accountId", "");
-                  setFormInfo("type", "");
-                  setFormInfo("name", "");
-                }
-              }}
-            >
-              <option value={""}>select existing account</option>
-              <For each={staticInfo.accounts}>
-                {(account) => {
-                  const name =
-                    typeof account[2] === "string" ? account[2] : "N/A";
-                  return <option value={account[0] as string}>{name}</option>;
-                }}
-              </For>
-            </Select>
-          </FormField>
+      <div class="flex gap-10 p-6 justify-start items-start">
+        <div class={showAccountForm() ? "block" : "hidden"}>
+          <Show when={!database.loading} fallback={<div>Loading....</div>}>
+            <AccountForm formInfo={formInfo} setFormInfo={setFormInfo} />
+          </Show>
         </div>
-      </div>
-      <div class="flex gap-10 p-6 justify-center items-center">
+        <button
+          class="inline-flex w-4 h-full bg-gray-1 items-center justify-center rounded-xl "
+          border="none"
+          onClick={() => {
+            setShowAccountForm((flag) => !flag);
+          }}
+        >
+          +
+        </button>
         <div class="flex flex-col gap-6">
           <div class="flex flex-col gap-2">
-            You are entering transactions for account:
-            <div
-              class="text-md font-bold text-gray-8 text-center rounded-xl leading-7"
-              border="2 solid gray-2"
-            >
-              {" "}
-              {formInfo.accountId ? formInfo.name : "---"}
+            <div class="w-full max-w-sm">
+              <FormField formLabel="You are entering transactions for account:">
+                <Select
+                  onChange={(e) => {
+                    const accountId = e.target.value;
+                    const accountIdIdx = parseInt(accountId) - 1;
+                    if (accountId) {
+                      setFormInfo("accountId", accountId);
+                      setFormInfo(
+                        "type",
+                        staticInfo.accounts[accountIdIdx][3] as string
+                      );
+                      setFormInfo(
+                        "name",
+                        staticInfo.accounts[accountIdIdx][2] as string
+                      );
+                    } else {
+                      setFormInfo("accountId", "");
+                      setFormInfo("name", "");
+                    }
+                  }}
+                >
+                  <option value={""}>select existing account</option>
+                  <For each={staticInfo.accounts}>
+                    {(account) => {
+                      const name =
+                        typeof account[2] === "string" ? account[2] : "N/A";
+                      return (
+                        <option value={account[0] as string}>{name}</option>
+                      );
+                    }}
+                  </For>
+                </Select>
+              </FormField>
             </div>
           </div>
           <FormField formLabel="Select Statement Format:">
             <StatementFormatSelector handleChange={handleDocSelector} />
           </FormField>
         </div>
-        <FileInput
-          dataSetter={setParsedResult}
-          password={filePassword}
-          passwordDialogTriggerSetter={setPasswordDialogIsOpen}
-          passwordSetter={setFilePassword}
-          formInfo={formInfo}
-        />
+        <div class="w-sm">
+          <FileInput
+            dataSetter={setParsedResult}
+            password={filePassword}
+            passwordDialogTriggerSetter={setPasswordDialogIsOpen}
+            passwordSetter={setFilePassword}
+            formInfo={formInfo}
+          />
+        </div>
       </div>
       <div class="flex flex-col gap-6 p-6 items-center">
         <DataGridLite rowData={parsedResult} />
