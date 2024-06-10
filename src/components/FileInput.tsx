@@ -168,7 +168,7 @@ export function FileInput<T>(props: FileInputProps<T>) {
           <label
             for="file"
             text="white sm"
-            class="min-w-max bg-cyan-900 rounded hover:bg-cyan-700"
+            class="min-w-max bg-cyan-850 rounded hover:shadow-md"
             border="~ solid black"
             p="y-1 x-1"
             m="l-1"

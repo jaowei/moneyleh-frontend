@@ -19,6 +19,7 @@ import {
 } from "@tanstack/solid-table";
 import { FinancialTransactionView } from "../lib/storage";
 import { ParsedResult } from "../types";
+import { Select } from "./Select";
 
 declare module "@tanstack/solid-table" {
   interface TableMeta<TData extends RowData> {
@@ -50,7 +51,7 @@ function editableState<T>(
 }
 
 const editableInputStyles =
-  "bg-transparent text-gray-500 border border-transparent py-2.5 focus:outline-0 focus:bg-white focus:rounded-lg";
+  "bg-transparent text-gray-500 border border-transparent py-2.5 focus:outline-0 focus:bg-gray-1 focus:rounded-lg";
 
 const editableStringInputCell = (
   props: CellContext<Partial<FinancialTransactionView>, string | undefined>
@@ -96,6 +97,20 @@ const editableNumberInputCell = (
   );
 };
 
+const selectTransactionMethodCell = (
+  props: CellContext<Partial<FinancialTransactionView>, any | undefined>
+) => {
+  return (
+    <div>
+      <Select>
+        <option>{props.getValue()}</option>
+        <option>a</option>
+        <option>b</option>
+      </Select>
+    </div>
+  );
+};
+
 const defaultColumns = [
   columnHelper.accessor("transactionDate", {
     header: "Transaction Date",
@@ -116,7 +131,7 @@ const defaultColumns = [
   }),
   columnHelper.accessor("transactionMethod", {
     header: "Transaction Method",
-    cell: editableStringInputCell,
+    cell: selectTransactionMethodCell,
   }),
   columnHelper.accessor("transactionType", {
     header: "Transaction Type",
@@ -154,7 +169,6 @@ export const DataGridLite = (props: DataGridLiteProps) => {
     getSortedRowModel: getSortedRowModel(),
     meta: {
       updateData: (rowIndex, columnId, value) => {
-        console.log(rowIndex, columnId, value);
         const currData = data();
         currData[rowIndex] = { ...currData[rowIndex], [columnId]: value };
         setData(currData);
@@ -169,7 +183,7 @@ export const DataGridLite = (props: DataGridLiteProps) => {
 
   return (
     <div>
-      <table class="table-auto border-collapse border-gray-300 rounded-md">
+      <table class="table-auto border-collapse border-gray-300 bg-white">
         <thead class="bg-gray-100">
           <For each={table.getHeaderGroups()}>
             {(headerGroup) => (

@@ -6,7 +6,7 @@ export const PrimaryButton: ParentComponent<
   const [buttonState, rest] = splitProps(props, ["disabled"]);
   return (
     <button
-      class={`rounded-lg font-sans w-full max-w-36 ${buttonState.disabled ? "" : "hover:bg-cyan-900"}`}
+      class={`rounded-lg font-sans w-full max-w-36 ${buttonState.disabled ? "" : "hover:shadow-md"}`}
       border="~ solid black"
       text="white sm"
       font="medium"

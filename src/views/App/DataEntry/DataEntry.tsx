@@ -1,4 +1,4 @@
-import { For, Show, createSignal } from "solid-js";
+import { For, Show, createEffect, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import {
   FinancialTransaction,
@@ -44,6 +44,8 @@ export const DataEntry = () => {
   const [filePassword, setFilePassword] = createSignal<string>();
   const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
 
+  let dialogRef!: HTMLDialogElement;
+
   const handleDocSelector = (
     event: Event & {
       currentTarget: HTMLSelectElement;
@@ -88,67 +90,57 @@ export const DataEntry = () => {
     }
   };
 
-  const [showAccountForm, setShowAccountForm] = createSignal(false);
-
   return (
-    <div class="flex flex-col w-full h-full">
-      <div class="flex gap-10 p-6 justify-start items-start">
-        <div class={showAccountForm() ? "block" : "hidden"}>
-          <Show when={!database.loading} fallback={<div>Loading....</div>}>
-            <AccountForm formInfo={formInfo} setFormInfo={setFormInfo} />
-          </Show>
+    <div class="flex flex-col w-full h-full items-center">
+      <div class="flex gap-16 p-6 justify-center items-start">
+        <div class="flex flex-col gap-4">
+          <FormField formLabel="You are entering transactions for account:">
+            <Select
+              onChange={(e) => {
+                const accountId = e.target.value;
+                const accountIdIdx = parseInt(accountId) - 1;
+                if (accountId) {
+                  setFormInfo("accountId", accountId);
+                  setFormInfo(
+                    "type",
+                    staticInfo.accounts[accountIdIdx][3] as string
+                  );
+                  setFormInfo(
+                    "name",
+                    staticInfo.accounts[accountIdIdx][2] as string
+                  );
+                } else {
+                  setFormInfo("accountId", "");
+                  setFormInfo("name", "");
+                }
+              }}
+            >
+              <option value={""}>select existing account</option>
+              <For each={staticInfo.accounts}>
+                {(account) => {
+                  const name =
+                    typeof account[2] === "string" ? account[2] : "N/A";
+                  return <option value={account[0] as string}>{name}</option>;
+                }}
+              </For>
+            </Select>
+          </FormField>{" "}
+          <PrimaryButton
+            class="inline-flex h-8 items-center justify-center rounded-xl hover:shadow-md"
+            onClick={() => {
+              if (dialogRef.open) {
+                dialogRef.close();
+              } else {
+                dialogRef.showModal();
+              }
+            }}
+          >
+            Create new account
+          </PrimaryButton>
         </div>
-        <button
-          class="inline-flex w-4 h-full bg-gray-1 items-center justify-center rounded-xl "
-          border="none"
-          onClick={() => {
-            setShowAccountForm((flag) => !flag);
-          }}
-        >
-          +
-        </button>
-        <div class="flex flex-col gap-6">
-          <div class="flex flex-col gap-2">
-            <div class="w-full max-w-sm">
-              <FormField formLabel="You are entering transactions for account:">
-                <Select
-                  onChange={(e) => {
-                    const accountId = e.target.value;
-                    const accountIdIdx = parseInt(accountId) - 1;
-                    if (accountId) {
-                      setFormInfo("accountId", accountId);
-                      setFormInfo(
-                        "type",
-                        staticInfo.accounts[accountIdIdx][3] as string
-                      );
-                      setFormInfo(
-                        "name",
-                        staticInfo.accounts[accountIdIdx][2] as string
-                      );
-                    } else {
-                      setFormInfo("accountId", "");
-                      setFormInfo("name", "");
-                    }
-                  }}
-                >
-                  <option value={""}>select existing account</option>
-                  <For each={staticInfo.accounts}>
-                    {(account) => {
-                      const name =
-                        typeof account[2] === "string" ? account[2] : "N/A";
-                      return (
-                        <option value={account[0] as string}>{name}</option>
-                      );
-                    }}
-                  </For>
-                </Select>
-              </FormField>
-            </div>
-          </div>
-          <FormField formLabel="Select Statement Format:">
-            <StatementFormatSelector handleChange={handleDocSelector} />
-          </FormField>
-        </div>
+        <FormField formLabel="Select Statement Format:">
+          <StatementFormatSelector handleChange={handleDocSelector} />
+        </FormField>
         <div class="w-sm">
           <FileInput
             dataSetter={setParsedResult}
@@ -175,6 +167,22 @@ export const DataEntry = () => {
         passwordDialogTriggerSetter={setPasswordDialogIsOpen}
         passwordSetter={setFilePassword}
       />
+      <dialog ref={dialogRef} class="rounded-lg p-6" border="none">
+        <div class="flex flex-col gap-6">
+          <button
+            class="flex rounded-full bg-transparent items-center w-fit h-fit self-end hover:bg-gray-1"
+            border="none"
+            onClick={() => {
+              dialogRef.close();
+            }}
+          >
+            <div class="i-radix-icons:cross-2 w-30px h-30px" />
+          </button>
+          <Show when={!database.loading} fallback={<div>Loading....</div>}>
+            <AccountForm formInfo={formInfo} setFormInfo={setFormInfo} />
+          </Show>
+        </div>
+      </dialog>
     </div>
   );
 };
