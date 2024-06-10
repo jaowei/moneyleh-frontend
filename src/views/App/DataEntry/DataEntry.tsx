@@ -1,4 +1,4 @@
-import { For, Show, createEffect, createSignal } from "solid-js";
+import { For, Show, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import {
   FinancialTransaction,

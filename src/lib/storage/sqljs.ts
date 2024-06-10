@@ -85,7 +85,6 @@ const createLocalDB = () => {
   createEffect(() => {
     const db = database();
     if (db) {
-      console.log("setting static info", Account.selectAll?.(db));
       setStaticInfo("entities", FinancialEntity.selectAll?.(db) ?? []);
       setStaticInfo("accounts", Account.selectAll?.(db) ?? []);
       setStaticInfo(

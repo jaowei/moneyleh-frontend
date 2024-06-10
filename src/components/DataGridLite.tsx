@@ -20,6 +20,8 @@ import {
 import { FinancialTransactionView } from "../lib/storage";
 import { ParsedResult } from "../types";
 import { Select } from "./Select";
+import initDB from "../lib/storage/sqljs";
+import { SqlValue } from "sql.js";
 
 declare module "@tanstack/solid-table" {
   interface TableMeta<TData extends RowData> {
@@ -97,16 +99,54 @@ const editableNumberInputCell = (
   );
 };
 
+const renderOption = (value: SqlValue[], currentValue: string) => {
+  const methodName = typeof value[2] === "string" ? value[2] : "N/A";
+  return (
+    <option value={methodName} selected={currentValue === methodName}>
+      {methodName}
+    </option>
+  );
+};
+
+const renderCellSelect = (options: SqlValue[][], currentValue: string) => {
+  return (
+    <Select>
+      <option>Choose an option</option>
+      <For each={options}>{(option) => renderOption(option, currentValue)}</For>
+    </Select>
+  );
+};
+
 const selectTransactionMethodCell = (
   props: CellContext<Partial<FinancialTransactionView>, any | undefined>
 ) => {
+  const { staticInfo } = initDB;
+
   return (
     <div>
-      <Select>
-        <option>{props.getValue()}</option>
-        <option>a</option>
-        <option>b</option>
-      </Select>
+      {renderCellSelect(staticInfo.transactionMethods, props.getValue())}
+    </div>
+  );
+};
+
+const selectTransactionTypeCell = (
+  props: CellContext<Partial<FinancialTransactionView>, any | undefined>
+) => {
+  const { staticInfo } = initDB;
+
+  return (
+    <div>{renderCellSelect(staticInfo.transactionTypes, props.getValue())}</div>
+  );
+};
+
+const selectTransactionSubTypeCell = (
+  props: CellContext<Partial<FinancialTransactionView>, any | undefined>
+) => {
+  const { staticInfo } = initDB;
+
+  return (
+    <div>
+      {renderCellSelect(staticInfo.transactionSubTypes, props.getValue())}
     </div>
   );
 };
@@ -135,11 +175,11 @@ const defaultColumns = [
   }),
   columnHelper.accessor("transactionType", {
     header: "Transaction Type",
-    cell: editableStringInputCell,
+    cell: selectTransactionTypeCell,
   }),
   columnHelper.accessor("transactionSubType", {
     header: "Transaction Sub Type",
-    cell: editableStringInputCell,
+    cell: selectTransactionSubTypeCell,
   }),
 ];
 
