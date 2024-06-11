@@ -1,5 +1,5 @@
 import { RowData } from "../../../../types";
-import { extendedDayjs } from "../../../../utils/dayjs";
+import { extendedDayjs, formatTransactionDate } from "../../../../utils/dayjs";
 import {
   FinancialTransactionModel,
   FinancialTransactionView,
@@ -82,7 +82,7 @@ export const parseDBSNAVDemoFormat: CSVParser<RowData> = (parsedContent) => {
         const parsedDescription = parseDBSNAVDescription(cleanDescription);
 
         prev.push({
-          date: curr[0],
+          date: formatTransactionDate(curr[0], "DD-MMM-YYYY") ?? "",
           currency: "SGD",
           description: cleanDescription,
           amount,
@@ -120,7 +120,7 @@ export const parseDBSAppFormat: CSVParser<FinancialTransactionModel> = (
         const { transactionMethod, transactionType, transactionSubType } =
           descriptionToTags(description);
         prev.push({
-          transactionDate: curr[0],
+          transactionDate: formatTransactionDate(curr[0], "DD-MMM-YYYY") ?? "",
           currency,
           description,
           amount,

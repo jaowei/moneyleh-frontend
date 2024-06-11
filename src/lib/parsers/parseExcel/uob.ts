@@ -1,6 +1,6 @@
 import { WorkBook, utils } from "xlsx";
 import { RowData } from "../../../types";
-import { extendedDayjs } from "../../../utils/dayjs";
+import { extendedDayjs, formatTransactionDate } from "../../../utils/dayjs";
 import { FinancialTransactionView } from "../../storage";
 import { descriptionToTags } from "../description";
 
@@ -30,7 +30,7 @@ export const demoUOBFormat = (parsedContent: Array<any>) => {
       const { transactionMethod, transactionType, transactionSubType } =
         descriptionToTags(description);
       prev.push({
-        date: curr[0],
+        date: formatTransactionDate(curr[0], "DD MM YYYY") ?? "",
         currency: curr[5],
         description,
         amount: parseFloat(curr?.at(-1) ?? "0"),
@@ -51,7 +51,7 @@ export const appUOBFormat = (parsedContent: Array<any>) => {
         const { transactionMethod, transactionType, transactionSubType } =
           descriptionToTags(description);
         prev.push({
-          transactionDate: curr[0],
+          transactionDate: formatTransactionDate(curr[0], "DD MMM YYYY") ?? "",
           currency: curr[5],
           description,
           amount: parseFloat(curr?.at(-1) ?? "0"),

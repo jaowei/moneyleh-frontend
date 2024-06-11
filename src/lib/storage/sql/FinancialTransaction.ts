@@ -28,7 +28,10 @@ export type FinancialTransactionModel = {
   $isInternal?: number;
 };
 
-const FinancialTransaction: DatabaseModel<FinancialTransactionModel> = {
+const FinancialTransaction: DatabaseModel<
+  FinancialTransactionModel,
+  FinancialTransactionView
+> = {
   queries: {
     createTable:
       "CREATE TABLE financialTransaction (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, transactionDate char, description char, amount int, currency char, transactionMethodId int, transactionTypeId int, transactionSubTypeId int, accountId int, isInternal boolean, FOREIGN KEY(transactionMethodId) REFERENCES transactionMethod(id), FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id), FOREIGN KEY(transactionSubTypeId) REFERENCES transactionSubType(id), FOREIGN KEY(accountId) REFERENCES account(id));",
@@ -52,7 +55,12 @@ const FinancialTransaction: DatabaseModel<FinancialTransactionModel> = {
     persistDB(db);
   },
   selectAll(db) {
-    return db.exec(this.queries.selectAll)[0]?.values;
+    const data = [];
+    const stmt = db.prepare(this.queries.selectAll);
+    while (stmt.step()) {
+      data.push(stmt.getAsObject() as unknown as FinancialTransactionView);
+    }
+    return data;
   },
 };
 

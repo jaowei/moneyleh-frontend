@@ -1,4 +1,5 @@
 import { RowData } from "../../../../types";
+import { formatTransactionDate } from "../../../../utils/dayjs";
 import { descriptionToTags } from "../../description";
 
 export const parseHSBCFormat = (
@@ -9,7 +10,7 @@ export const parseHSBCFormat = (
     const { transactionMethod, transactionType, transactionSubType } =
       descriptionToTags(description);
     return {
-      date: data[0],
+      date: formatTransactionDate(data[0], "DD/M/YYYY") ?? "",
       currency: "SGD",
       description,
       amount: parseFloat(data[2]) * -1,

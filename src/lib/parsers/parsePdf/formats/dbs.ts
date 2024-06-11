@@ -1,5 +1,5 @@
 import { RowData } from "../../../../types";
-import { extendedDayjs } from "../../../../utils/dayjs";
+import { extendedDayjs, formatTransactionDate } from "../../../../utils/dayjs";
 import {
   PDFParser,
   PDFParserData,
@@ -9,6 +9,7 @@ import {
 import { FinancialTransactionView } from "../../../storage";
 import { accountTypeConverter, isInSameRow } from "../../utils";
 import { descriptionToTags } from "../../description";
+import { DATE_FORMAT } from "../../../../constants";
 
 const filterTextData = (text: string): boolean => {
   if (
@@ -41,7 +42,8 @@ const extractAmount = (row: Array<string> | string) => {
 };
 
 const extractDate = (row: Array<string> | string, year: string) => {
-  return year ? row.at(0) + " " + year : row.at(0);
+  const rawString = year ? row.at(0) + year : row.at(0);
+  return formatTransactionDate(rawString, "DD MMMYYYY");
 };
 
 const parseDemoRow = (data: RowParserData): RowData => {

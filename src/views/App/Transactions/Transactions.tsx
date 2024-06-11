@@ -1,16 +1,31 @@
-// import { createEffect } from "solid-js";
-// import initDB from "../../../lib/storage/sqljs";
-// import { FinancialTransaction } from "../../../lib/storage";
+import { createEffect, createSignal } from "solid-js";
+import initDB from "../../../lib/storage/sqljs";
+import {
+  FinancialTransaction,
+  FinancialTransactionView,
+} from "../../../lib/storage";
+import { DataGridLite } from "../../../components";
+import { ParsedResult } from "../../../types";
+import { EMPTY_PARSED_RESULT } from "../../../constants";
 
 export const Transactions = () => {
-  // const { database, staticInfo } = initDB;
-  // const [transactions, setTransactions] = createSignal<any>();
-  // createEffect(() => {
-  //   const db = database();
-  //   if (db) {
-  //     const res = FinancialTransaction?.selectAll?.(db);
-  //     console.log(res);
-  //   }
-  // });
-  return <div />;
+  const { database } = initDB;
+  const [parsedResult, setParsedResult] =
+    createSignal<ParsedResult<FinancialTransactionView>>(EMPTY_PARSED_RESULT);
+  createEffect(() => {
+    const db = database();
+    if (db) {
+      const res = FinancialTransaction?.selectAll?.(db);
+      console.log(res);
+      setParsedResult({
+        data: res ?? [],
+        format: "",
+      });
+    }
+  });
+  return (
+    <div>
+      <DataGridLite rowData={parsedResult} />
+    </div>
+  );
 };

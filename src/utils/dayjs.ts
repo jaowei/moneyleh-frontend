@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import updateLocale from "dayjs/plugin/updateLocale";
+import { DATE_FORMAT } from "../constants";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(updateLocale);
@@ -29,3 +30,11 @@ dayjs.updateLocale("en", {
 });
 
 export const extendedDayjs = dayjs;
+
+export const formatTransactionDate = (
+  target: string | undefined,
+  targetFormat: string
+) => {
+  const date = extendedDayjs(target, targetFormat);
+  return date.isValid() ? date.format(DATE_FORMAT) : target;
+};
