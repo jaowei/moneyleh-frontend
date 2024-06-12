@@ -24,8 +24,14 @@ export const Transactions = () => {
     }
   });
   return (
-    <div>
-      <DataGridLite rowData={parsedResult} />
+    <div class="flex flex-col items-center justify-center p-6">
+      <div class="flex text-gray-9 font-bold gap-2">
+        Number of transactions:
+        <div class="text-cyan-8">{parsedResult().data.length}</div>
+      </div>
+      <div class="p-4 max-w-7xl max-h-xl overflow-x-scroll">
+        <DataGridLite rowData={parsedResult} />
+      </div>
     </div>
   );
 };

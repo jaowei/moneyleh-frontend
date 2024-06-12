@@ -1,7 +1,6 @@
 export * from "./BuildingLogo";
 export * from "./ComingSoon";
 export * from "./DataGrid";
-export * from "./DataGridLite";
 export * from "./FileInput";
 export * from "./FileLogo";
 export * from "./GearLogo";

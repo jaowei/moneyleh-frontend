@@ -4,7 +4,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "./dataGrid.css";
 import { Accessor, Setter } from "solid-js";
-import { ParsedResult, RowData } from "../types";
+import { ParsedResult, RowData } from "../../types";
 import { SizeColumnsToContentStrategy } from "ag-grid-community";
 
 interface DataGridProps {
