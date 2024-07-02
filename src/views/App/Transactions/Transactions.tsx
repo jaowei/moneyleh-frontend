@@ -12,6 +12,7 @@ export const Transactions = () => {
   const { database } = initDB;
   const [parsedResult, setParsedResult] =
     createSignal<ParsedResult<FinancialTransactionView>>(EMPTY_PARSED_RESULT);
+
   createEffect(() => {
     const db = database();
     if (db) {
@@ -25,11 +26,11 @@ export const Transactions = () => {
   });
   return (
     <div class="flex flex-col items-center justify-center p-6">
-      <div class="flex text-gray-9 font-bold gap-2">
+      <div class="flex text-gray-9 font-bold gap-2 p-4">
         Number of transactions:
         <div class="text-cyan-8">{parsedResult().data.length}</div>
       </div>
-      <div class="p-4 max-w-7xl max-h-xl overflow-x-scroll">
+      <div>
         <DataGridLite rowData={parsedResult} />
       </div>
     </div>

@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@solid-primitives/scheduled':
+    specifier: ^1.4.3
+    version: 1.4.3(solid-js@1.8.16)
   '@solidjs/router':
     specifier: ^0.13.1
     version: 0.13.1(solid-js@1.8.16)
@@ -988,6 +991,14 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@solid-primitives/scheduled@1.4.3(solid-js@1.8.16):
+    resolution: {integrity: sha512-HfWN5w7b7FEc6VPLBKnnE302h90jsLMuR28Fcf7neRGGf8jBj6wm6/UFQ00VlKexHFMR6KQ2u4VBh5a1ZcqM8g==}
+    peerDependencies:
+      solid-js: ^1.6.12
+    dependencies:
+      solid-js: 1.8.16
+    dev: false
 
   /@solidjs/router@0.13.1(solid-js@1.8.16):
     resolution: {integrity: sha512-Rz5Lf0ssWMuN+Wm2GFO0vwZoO/KSwYFSuCUzWrRAvje5M0ZYZrMk5FZxuzdJT+zg8KuqWJQlRALks5E0r+FjAA==}
