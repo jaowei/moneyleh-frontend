@@ -1,3 +1,4 @@
+import { SqlValue } from "sql.js";
 import { DatabaseModel } from "../../../types";
 import { databaseSeeder } from "../utils";
 
@@ -22,7 +23,7 @@ export const financialEntities = [
   "Tiger Brokers",
 ];
 
-const FinancialEntity: DatabaseModel<FinancialEntityModel> = {
+const FinancialEntity: DatabaseModel<FinancialEntityModel, SqlValue[]> = {
   queries: {
     createTable:
       "CREATE TABLE financialEntity (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, isDeleted boolean);",

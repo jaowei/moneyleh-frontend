@@ -1,3 +1,4 @@
+import { SqlValue } from "sql.js";
 import { DatabaseModel } from "../../../types";
 import { databaseSeeder } from "../utils";
 
@@ -47,7 +48,7 @@ export const TransactionSubTypes = {
   music: "Music",
 } as const;
 
-// Corresponds to the 8 base categories above
+// Corresponds to the transaction types
 const baseTransactionSubTypes = [
   [TransactionSubTypes.termlife, 1],
   [TransactionSubTypes.wholelife, 1],
@@ -87,22 +88,23 @@ const baseTransactionSubTypes = [
   [TransactionSubTypes.music, 17],
 ];
 
-const TransactionSubType: DatabaseModel<TransactionSubTypesModel> = {
-  queries: {
-    createTable:
-      "CREATE TABLE transactionSubType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, transactionTypeId int, FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id));",
-    insertOne:
-      "INSERT INTO transactionSubType(name, transactionTypeId) VALUES (?, ?)",
-    selectAll: "SELECT * FROM transactionSubType;",
-  },
-  initTable(db) {
-    db.run(this.queries.createTable);
-    const stmt = db.prepare(this.queries.insertOne);
-    databaseSeeder(stmt, baseTransactionSubTypes);
-  },
-  selectAll(db) {
-    return db.exec(this.queries.selectAll)[0]?.values;
-  },
-};
+const TransactionSubType: DatabaseModel<TransactionSubTypesModel, SqlValue[]> =
+  {
+    queries: {
+      createTable:
+        "CREATE TABLE transactionSubType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, transactionTypeId int, FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id));",
+      insertOne:
+        "INSERT INTO transactionSubType(name, transactionTypeId) VALUES (?, ?)",
+      selectAll: "SELECT * FROM transactionSubType;",
+    },
+    initTable(db) {
+      db.run(this.queries.createTable);
+      const stmt = db.prepare(this.queries.insertOne);
+      databaseSeeder(stmt, baseTransactionSubTypes);
+    },
+    selectAll(db) {
+      return db.exec(this.queries.selectAll)[0]?.values;
+    },
+  };
 
 export { TransactionSubType };

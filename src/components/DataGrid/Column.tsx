@@ -6,6 +6,7 @@ import {
   selectTransactionMethodCell,
   selectTransactionTypeCell,
   selectTransactionSubTypeCell,
+  genericCell,
 } from "./Cells";
 
 const columnHelper = createColumnHelper<Partial<FinancialTransactionView>>();
@@ -47,7 +48,35 @@ export const dataEntryPageColumns = [...commonColumns];
 export const transactionsPageColumns = [
   columnHelper.accessor("account", {
     header: "Account Name",
-    cell: (info) => info.getValue(),
+    cell: genericCell,
   }),
-  ...commonColumns,
+  columnHelper.accessor("transactionDate", {
+    header: "Transaction Date",
+    cell: genericCell,
+  }),
+  columnHelper.accessor("description", {
+    header: "Description",
+    cell: genericCell,
+    size: 256,
+  }),
+  columnHelper.accessor("amount", {
+    header: "Amount",
+    cell: genericCell,
+  }),
+  columnHelper.accessor("currency", {
+    header: "Currency",
+    cell: genericCell,
+  }),
+  columnHelper.accessor("transactionMethod", {
+    header: "Transaction Method",
+    cell: genericCell,
+  }),
+  columnHelper.accessor("transactionType", {
+    header: "Transaction Type",
+    cell: genericCell,
+  }),
+  columnHelper.accessor("transactionSubType", {
+    header: "Transaction Sub Type",
+    cell: genericCell,
+  }),
 ];

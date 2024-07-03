@@ -1,5 +1,6 @@
 import { persistDB } from "../sqljs";
 import { DatabaseModel } from "../../../types";
+import { SqlValue } from "sql.js";
 
 export type AccountModel = {
   $id?: string;
@@ -11,7 +12,7 @@ export type AccountModel = {
   $startingBalance: number;
 };
 
-const Account: DatabaseModel<AccountModel> = {
+const Account: DatabaseModel<AccountModel, SqlValue[]> = {
   queries: {
     createTable:
       "CREATE TABLE account (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, type char, accountingRelation char, startingBalance int, financialEntityId INTEGER, FOREIGN KEY(financialEntityId) REFERENCES financialEntity(id));",

@@ -5,6 +5,13 @@ import { FinancialTransactionView } from "../../lib/storage";
 import { Select } from "../Select";
 import initDB from "../../lib/storage/sqljs";
 
+export const genericCell = (
+  info: CellContext<
+    Partial<FinancialTransactionView>,
+    string | number | undefined
+  >
+) => info.getValue;
+
 function editableState<T>(
   props: CellContext<Partial<FinancialTransactionView>, T | undefined>
 ) {

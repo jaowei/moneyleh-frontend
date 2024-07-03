@@ -1,3 +1,4 @@
+import { SqlValue } from "sql.js";
 import { DatabaseModel } from "../../../types";
 import { databaseSeeder } from "../utils";
 
@@ -52,7 +53,7 @@ const baseTransactionTypes = [
   TransactionTypes.rebates,
 ];
 
-const TransactionType: DatabaseModel<TransactionTypeModel> = {
+const TransactionType: DatabaseModel<TransactionTypeModel, SqlValue[]> = {
   queries: {
     createTable:
       "CREATE TABLE transactionType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE);",

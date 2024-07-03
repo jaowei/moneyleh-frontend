@@ -5,6 +5,7 @@ export type DatabaseModel<T, V = {}> = {
     createTable: string;
     insertOne: string;
     selectAll: string;
+    [key: string]: string;
   };
   initTable: (db: Database) => void;
   insertOne?: (db: Database, data: T) => Promise<Array<any>>;

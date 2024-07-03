@@ -17,7 +17,6 @@ export const Transactions = () => {
     const db = database();
     if (db) {
       const res = FinancialTransaction?.selectAll?.(db);
-      console.log(res);
       setParsedResult({
         data: res ?? [],
         format: "",
