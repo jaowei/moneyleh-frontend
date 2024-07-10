@@ -19,7 +19,6 @@ import { ParsedResult } from "../../../types";
 import toast from "solid-toast";
 import { financialTransactionsMapper } from "../../../lib/storage/utils";
 import { AccountForm } from "./AccountForm";
-
 export type formInfo = {
   name: string;
   type: string;
@@ -90,6 +89,12 @@ export const DataEntry = () => {
     }
   };
 
+  const closeDialog = () => {
+    if (dialogRef.open) {
+      dialogRef.close();
+    }
+  };
+
   return (
     <div class="flex flex-col w-full h-full items-center">
       <div class="flex gap-16 p-6 justify-center items-start">
@@ -151,13 +156,13 @@ export const DataEntry = () => {
           />
         </div>
       </div>
-      <div class="flex flex-col gap-6 p-6 items-center">
+      <div class="flex flex-col gap-6 p-4 items-center">
         <DataGridLite rowData={parsedResult} />
       </div>
       <div class="flex flex-col gap-6 p-6 items-center">
         <PrimaryButton
           onClick={handleSubmitTransactions}
-          disabled={!parsedResult().data.length}
+          disabled={!(parsedResult().data.length && formInfo.accountId)}
         >
           Submit transactions
         </PrimaryButton>
@@ -179,7 +184,11 @@ export const DataEntry = () => {
             <div class="i-radix-icons:cross-2 w-30px h-30px" />
           </button>
           <Show when={!database.loading} fallback={<div>Loading....</div>}>
-            <AccountForm formInfo={formInfo} setFormInfo={setFormInfo} />
+            <AccountForm
+              formInfo={formInfo}
+              setFormInfo={setFormInfo}
+              closeForm={closeDialog}
+            />
           </Show>
         </div>
       </dialog>

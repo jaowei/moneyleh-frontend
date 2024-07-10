@@ -16,6 +16,7 @@ import toast from "solid-toast";
 interface AccountFormProps {
   formInfo: formInfo;
   setFormInfo: SetStoreFunction<formInfo>;
+  closeForm?: () => void;
 }
 
 const accountingRelationMap: Record<string, string> = {
@@ -59,6 +60,7 @@ export const AccountForm = (props: AccountFormProps) => {
             position: "top-center",
           });
           refetch();
+          props?.closeForm?.();
         } else {
           toast.error("Error inserting into DB", { position: "top-center" });
         }

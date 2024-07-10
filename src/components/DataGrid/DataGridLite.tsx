@@ -106,7 +106,7 @@ export const DataGridLite = (props: DataGridLiteProps) => {
           placeholder="Search all columns"
         />
       </div>
-      <div class="sm:max-w-sm md:max-w-lg lg:max-w-3xl xl:max-w-5xl 2xl:max-w-7xl max-h-lg overflow-y-auto">
+      <div class="sm:max-w-sm md:max-w-lg lg:max-w-3xl xl:max-w-5xl 2xl:max-w-[1440px] max-h-lg 2xl:max-h-xl overflow-y-auto">
         <table class="table-auto border-collapse border-gray-300 bg-white">
           <thead class="bg-gray-100">
             <For each={table.getHeaderGroups()}>
