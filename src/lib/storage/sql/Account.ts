@@ -18,7 +18,7 @@ const Account: DatabaseModel<AccountModel, SqlValue[]> = {
       "CREATE TABLE account (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, type char, accountingRelation char, startingBalance int, financialEntityId INTEGER, FOREIGN KEY(financialEntityId) REFERENCES financialEntity(id));",
     insertOne:
       "INSERT INTO account(name, type, accountingRelation, financialEntityId, startingBalance) VALUES ($name, $type, $accountingRelation, $financialEntityId, $startingBalance) RETURNING id;",
-    selectAll: "SELECT * FROM account;",
+    selectAll: "SELECT * FROM account ORDER BY name ASC;",
   },
   initTable(db) {
     db.run(this.queries.createTable);

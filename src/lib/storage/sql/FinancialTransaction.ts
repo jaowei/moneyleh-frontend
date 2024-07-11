@@ -44,7 +44,8 @@ const FinancialTransaction: DatabaseModel<
     LEFT JOIN transactionMethod ON financialTransaction.transactionMethodId=transactionMethod.id
     LEFT JOIN transactionType ON financialTransaction.transactionTypeId=transactionType.id
     LEFT JOIN transactionSubType ON financialTransaction.transactionSubTypeId=transactionSubType.id
-    LEFT JOIN account ON financialTransaction.accountId=account.id;`,
+    LEFT JOIN account ON financialTransaction.accountId=account.id
+    ORDER BY account ASC;`,
   },
   initTable(db) {
     db.run(this.queries.createTable);

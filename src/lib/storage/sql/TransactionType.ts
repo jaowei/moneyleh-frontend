@@ -58,7 +58,7 @@ const TransactionType: DatabaseModel<TransactionTypeModel, SqlValue[]> = {
     createTable:
       "CREATE TABLE transactionType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE);",
     insertOne: "INSERT INTO transactionType(name) VALUES (?)",
-    selectAll: "SELECT * FROM transactionType;",
+    selectAll: "SELECT * FROM transactionType ORDER BY name ASC;",
   },
   initTable(db) {
     db.run(this.queries.createTable);

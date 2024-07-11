@@ -129,7 +129,7 @@ export const DataEntry = () => {
                 }}
               </For>
             </Select>
-          </FormField>{" "}
+          </FormField>
           <PrimaryButton
             class="inline-flex h-8 items-center justify-center rounded-xl hover:shadow-md"
             onClick={() => {

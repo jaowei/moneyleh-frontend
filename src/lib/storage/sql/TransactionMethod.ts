@@ -33,7 +33,7 @@ const TransactionMethod: DatabaseModel<TransactionMethodModel, SqlValue[]> = {
     createTable:
       "CREATE TABLE transactionMethod (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE);",
     insertOne: "INSERT INTO transactionMethod(name) VALUES (?)",
-    selectAll: "SELECT * FROM transactionMethod;",
+    selectAll: "SELECT * FROM transactionMethod ORDER BY name ASC;",
   },
   initTable(db) {
     db.run(this.queries.createTable);

@@ -95,7 +95,7 @@ const TransactionSubType: DatabaseModel<TransactionSubTypesModel, SqlValue[]> =
         "CREATE TABLE transactionSubType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, transactionTypeId int, FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id));",
       insertOne:
         "INSERT INTO transactionSubType(name, transactionTypeId) VALUES (?, ?)",
-      selectAll: "SELECT * FROM transactionSubType;",
+      selectAll: "SELECT * FROM transactionSubType ORDER BY name ASC;",
     },
     initTable(db) {
       db.run(this.queries.createTable);

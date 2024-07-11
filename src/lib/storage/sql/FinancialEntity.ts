@@ -28,7 +28,7 @@ const FinancialEntity: DatabaseModel<FinancialEntityModel, SqlValue[]> = {
     createTable:
       "CREATE TABLE financialEntity (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, isDeleted boolean);",
     insertOne: "INSERT INTO financialEntity(name) VALUES (?);",
-    selectAll: "SELECT * FROM financialEntity;",
+    selectAll: "SELECT * FROM financialEntity ORDER BY name ASC;",
   },
   initTable(db) {
     db.run(this.queries.createTable);
