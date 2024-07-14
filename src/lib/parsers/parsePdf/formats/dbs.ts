@@ -9,7 +9,6 @@ import {
 import { FinancialTransactionView } from "../../../storage";
 import { accountTypeConverter, isInSameRow } from "../../utils";
 import { descriptionToTags } from "../../description";
-import { DATE_FORMAT } from "../../../../constants";
 
 const filterTextData = (text: string): boolean => {
   if (
