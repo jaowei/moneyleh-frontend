@@ -22,7 +22,7 @@ import { AccountForm } from "./AccountForm";
 export type formInfo = {
   name: string;
   type: string;
-  financialEntityId: string;
+  financialEntityId: number;
   startingBalance: number;
   docFormat: string;
   accountId: string;
@@ -33,7 +33,7 @@ export const DataEntry = () => {
   const [formInfo, setFormInfo] = createStore<formInfo>({
     name: "",
     type: "cash",
-    financialEntityId: "1",
+    financialEntityId: 1,
     startingBalance: 0,
     docFormat: StatementFormatsEnum.DBS_CARD as string,
     accountId: "",

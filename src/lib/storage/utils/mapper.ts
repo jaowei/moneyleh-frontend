@@ -8,7 +8,6 @@ export const mapToFinancialTransaction = ({
   currency,
   transactionMethod,
   transactionType,
-  transactionSubType,
   account,
   isInternal,
 }: FinancialTransactionView) => ({
@@ -18,7 +17,6 @@ export const mapToFinancialTransaction = ({
   $currency: currency,
   $transactionMethodId: transactionMethod,
   $transactionTypeId: transactionType,
-  $transactionSubTypeId: transactionSubType,
   $accountId: account,
   $isInternal: +!!isInternal, // convert to number
 });
@@ -44,12 +42,6 @@ export const financialTransactionsMapper = (
     });
     dbModel.$transactionTypeId =
       typeArr?.[0]?.[0]?.toString() ?? dbModel.$transactionTypeId;
-
-    const subTypeArr = databaseInfo.transactionSubTypes.filter((subType) => {
-      return subType.includes(dbModel.$transactionSubTypeId ?? null);
-    });
-    dbModel.$transactionSubTypeId =
-      subTypeArr?.[0]?.[0]?.toString() ?? dbModel.$transactionSubTypeId;
 
     financialTransactionModel.push(dbModel);
   }

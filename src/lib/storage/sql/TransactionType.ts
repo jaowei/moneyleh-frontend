@@ -9,49 +9,14 @@ export type TransactionTypeModel = {
 };
 
 export const TransactionTypes = {
-  insurance: "Insurance",
-  transport: "Transportation",
-  shopping: "Shopping",
-  dining: "Dining",
-  groceries: "Groceries",
-  healthcare: "Healthcare",
-  fitness: "Fitness",
-  travel: "Travel",
-  transfer: "Transfer",
-  salary: "Salary",
-  bonus: "Bonus",
-  interest: "Interest",
-  dividend: "Dividend",
-  cash: "Cash",
-  tax: "Tax",
-  allowance: "Allowance",
-  billPayment: "Bill Payment",
-  misc: "Misc Fees",
-  rebates: "Rebates & Payouts",
-  memberships: "Memberships",
+  needs: "Needs",
+  wants: "Wants",
+  income: "Income",
+  savings: "Savings",
+  investments: "Investments",
 } as const;
 
-const baseTransactionTypes = [
-  TransactionTypes.insurance,
-  TransactionTypes.transport,
-  TransactionTypes.shopping,
-  TransactionTypes.dining,
-  TransactionTypes.groceries,
-  TransactionTypes.healthcare,
-  TransactionTypes.fitness,
-  TransactionTypes.travel,
-  TransactionTypes.transfer,
-  TransactionTypes.salary,
-  TransactionTypes.bonus,
-  TransactionTypes.interest,
-  TransactionTypes.dividend,
-  TransactionTypes.cash,
-  TransactionTypes.tax,
-  TransactionTypes.allowance,
-  TransactionTypes.billPayment,
-  TransactionTypes.misc,
-  TransactionTypes.rebates,
-];
+const baseTransactionTypes = Object.values(TransactionTypes);
 
 const TransactionType: DatabaseModel<TransactionTypeModel, SqlValue[]> = {
   queries: {

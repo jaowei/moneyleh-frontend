@@ -8,9 +8,8 @@ import {
 } from "../../../components";
 import { SetStoreFunction, createStore } from "solid-js/store";
 import { formInfo } from "./DataEntry";
-import { AccountTypes } from "../../../constants";
 import initDB from "../../../lib/storage/sqljs";
-import { Account } from "../../../lib/storage";
+import { Account, DefaultAccountTypeIds } from "../../../lib/storage";
 import toast from "solid-toast";
 
 interface AccountFormProps {
@@ -18,12 +17,6 @@ interface AccountFormProps {
   setFormInfo: SetStoreFunction<formInfo>;
   closeForm?: () => void;
 }
-
-const accountingRelationMap: Record<string, string> = {
-  cash: "asset",
-  investment: "asset",
-  creditCard: "liability",
-};
 
 export const AccountForm = (props: AccountFormProps) => {
   const { database, staticInfo, refetch } = initDB;
@@ -46,10 +39,9 @@ export const AccountForm = (props: AccountFormProps) => {
     const db = database();
     const accountData = {
       $name: props.formInfo.name,
-      $type: props.formInfo.type,
       $financialEntityId: props.formInfo.financialEntityId,
       $startingBalance: props.formInfo.startingBalance,
-      $accountingRelation: accountingRelationMap[props.formInfo.type],
+      $accountTypeId: DefaultAccountTypeIds[props.formInfo.type],
     };
     if (db) {
       try {
@@ -95,9 +87,13 @@ export const AccountForm = (props: AccountFormProps) => {
           </FormField>
           <FormField formLabel="Account Type">
             <Select onChange={(e) => props.setFormInfo("type", e.target.value)}>
-              <option value={AccountTypes.CASH}>Cash</option>
-              <option value={AccountTypes.INVESTMENT}>Investment</option>
-              <option value={AccountTypes.CREDITCARD}>Credit Card</option>
+              <For each={staticInfo.accountTypes}>
+                {(acctType) => {
+                  const name =
+                    typeof acctType[2] === "string" ? acctType[2] : "N/A";
+                  return <option value={name}>{name}</option>;
+                }}
+              </For>
             </Select>
           </FormField>
           <FormField formLabel="Financial Entity (Company)">
@@ -105,7 +101,7 @@ export const AccountForm = (props: AccountFormProps) => {
               onChange={(e) =>
                 props.setFormInfo(
                   "financialEntityId",
-                  `${e.target.selectedIndex + 1}`
+                  e.target.selectedIndex + 1
                 )
               }
             >

@@ -1,178 +1,132 @@
-import {
-  TransactionMethods,
-  TransactionSubTypes,
-  TransactionTypes,
-} from "../storage";
+import { TransactionMethods, TransactionTypes } from "../storage";
 
 const ERROR_VALUE = "";
 
 type TransactionMap = {
   method?: string;
   type?: string;
-  subType?: string;
 };
 
 // arrange from most generic to most specific terms
 const methodMap: Record<string, TransactionMap> = {
   "i-bank": {
-    method: TransactionMethods.fast,
+    method: TransactionMethods.transfer.name,
   },
   paynow: {
-    method: TransactionMethods.paynow,
+    method: TransactionMethods.paynow.name,
   },
   paylah: {
-    method: TransactionMethods.paylah,
+    method: TransactionMethods.paylah.name,
   },
   "bill ccc": {
-    method: TransactionMethods.fast,
-    type: TransactionTypes.billPayment,
+    method: TransactionMethods.transfer.name,
   },
   ccc: {
-    method: TransactionMethods.fast,
-    type: TransactionTypes.billPayment,
+    method: TransactionMethods.transfer.name,
   },
   dbsc: {
-    method: TransactionMethods.fast,
-    type: TransactionTypes.billPayment,
+    method: TransactionMethods.transfer.name,
   },
   salary: {
-    method: TransactionMethods.fast,
-    type: TransactionTypes.salary,
+    method: TransactionMethods.transfer.name,
+    type: TransactionTypes.income,
   },
-  " si ": { method: TransactionMethods.giro }, // standing instruction
+  " si ": { method: TransactionMethods.transfer.name }, // standing instruction
   "preferential rate based on total": {
-    method: TransactionMethods.fast,
-    type: TransactionTypes.interest,
+    method: TransactionMethods.transfer.name,
+    type: TransactionTypes.income,
   },
   "ntuc-mship fee": {
-    method: TransactionMethods.cardInstallment,
-    type: TransactionTypes.memberships,
-    subType: TransactionSubTypes.ntucMembership,
+    method: TransactionMethods.cardOnline.name,
+    type: TransactionTypes.wants,
   },
   spotify: {
-    method: TransactionMethods.cardInstallment,
-    type: TransactionTypes.billPayment,
-    subType: TransactionSubTypes.music,
+    method: TransactionMethods.cardOnline.name,
+    type: TransactionTypes.needs,
   },
   "gopay-gojek": {
-    method: TransactionMethods.cardOnline,
-    type: TransactionTypes.transport,
-    subType: TransactionSubTypes.rideHailing,
+    method: TransactionMethods.cardOnline.name,
+    type: TransactionTypes.needs,
   },
   "grab*": {
-    method: TransactionMethods.cardOnline,
-    type: TransactionTypes.transport,
-    subType: TransactionSubTypes.rideHailing,
+    method: TransactionMethods.cardOnline.name,
+    type: TransactionTypes.needs,
   },
   "shopee singapore mp": {
-    method: TransactionMethods.cardOnline,
-    type: TransactionTypes.shopping,
+    method: TransactionMethods.cardOnline.name,
   },
   "amazon mktplc": {
-    method: TransactionMethods.cardOnline,
-    type: TransactionTypes.shopping,
+    method: TransactionMethods.cardOnline.name,
   },
 };
 
 const typeMap: Record<string, TransactionMap> = {
-  "i-bank": {
-    type: TransactionTypes.transfer,
-  },
   "bus/mrt": {
-    type: TransactionTypes.transport,
-    subType: TransactionSubTypes.public,
+    type: TransactionTypes.needs,
   },
   giga: {
-    type: TransactionTypes.billPayment,
-    subType: TransactionSubTypes.phonePlan,
+    type: TransactionTypes.needs,
   },
   "ezpaysgd*anytime": {
-    type: TransactionTypes.fitness,
-    subType: TransactionSubTypes.gym,
+    type: TransactionTypes.needs,
   },
   causewaylink: {
-    type: TransactionTypes.transport,
-    subType: TransactionSubTypes.public,
+    type: TransactionTypes.wants,
   },
   "diamond kitchen": {
-    type: TransactionTypes.dining,
-    subType: TransactionSubTypes.restaurant,
+    type: TransactionTypes.needs,
   },
   kopifellas: {
-    type: TransactionTypes.dining,
-    subType: TransactionSubTypes.casualDining,
+    type: TransactionTypes.wants,
   },
   "xiang xiang hunan": {
-    type: TransactionTypes.dining,
-    subType: TransactionSubTypes.restaurant,
+    type: TransactionTypes.wants,
   },
   kazuki: {
-    type: TransactionTypes.dining,
-    subType: TransactionSubTypes.casualDining,
+    type: TransactionTypes.needs,
   },
   "old chang kee": {
-    type: TransactionTypes.dining,
-    subType: TransactionSubTypes.casualDining,
+    type: TransactionTypes.wants,
   },
   "sheng siong": {
-    type: TransactionTypes.groceries,
+    type: TransactionTypes.needs,
   },
   "cold storage": {
-    type: TransactionTypes.groceries,
+    type: TransactionTypes.needs,
   },
   "venus beauty": {
-    type: TransactionTypes.shopping,
-    subType: TransactionSubTypes.toiletries,
+    type: TransactionTypes.needs,
   },
 };
 
-const subTypeMap: Record<string, string> = {};
-
 /**
- * Parses financial transaction descriptions to it's transfer method,
- * type and subtypes.
+ * Parses financial transaction descriptions to transaction method and type
  * @param description
  */
-const descriptionToTags = (description: string) => {
+export const descriptionToTags = (description: string) => {
   const desc = description.toLowerCase();
 
   let transactionMethod = "";
   let transactionType = "";
-  let transactionSubType = "";
 
   const methodKeys = Object.keys(methodMap);
   const typeKeys = Object.keys(typeMap);
-  const subTypeKeys = Object.keys(subTypeMap);
 
-  const maxLen = Math.max(
-    methodKeys.length,
-    typeKeys.length,
-    subTypeKeys.length
-  );
+  const maxLen = Math.max(methodKeys.length, typeKeys.length);
 
   for (let i = 0; i < maxLen; i++) {
     const methodKeyword = methodKeys?.[i];
     const typeKeyword = typeKeys?.[i];
-    const subTypeKeyword = subTypeKeys?.[i];
     if (methodKeyword && desc.includes(methodKeyword)) {
       transactionMethod = methodMap[methodKeyword]?.method || ERROR_VALUE;
       transactionType = methodMap[methodKeyword]?.type || ERROR_VALUE;
-      transactionSubType = methodMap[methodKeyword]?.subType || ERROR_VALUE;
     }
     if (typeKeyword && desc.includes(typeKeyword)) {
       transactionType = typeMap[typeKeyword]?.type || ERROR_VALUE;
-      transactionSubType = typeMap[typeKeyword]?.subType || ERROR_VALUE;
-    }
-    if (subTypeKeyword && desc.includes(subTypeKeyword)) {
-      transactionSubType = subTypeMap[subTypeKeyword] || ERROR_VALUE;
     }
   }
-
   return {
     transactionMethod,
     transactionType,
-    transactionSubType,
   };
 };
-
-export { descriptionToTags };

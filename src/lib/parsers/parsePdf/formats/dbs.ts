@@ -53,8 +53,7 @@ const parseDemoRow = (data: RowParserData): RowData => {
 
   const description = row.at(1) ?? "";
 
-  const { transactionMethod, transactionType, transactionSubType } =
-    descriptionToTags(description);
+  const { transactionMethod, transactionType } = descriptionToTags(description);
 
   return {
     date: date ?? "",
@@ -63,7 +62,6 @@ const parseDemoRow = (data: RowParserData): RowData => {
     amount: parsedAmount,
     transactionCode: transactionMethod,
     parentTag: transactionType,
-    childTag: transactionSubType,
   };
 };
 
@@ -75,8 +73,7 @@ const parseAppRow = (data: RowParserData): FinancialTransactionView => {
 
   const description = row.at(1) ?? "";
 
-  const { transactionMethod, transactionType, transactionSubType } =
-    descriptionToTags(description);
+  const { transactionMethod, transactionType } = descriptionToTags(description);
 
   const method = transactionMethod || accountTypeConverter(accountType);
 
@@ -87,7 +84,6 @@ const parseAppRow = (data: RowParserData): FinancialTransactionView => {
     amount: parsedAmount,
     transactionMethod: method,
     transactionType: transactionType,
-    transactionSubType: transactionSubType,
     account: accountId ?? "",
     isInternal: false, // false until marked true by user
   };

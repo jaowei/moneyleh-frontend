@@ -27,7 +27,7 @@ export const demoUOBFormat = (parsedContent: Array<any>) => {
   return parsedContent.reduce((prev: Array<RowData>, curr: Array<string>) => {
     if (extendedDayjs(curr[0], "DD MMM YYYY").isValid()) {
       const description = curr[2];
-      const { transactionMethod, transactionType, transactionSubType } =
+      const { transactionMethod, transactionType } =
         descriptionToTags(description);
       prev.push({
         date: formatTransactionDate(curr[0], "DD MM YYYY") ?? "",
@@ -36,7 +36,6 @@ export const demoUOBFormat = (parsedContent: Array<any>) => {
         amount: parseFloat(curr?.at(-1) ?? "0"),
         transactionCode: transactionMethod,
         parentTag: transactionType,
-        childTag: transactionSubType,
       });
     }
     return prev;
@@ -48,7 +47,7 @@ export const appUOBFormat = (parsedContent: Array<any>) => {
     (prev: Array<FinancialTransactionView>, curr: Array<string>) => {
       if (extendedDayjs(curr[0], "DD MMM YYYY").isValid()) {
         const description = curr[2];
-        const { transactionMethod, transactionType, transactionSubType } =
+        const { transactionMethod, transactionType } =
           descriptionToTags(description);
         prev.push({
           transactionDate: formatTransactionDate(curr[0], "DD MMM YYYY") ?? "",
@@ -57,7 +56,6 @@ export const appUOBFormat = (parsedContent: Array<any>) => {
           amount: parseFloat(curr?.at(-1) ?? "0"),
           transactionMethod: transactionMethod, // set as card as uob statement is for cards
           transactionType: transactionType, //  map using pre configured keywords
-          transactionSubType: transactionSubType, //  map using pre configured keywords
           account: "", // to get from top level
           isInternal: false, // false until marked true by user
         });

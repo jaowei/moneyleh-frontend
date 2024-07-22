@@ -117,7 +117,7 @@ export const parseDBSAppFormat: CSVParser<FinancialTransactionModel> = (
           amount = parseFloat(creditAmt);
         }
         const description = curr.slice(-4, -1).join(" ");
-        const { transactionMethod, transactionType, transactionSubType } =
+        const { transactionMethod, transactionType } =
           descriptionToTags(description);
         prev.push({
           transactionDate: formatTransactionDate(curr[0], "DD-MMM-YYYY") ?? "",
@@ -126,7 +126,6 @@ export const parseDBSAppFormat: CSVParser<FinancialTransactionModel> = (
           amount,
           transactionMethod: transactionMethod,
           transactionType: transactionType,
-          transactionSubType: transactionSubType,
           account: "", // to get from top level
           isInternal: false, // false until marked true by user
         });
@@ -161,7 +160,6 @@ export const parseDBSNAVAppFormat: CSVParser<FinancialTransactionModel> = (
           amount,
           transactionMethod: curr[1],
           transactionType: parsedDescription.parentTag ?? curr[3],
-          transactionSubType: curr[4],
           account: parsedDescription.accountNumber,
           isInternal: false, // false until marked true by user
         });

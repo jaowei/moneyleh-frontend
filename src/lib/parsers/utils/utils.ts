@@ -1,5 +1,4 @@
-import { AccountTypes } from "../../../constants";
-import { TransactionMethods } from "../../storage";
+import { AccountTypes, TransactionMethods } from "../../storage";
 
 export const isInSameRow = (
   prevCoord: number,
@@ -10,8 +9,8 @@ export const isInSameRow = (
 };
 
 export const accountTypeConverter = (accountType?: string) => {
-  if (accountType === AccountTypes.CREDITCARD) {
-    return TransactionMethods.cardPhysical;
+  if (accountType === AccountTypes.creditCard) {
+    return TransactionMethods.cardPhysical.name;
   }
   return "";
 };

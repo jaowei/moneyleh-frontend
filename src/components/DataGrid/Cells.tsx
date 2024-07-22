@@ -115,15 +115,3 @@ export const selectTransactionTypeCell = (
     <div>{renderCellSelect(staticInfo.transactionTypes, props.getValue())}</div>
   );
 };
-
-export const selectTransactionSubTypeCell = (
-  props: CellContext<Partial<FinancialTransactionView>, any | undefined>
-) => {
-  const { staticInfo } = initDB;
-
-  return (
-    <div>
-      {renderCellSelect(staticInfo.transactionSubTypes, props.getValue())}
-    </div>
-  );
-};

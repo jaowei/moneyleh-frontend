@@ -7,7 +7,7 @@ export const parseHSBCFormat = (
 ): Array<RowData> => {
   return parsedContent.data.map((data: string[]) => {
     const description = data[1];
-    const { transactionMethod, transactionType, transactionSubType } =
+    const { transactionMethod, transactionType } =
       descriptionToTags(description);
     return {
       date: formatTransactionDate(data[0], "DD/M/YYYY") ?? "",
@@ -16,7 +16,6 @@ export const parseHSBCFormat = (
       amount: parseFloat(data[2]) * -1,
       transactionCode: transactionMethod,
       parentTag: transactionType,
-      childTag: transactionSubType,
     };
   });
 };

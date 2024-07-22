@@ -22,8 +22,8 @@ const NavItem: ParentComponent<{ href: string; isSelected: boolean }> = (
 
 export const Nav = () => {
   const [currentTab, setCurrentTab] = createSignal();
-  const location = useLocation();
   createEffect(() => {
+    const location = useLocation();
     const tabName = location.pathname.split("/").at(-1);
     setCurrentTab(tabName);
   });

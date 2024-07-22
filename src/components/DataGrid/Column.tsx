@@ -5,7 +5,6 @@ import {
   editableNumberInputCell,
   selectTransactionMethodCell,
   selectTransactionTypeCell,
-  selectTransactionSubTypeCell,
   genericCell,
 } from "./Cells";
 
@@ -36,10 +35,6 @@ export const commonColumns = [
   columnHelper.accessor("transactionType", {
     header: "Transaction Type",
     cell: selectTransactionTypeCell,
-  }),
-  columnHelper.accessor("transactionSubType", {
-    header: "Transaction Sub Type",
-    cell: selectTransactionSubTypeCell,
   }),
 ];
 
@@ -73,10 +68,6 @@ export const transactionsPageColumns = [
   }),
   columnHelper.accessor("transactionType", {
     header: "Transaction Type",
-    cell: genericCell,
-  }),
-  columnHelper.accessor("transactionSubType", {
-    header: "Transaction Sub Type",
     cell: genericCell,
   }),
 ];

@@ -4,10 +4,10 @@ import sqlJsWasmUrl from "/sql-wasm.wasm?url";
 import { createEffect, createResource, createRoot } from "solid-js";
 import {
   Account,
+  AccountType,
   FinancialEntity,
   FinancialTransaction,
   TransactionMethod,
-  TransactionSubType,
   TransactionType,
 } from "./sql";
 import { createStore } from "solid-js/store";
@@ -34,11 +34,11 @@ export const persistDB = async (db: Database) => {
 };
 
 const initTables = (db: Database) => {
+  AccountType.initTable(db);
   FinancialEntity.initTable(db);
   Account.initTable(db);
   TransactionMethod.initTable(db);
   TransactionType.initTable(db);
-  TransactionSubType.initTable(db);
   FinancialTransaction.initTable(db);
 };
 
@@ -68,7 +68,7 @@ export type staticInfo = {
   accounts: SqlValue[][];
   transactionMethods: SqlValue[][];
   transactionTypes: SqlValue[][];
-  transactionSubTypes: SqlValue[][];
+  accountTypes: SqlValue[][];
 };
 
 const createLocalDB = () => {
@@ -79,7 +79,7 @@ const createLocalDB = () => {
     accounts: [],
     transactionMethods: [],
     transactionTypes: [],
-    transactionSubTypes: [],
+    accountTypes: [],
   });
 
   createEffect(() => {
@@ -92,10 +92,7 @@ const createLocalDB = () => {
         TransactionMethod.selectAll?.(db) ?? []
       );
       setStaticInfo("transactionTypes", TransactionType.selectAll?.(db) ?? []);
-      setStaticInfo(
-        "transactionSubTypes",
-        TransactionSubType.selectAll?.(db) ?? []
-      );
+      setStaticInfo("accountTypes", AccountType.selectAll?.(db) ?? []);
     }
   });
 
