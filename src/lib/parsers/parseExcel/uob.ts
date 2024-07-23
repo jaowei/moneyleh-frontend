@@ -57,7 +57,6 @@ export const appUOBFormat = (parsedContent: Array<any>) => {
           transactionMethod: transactionMethod, // set as card as uob statement is for cards
           transactionType: transactionType, //  map using pre configured keywords
           account: "", // to get from top level
-          isInternal: false, // false until marked true by user
         });
       }
       return prev;

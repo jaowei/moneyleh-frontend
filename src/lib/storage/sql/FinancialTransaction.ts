@@ -10,10 +10,10 @@ export type FinancialTransactionView = {
   transactionMethod: string;
   transactionType?: string;
   account?: string;
-  isInternal?: boolean;
+  transactionTagIds?: Array<number>;
 };
 
-export type FinancialTransactionModel = {
+export type CreateFinancialTransactionDto = {
   $id?: string;
   $createdAt?: string;
   $transactionDate: string;
@@ -23,20 +23,20 @@ export type FinancialTransactionModel = {
   $transactionMethodId: string;
   $transactionTypeId?: string;
   $accountId?: string;
-  $isInternal?: number;
+  $transactionTagIds?: string;
 };
 
 const FinancialTransaction: DatabaseModel<
-  FinancialTransactionModel,
+  CreateFinancialTransactionDto,
   FinancialTransactionView
 > = {
   queries: {
     createTable:
-      "CREATE TABLE financialTransaction (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, transactionDate char, description char, amount int, currency char, transactionMethodId int, transactionTypeId int, accountId int, isInternal boolean, FOREIGN KEY(transactionMethodId) REFERENCES transactionMethod(id), FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id),  FOREIGN KEY(accountId) REFERENCES account(id));",
+      "CREATE TABLE financialTransaction (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, transactionDate char, description char, amount int, currency char, transactionMethodId int, transactionTypeId int, accountId int, transactionTagIds TEXT, FOREIGN KEY(transactionMethodId) REFERENCES transactionMethod(id), FOREIGN KEY(transactionTypeId) REFERENCES transactionType(id),  FOREIGN KEY(accountId) REFERENCES account(id));",
     insertOne:
-      "INSERT INTO financialTransaction(transactionDate, description, amount, currency, transactionMethodId, transactionTypeId, accountId, isInternal) VALUES ($transactionDate, $description, $amount, $currency, $transactionMethodId, $transactionTypeId, $accountId, $isInternal);",
+      "INSERT INTO financialTransaction(transactionDate, description, amount, currency, transactionMethodId, transactionTypeId, accountId, transactionTagIds) VALUES ($transactionDate, $description, $amount, $currency, $transactionMethodId, $transactionTypeId, $accountId, $transactionTagIds);",
     selectAll: `SELECT transactionDate, description, amount, currency, transactionMethod.name AS transactionMethod, transactionType.name AS transactionType,  
-    account.name as account
+    account.name as account, transactionTagids
     from financialTransaction 
     LEFT JOIN transactionMethod ON financialTransaction.transactionMethodId=transactionMethod.id
     LEFT JOIN transactionType ON financialTransaction.transactionTypeId=transactionType.id

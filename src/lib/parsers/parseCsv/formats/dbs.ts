@@ -1,7 +1,7 @@
 import { RowData } from "../../../../types";
 import { extendedDayjs, formatTransactionDate } from "../../../../utils/dayjs";
 import {
-  FinancialTransactionModel,
+  CreateFinancialTransactionDto,
   FinancialTransactionView,
 } from "../../../storage";
 import { descriptionToTags } from "../../description";
@@ -98,7 +98,7 @@ export const parseDBSNAVDemoFormat: CSVParser<RowData> = (parsedContent) => {
   );
 };
 
-export const parseDBSAppFormat: CSVParser<FinancialTransactionModel> = (
+export const parseDBSAppFormat: CSVParser<CreateFinancialTransactionDto> = (
   parsedContent
 ) => {
   let currency = "SGD";
@@ -127,7 +127,6 @@ export const parseDBSAppFormat: CSVParser<FinancialTransactionModel> = (
           transactionMethod: transactionMethod,
           transactionType: transactionType,
           account: "", // to get from top level
-          isInternal: false, // false until marked true by user
         });
       }
       return prev;
@@ -136,7 +135,7 @@ export const parseDBSAppFormat: CSVParser<FinancialTransactionModel> = (
   );
 };
 
-export const parseDBSNAVAppFormat: CSVParser<FinancialTransactionModel> = (
+export const parseDBSNAVAppFormat: CSVParser<CreateFinancialTransactionDto> = (
   parsedContent
 ) => {
   return parsedContent.data.reduce(
@@ -161,7 +160,6 @@ export const parseDBSNAVAppFormat: CSVParser<FinancialTransactionModel> = (
           transactionMethod: curr[1],
           transactionType: parsedDescription.parentTag ?? curr[3],
           account: parsedDescription.accountNumber,
-          isInternal: false, // false until marked true by user
         });
       }
       return prev;

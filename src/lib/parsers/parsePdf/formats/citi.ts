@@ -79,7 +79,6 @@ const parseAppRow = (data: RowParserData): FinancialTransactionView => {
     transactionMethod: "5", // set as card as uob statement is for cards
     transactionType: "1", //  map using pre configured keywords
     account: "", // to get from top level
-    isInternal: false, // false until marked true by user
   };
 };
 

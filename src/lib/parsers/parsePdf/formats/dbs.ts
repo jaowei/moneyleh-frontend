@@ -85,7 +85,6 @@ const parseAppRow = (data: RowParserData): FinancialTransactionView => {
     transactionMethod: method,
     transactionType: transactionType,
     account: accountId ?? "",
-    isInternal: false, // false until marked true by user
   };
 };
 

@@ -1,4 +1,7 @@
-import { FinancialTransactionModel, FinancialTransactionView } from "../sql";
+import {
+  CreateFinancialTransactionDto,
+  FinancialTransactionView,
+} from "../sql";
 import { staticInfo } from "../sqljs";
 
 export const mapToFinancialTransaction = ({
@@ -9,7 +12,6 @@ export const mapToFinancialTransaction = ({
   transactionMethod,
   transactionType,
   account,
-  isInternal,
 }: FinancialTransactionView) => ({
   $transactionDate: transactionDate,
   $description: description,
@@ -18,15 +20,14 @@ export const mapToFinancialTransaction = ({
   $transactionMethodId: transactionMethod,
   $transactionTypeId: transactionType,
   $accountId: account,
-  $isInternal: +!!isInternal, // convert to number
 });
 
 export const financialTransactionsMapper = (
   data: FinancialTransactionView[],
   databaseInfo: staticInfo,
   accountId: string
-): FinancialTransactionModel[] => {
-  const financialTransactionModel: FinancialTransactionModel[] = [];
+): CreateFinancialTransactionDto[] => {
+  const financialTransactionModel: CreateFinancialTransactionDto[] = [];
   for (let row of data) {
     const dbModel = mapToFinancialTransaction(row);
     dbModel.$accountId = accountId;
