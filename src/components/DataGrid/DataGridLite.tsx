@@ -26,6 +26,8 @@ import {
 } from "./Column";
 import { useLocation } from "@solidjs/router";
 import { Input } from "../Input";
+import { ColumnSort } from "./ColumnSort";
+import { ColumnResizer } from "./ColumnResizer";
 
 declare module "@tanstack/solid-table" {
   interface TableMeta<TData extends RowData> {
@@ -89,11 +91,6 @@ export const DataGridLite = (props: DataGridLiteProps) => {
         setData(currData);
       },
     },
-    defaultColumn: {
-      size: 128,
-      minSize: 96,
-      maxSize: 384,
-    },
   });
 
   return (
@@ -106,8 +103,8 @@ export const DataGridLite = (props: DataGridLiteProps) => {
           placeholder="Search all columns"
         />
       </div>
-      <div class="sm:max-w-sm md:max-w-lg lg:max-w-3xl xl:max-w-5xl 2xl:max-w-[1440px] max-h-lg 2xl:max-h-xl overflow-y-auto">
-        <table class="table-auto border-collapse border-gray-300 bg-white">
+      <div class="max-h-lg 2xl:max-h-xl overflow-y-auto">
+        <table class="table-auto border-collapse border-gray-300 bg-white w-full">
           <thead class="bg-gray-100">
             <For each={table.getHeaderGroups()}>
               {(headerGroup) => (
@@ -121,56 +118,28 @@ export const DataGridLite = (props: DataGridLiteProps) => {
                         }}
                       >
                         <Show when={!header.isPlaceholder}>
-                          <div
-                            class="flex flex-row items-center gap-6 w-full justify-between"
-                            cursor={
-                              header.column.getCanSort() ? "pointer" : undefined
-                            }
-                          >
-                            <div
-                              class="flex flex-row items-center gap-2"
-                              onClick={header.column.getToggleSortingHandler()}
-                            >
+                          <div class="flex flex-row items-center gap-6 w-full justify-between">
+                            <div class="flex flex-row items-center">
                               {flexRender(
                                 header.column.columnDef.header,
                                 header.getContext()
                               )}
-                              <Switch
-                                fallback={
-                                  <div class="i-radix-icons:caret-sort w-1em h-1em" />
-                                }
-                              >
-                                <Match
-                                  when={header.column.getIsSorted() === "asc"}
-                                >
-                                  <div class="i-radix-icons:caret-up w-1em h-1em" />
-                                </Match>
-                                <Match
-                                  when={header.column.getIsSorted() === "desc"}
-                                >
-                                  <div class="i-radix-icons:caret-down w-1em h-1em" />
-                                </Match>
-                              </Switch>
+                              {header.column.getCanSort() && (
+                                <ColumnSort
+                                  onSort={header.column.getToggleSortingHandler}
+                                  sortDirection={header.column.getIsSorted()}
+                                />
+                              )}
                             </div>
-                            <div
-                              class="w-1 h-6 bg-gray-200"
-                              style={{
-                                transform:
-                                  table.options.columnResizeMode === "onEnd" &&
-                                  header.column.getIsResizing()
-                                    ? `translateX(${
-                                        (table.options.columnResizeDirection ===
-                                        "rtl"
-                                          ? -1
-                                          : 1) *
-                                        (table.getState().columnSizingInfo
-                                          .deltaOffset ?? 0)
-                                      }px)`
-                                    : "",
-                              }}
-                              onDblClick={() => header.column.resetSize()}
-                              onMouseDown={header.getResizeHandler()}
-                              onTouchStart={header.getResizeHandler()}
+                            <ColumnResizer
+                              mode={table.options.columnResizeMode}
+                              isResizing={header.column.getIsResizing()}
+                              direction={table.options.columnResizeDirection}
+                              deltaOffset={
+                                table.getState().columnSizingInfo.deltaOffset
+                              }
+                              onResetSize={() => header.column.resetSize()}
+                              onResize={header.getResizeHandler}
                             />
                           </div>
                         </Show>
@@ -187,7 +156,12 @@ export const DataGridLite = (props: DataGridLiteProps) => {
                 <tr class="snap-start" border="b t-0 l-0 r-0 solid">
                   <For each={row.getVisibleCells()}>
                     {(cell) => (
-                      <td class="py-2 px-4">
+                      <td
+                        class="py-2 px-4 "
+                        style={{
+                          width: `${cell.column.getSize()}px`,
+                        }}
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()

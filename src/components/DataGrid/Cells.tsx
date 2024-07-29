@@ -30,23 +30,16 @@ function editableState<T>(
 }
 
 const editableInputStyles =
-  "bg-transparent text-gray-500 border border-transparent py-2.5 focus:outline-0 focus:bg-gray-1 focus:rounded-lg";
+  "bg-transparent text-gray-500 border border-transparent py-2.5 focus:outline-0 focus:bg-gray-1 focus:rounded-lg w-full";
 
 export const editableStringInputCell = (
   props: CellContext<Partial<FinancialTransactionView>, string | undefined>
 ) => {
   const { value, setValue, onBlur } = editableState<string>(props);
   return (
-    <div
-      style={{
-        width: `${props.column.getSize()}px`,
-      }}
-    >
+    <div>
       <input
         class={editableInputStyles}
-        style={{
-          width: `${props.column.getSize()}px`,
-        }}
         value={value()}
         onBlur={onBlur}
         onChange={(e) => setValue(e.target.value)}
@@ -63,9 +56,6 @@ export const editableNumberInputCell = (
     <div>
       <input
         class={editableInputStyles}
-        style={{
-          width: `${props.column.getSize()}px`,
-        }}
         type="number"
         step="0.01"
         value={value()}

@@ -18,23 +18,27 @@ export const commonColumns = [
   columnHelper.accessor("description", {
     header: "Description",
     cell: editableStringInputCell,
-    size: 256,
+    size: 300,
   }),
   columnHelper.accessor("amount", {
     header: "Amount",
     cell: editableNumberInputCell,
+    size: 90,
   }),
   columnHelper.accessor("currency", {
     header: "Currency",
     cell: editableStringInputCell,
+    size: 90,
   }),
   columnHelper.accessor("transactionMethod", {
     header: "Transaction Method",
     cell: selectTransactionMethodCell,
+    size: 200,
   }),
   columnHelper.accessor("transactionType", {
     header: "Transaction Type",
     cell: selectTransactionTypeCell,
+    size: 200,
   }),
 ];
 
@@ -52,7 +56,6 @@ export const transactionsPageColumns = [
   columnHelper.accessor("description", {
     header: "Description",
     cell: genericCell,
-    size: 256,
   }),
   columnHelper.accessor("amount", {
     header: "Amount",
