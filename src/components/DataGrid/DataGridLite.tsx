@@ -103,7 +103,7 @@ export const DataGridLite = (props: DataGridLiteProps) => {
           placeholder="Search all columns"
         />
       </div>
-      <div class="max-h-lg 2xl:max-h-xl overflow-y-auto">
+      <div class="overflow-y-auto max-h-screen">
         <table class="table-auto border-collapse border-gray-300 bg-white w-full">
           <thead class="bg-gray-100">
             <For each={table.getHeaderGroups()}>
@@ -112,9 +112,9 @@ export const DataGridLite = (props: DataGridLiteProps) => {
                   <For each={headerGroup.headers}>
                     {(header) => (
                       <th
-                        class="py-2 px-4 text-gray-600 font-semibold sticky top-0 bg-gray-1"
+                        class="w-auto py-2 px-4 text-gray-600 font-semibold sticky top-0 bg-gray-1"
                         style={{
-                          width: `${header.column.getSize()}px`,
+                          "min-width": `${header.column.getSize()}px`,
                         }}
                       >
                         <Show when={!header.isPlaceholder}>
@@ -157,9 +157,9 @@ export const DataGridLite = (props: DataGridLiteProps) => {
                   <For each={row.getVisibleCells()}>
                     {(cell) => (
                       <td
-                        class="py-2 px-4 "
+                        class="py-2 px-4 w-auto"
                         style={{
-                          width: `${cell.column.getSize()}px`,
+                          "min-width": `${cell.column.getSize()}px`,
                         }}
                       >
                         {flexRender(

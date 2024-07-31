@@ -1,4 +1,4 @@
-import { For, Show, createSignal } from "solid-js";
+import { For, Match, Show, Switch, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import {
   FinancialTransaction,
@@ -42,6 +42,7 @@ export const DataEntry = () => {
     createSignal<ParsedResult<FinancialTransactionView>>(EMPTY_PARSED_RESULT);
   const [filePassword, setFilePassword] = createSignal<string>();
   const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
+  const [minimise, setMinimise] = createSignal(false);
 
   let dialogRef!: HTMLDialogElement;
 
@@ -97,64 +98,102 @@ export const DataEntry = () => {
 
   return (
     <div class="flex flex-col w-full h-full items-center">
-      <div class="flex gap-16 p-6 justify-center items-start">
-        <div class="flex flex-col gap-4">
-          <FormField formLabel="You are entering transactions for account:">
-            <Select
-              onChange={(e) => {
-                const accountId = e.target.value;
-                const accountIdIdx = parseInt(accountId) - 1;
-                if (accountId) {
-                  setFormInfo("accountId", accountId);
-                  setFormInfo(
-                    "type",
-                    staticInfo.accounts[accountIdIdx][3] as string
-                  );
-                  setFormInfo(
-                    "name",
-                    staticInfo.accounts[accountIdIdx][2] as string
-                  );
-                } else {
-                  setFormInfo("accountId", "");
-                  setFormInfo("name", "");
-                }
-              }}
-            >
-              <option value={""}>select existing account</option>
-              <For each={staticInfo.accounts}>
-                {(account) => {
-                  const name =
-                    typeof account[2] === "string" ? account[2] : "N/A";
-                  return <option value={account[0] as string}>{name}</option>;
-                }}
-              </For>
-            </Select>
-          </FormField>
-          <PrimaryButton
-            class="inline-flex h-8 items-center justify-center rounded-xl hover:shadow-md"
-            onClick={() => {
-              if (dialogRef.open) {
-                dialogRef.close();
-              } else {
-                dialogRef.showModal();
-              }
+      <Switch>
+        <Match when={minimise()}>
+          <div class="flex flex-row gap-2 pt-2">
+            <div>{formInfo.name || "No account selected"}</div>
+            <div>{formInfo.docFormat}</div>
+          </div>
+        </Match>
+        <Match when={!minimise()}>
+          <div
+            class={`flex gap-16 p-6 justify-center items-start`}
+            style={{
+              "view-transition-name": "data-entry-header",
             }}
           >
-            Create new account
-          </PrimaryButton>
-        </div>
-        <FormField formLabel="Select Statement Format:">
-          <StatementFormatSelector handleChange={handleDocSelector} />
-        </FormField>
-        <div class="w-sm">
-          <FileInput
-            dataSetter={setParsedResult}
-            password={filePassword}
-            passwordDialogTriggerSetter={setPasswordDialogIsOpen}
-            passwordSetter={setFilePassword}
-            formInfo={formInfo}
-          />
-        </div>
+            <div class="flex flex-col gap-4">
+              <FormField formLabel="You are entering transactions for account:">
+                <Select
+                  onChange={(e) => {
+                    const accountId = e.target.value;
+                    const accountIdIdx = parseInt(accountId) - 1;
+                    if (accountId) {
+                      setFormInfo("accountId", accountId);
+                      setFormInfo(
+                        "type",
+                        staticInfo.accounts[accountIdIdx][3] as string
+                      );
+                      setFormInfo(
+                        "name",
+                        staticInfo.accounts[accountIdIdx][2] as string
+                      );
+                    } else {
+                      setFormInfo("accountId", "");
+                      setFormInfo("name", "");
+                    }
+                  }}
+                >
+                  <option value={""}>select existing account</option>
+                  <For each={staticInfo.accounts}>
+                    {(account) => {
+                      const name =
+                        typeof account[2] === "string" ? account[2] : "N/A";
+                      return (
+                        <option value={account[0] as string}>{name}</option>
+                      );
+                    }}
+                  </For>
+                </Select>
+              </FormField>
+              <PrimaryButton
+                class="inline-flex h-8 items-center justify-center rounded-xl hover:shadow-md"
+                onClick={() => {
+                  if (dialogRef.open) {
+                    dialogRef.close();
+                  } else {
+                    dialogRef.showModal();
+                  }
+                }}
+              >
+                Create new account
+              </PrimaryButton>
+            </div>
+            <FormField formLabel="Select Statement Format:">
+              <StatementFormatSelector handleChange={handleDocSelector} />
+            </FormField>
+            <div class="w-sm">
+              <FileInput
+                dataSetter={setParsedResult}
+                password={filePassword}
+                passwordDialogTriggerSetter={setPasswordDialogIsOpen}
+                passwordSetter={setFilePassword}
+                formInfo={formInfo}
+              />
+            </div>
+          </div>
+        </Match>
+      </Switch>
+      <div class="w-full flex flex-row items-center">
+        <div class="flex-1 bg-cyan-900 h-px ml-4" />
+        <button
+          class="flex-none rounded-full p-0 bg-cyan-900"
+          onClick={() => {
+            document.startViewTransition(() => {
+              setMinimise((prev) => !prev);
+            });
+          }}
+        >
+          <Switch>
+            <Match when={minimise()}>
+              <div class="i-radix-icons:caret-down w-1.2rem h-1.2rem bg-white" />
+            </Match>
+            <Match when={!minimise()}>
+              <div class="i-radix-icons:caret-up w-1.2rem h-1.2rem bg-white" />
+            </Match>
+          </Switch>
+        </button>
+        <div class="flex-1 bg-cyan-900 h-px mr-4" />
       </div>
       <div class="flex flex-col gap-6 p-4 items-center">
         <DataGridLite rowData={parsedResult} />

@@ -154,11 +154,6 @@ export const Accounts = () => {
                 {(cell) => (
                   <div>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    {/* {accountTotal.name}
-                  {Math.round(
-                    (accountTotal.startingBalance + accountTotal.runningTotal) *
-                      100
-                  ) / 100} */}
                   </div>
                 )}
               </For>

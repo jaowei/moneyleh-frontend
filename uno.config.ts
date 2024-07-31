@@ -32,5 +32,13 @@ export default defineConfig({
         850: "#1F6F8D",
       },
     },
+    animation: {
+      disappear: "fade-out 0.5s forwards",
+    },
+    keyframes: {
+      "fade-out": {
+        "100%": { opacity: 0, display: "none" },
+      },
+    },
   },
 });
