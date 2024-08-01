@@ -1,5 +1,5 @@
 import { RowData } from "../../../types";
-import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../../constants";
+import { INVALID_FORMAT_ERROR, StatementFormats } from "../../../constants";
 import toast from "solid-toast";
 import { WorkBook, read, utils } from "xlsx";
 import { appUOBFormat, demoUOBFormat, parseUOBFormat } from "./uob";
@@ -15,7 +15,7 @@ export const parseExcel = async (
     toast.error("No sheets detected");
   }
   switch (statementFormat) {
-    case StatementFormatsEnum.UOB_CARD:
+    case StatementFormats.UOB_CARD:
       return parseUOBFormat(workbook);
     default:
       toast.error(INVALID_FORMAT_ERROR);
@@ -46,9 +46,9 @@ export const ExcelFileParser = {
     }
   },
   demoParsers: {
-    [StatementFormatsEnum.UOB_CARD]: demoUOBFormat,
+    [StatementFormats.UOB_CARD]: demoUOBFormat,
   } as Record<string, any>,
   appParsers: {
-    [StatementFormatsEnum.UOB_CARD]: appUOBFormat,
+    [StatementFormats.UOB_CARD]: appUOBFormat,
   } as Record<string, any>,
 };

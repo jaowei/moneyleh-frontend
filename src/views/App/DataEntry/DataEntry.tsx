@@ -1,6 +1,7 @@
 import { For, Match, Show, Switch, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import {
+  AccountTypes,
   FinancialTransaction,
   FinancialTransactionView,
 } from "../../../lib/storage";
@@ -14,7 +15,7 @@ import {
   Select,
   StatementFormatSelector,
 } from "../../../components";
-import { EMPTY_PARSED_RESULT, StatementFormatsEnum } from "../../../constants";
+import { EMPTY_PARSED_RESULT, StatementFormats } from "../../../constants";
 import { ParsedResult } from "../../../types";
 import toast from "solid-toast";
 import { financialTransactionsMapper } from "../../../lib/storage/utils";
@@ -32,10 +33,10 @@ export const DataEntry = () => {
   const { database, staticInfo } = initDB;
   const [formInfo, setFormInfo] = createStore<formInfo>({
     name: "",
-    type: "cash",
+    type: AccountTypes.cash,
     financialEntityId: 1,
     startingBalance: 0,
-    docFormat: StatementFormatsEnum.DBS_CARD as string,
+    docFormat: StatementFormats.DBS_CARD,
     accountId: "",
   });
   const [parsedResult, setParsedResult] =
@@ -109,6 +110,7 @@ export const DataEntry = () => {
           <div
             class={`flex gap-16 p-6 justify-center items-start`}
             style={{
+              // eslint-disable-next-line solid/style-prop
               "view-transition-name": "data-entry-header",
             }}
           >
@@ -179,6 +181,10 @@ export const DataEntry = () => {
         <button
           class="flex-none rounded-full p-0 bg-cyan-900"
           onClick={() => {
+            if (!document.startViewTransition) {
+              setMinimise((prev) => !prev);
+              return;
+            }
             document.startViewTransition(() => {
               setMinimise((prev) => !prev);
             });

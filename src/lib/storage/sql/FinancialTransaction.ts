@@ -36,7 +36,7 @@ const FinancialTransaction: DatabaseModel<
     insertOne:
       "INSERT INTO financialTransaction(transactionDate, description, amount, currency, transactionMethodId, transactionTypeId, accountId, transactionTagIds) VALUES ($transactionDate, $description, $amount, $currency, $transactionMethodId, $transactionTypeId, $accountId, $transactionTagIds);",
     selectAll: `SELECT transactionDate, description, amount, currency, transactionMethod.name AS transactionMethod, transactionType.name AS transactionType,  
-    account.name as account, transactionTagids
+    account.name as account, transactionTagIds
     from financialTransaction 
     LEFT JOIN transactionMethod ON financialTransaction.transactionMethodId=transactionMethod.id
     LEFT JOIN transactionType ON financialTransaction.transactionTypeId=transactionType.id

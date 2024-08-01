@@ -1,4 +1,4 @@
-export enum StatementFormatsEnum {
+export enum StatementFormats {
   DBS_CARD = "dbs-creditcard",
   CITI_CARD = "citi-creditcard",
   DBS_ACCOUNT = "dbs-account",

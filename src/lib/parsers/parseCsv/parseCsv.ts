@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 import { RowData } from "../../../types";
-import { INVALID_FORMAT_ERROR, StatementFormatsEnum } from "../../../constants";
+import { INVALID_FORMAT_ERROR, StatementFormats } from "../../../constants";
 import toast from "solid-toast";
 import {
   parseDBSAppFormat,
@@ -18,13 +18,13 @@ export const parseCSV = async (
   const textContent = await file.text();
   const parsedContent = Papa.parse(textContent, { skipEmptyLines: true });
   switch (statementFormat) {
-    case StatementFormatsEnum.DBS_ACCOUNT:
+    case StatementFormats.DBS_ACCOUNT:
       return parseDBSDemoFormat(parsedContent);
-    case StatementFormatsEnum.HSBC_CARD:
+    case StatementFormats.HSBC_CARD:
       return parseHSBCFormat(parsedContent);
-    case StatementFormatsEnum.IBKR_ACCOUNT:
+    case StatementFormats.IBKR_ACCOUNT:
       return parseIBKRFormat(parsedContent);
-    case StatementFormatsEnum.DBS_NAV_ACCOUNT:
+    case StatementFormats.DBS_NAV_ACCOUNT:
       return parseDBSNAVDemoFormat(parsedContent);
     default:
       toast.error(INVALID_FORMAT_ERROR);
@@ -52,13 +52,13 @@ export const CSVFileParser = {
     }
   },
   demoParsers: {
-    [StatementFormatsEnum.DBS_ACCOUNT]: parseDBSDemoFormat,
-    [StatementFormatsEnum.HSBC_CARD]: parseHSBCFormat,
-    [StatementFormatsEnum.IBKR_ACCOUNT]: parseIBKRFormat,
-    [StatementFormatsEnum.DBS_NAV_ACCOUNT]: parseDBSNAVDemoFormat,
+    [StatementFormats.DBS_ACCOUNT]: parseDBSDemoFormat,
+    [StatementFormats.HSBC_CARD]: parseHSBCFormat,
+    [StatementFormats.IBKR_ACCOUNT]: parseIBKRFormat,
+    [StatementFormats.DBS_NAV_ACCOUNT]: parseDBSNAVDemoFormat,
   } as Record<string, any>,
   appParsers: {
-    [StatementFormatsEnum.DBS_ACCOUNT]: parseDBSAppFormat,
-    [StatementFormatsEnum.DBS_NAV_ACCOUNT]: parseDBSNAVAppFormat,
+    [StatementFormats.DBS_ACCOUNT]: parseDBSAppFormat,
+    [StatementFormats.DBS_NAV_ACCOUNT]: parseDBSNAVAppFormat,
   } as Record<string, any>,
 };

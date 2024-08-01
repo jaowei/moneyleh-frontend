@@ -2,6 +2,7 @@ type MoneyLehLogoProps = {
   href: string;
   iconSize: string;
   textSize: string;
+  isMinimised?: boolean;
 };
 
 export const MoneyLehLogo = (props: MoneyLehLogoProps) => {
@@ -12,9 +13,11 @@ export const MoneyLehLogo = (props: MoneyLehLogoProps) => {
           class={`i-ph:piggy-bank-duotone w-${props.iconSize} h-${props.iconSize}`}
           style={{ color: "#164e63" }}
         />
-        <div class="font-bold pl-2" text={`cyan-900 ${props.textSize}`}>
-          MoneyLeh?
-        </div>
+        {!props.isMinimised && (
+          <div class="font-bold pl-2" text={`cyan-900 ${props.textSize}`}>
+            MoneyLeh?
+          </div>
+        )}
       </div>
     </a>
   );

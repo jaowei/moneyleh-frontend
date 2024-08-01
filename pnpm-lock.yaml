@@ -17,6 +17,9 @@ importers:
       '@tanstack/solid-table':
         specifier: ^8.19.2
         version: 8.19.2(solid-js@1.8.18)
+      '@types/dom-view-transitions':
+        specifier: ^1.0.5
+        version: 1.0.5
       ag-grid-community:
         specifier: ~31.1.1
         version: 31.1.1
@@ -654,6 +657,9 @@ packages:
 
   '@types/babel__traverse@7.20.6':
     resolution: {integrity: sha512-r1bzfrm0tomOI8g1SzvCaQHo6Lcv6zu0EA+W2kHrt8dyrHQxGzBBL4kdkzIS+jBMV+EYcMAEAqXqYaLJq5rOZg==}
+
+  '@types/dom-view-transitions@1.0.5':
+    resolution: {integrity: sha512-N2sILR7fxSMnaFaAPwGj4DtHCXjIyQTHt+xJyf9jATpzUsTkMNM0DWtqZB6W7f501B/Y0tq3uqat/VlbjuTpMA==}
 
   '@types/emscripten@1.39.13':
     resolution: {integrity: sha512-cFq+fO/isvhvmuP/+Sl4K4jtU6E23DoivtbO4r50e3odaxAiVdbfSYRDdJ4gCdxx+3aRjhphS5ZMwIH4hFy/Cw==}
@@ -2857,6 +2863,8 @@ snapshots:
   '@types/babel__traverse@7.20.6':
     dependencies:
       '@babel/types': 7.24.7
+
+  '@types/dom-view-transitions@1.0.5': {}
 
   '@types/emscripten@1.39.13': {}
 

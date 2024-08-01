@@ -10,7 +10,7 @@ import {
   StatementFormatSelector,
 } from "../../components";
 import { ParsedResult, RowData } from "../../types";
-import { EMPTY_PARSED_RESULT, StatementFormatsEnum } from "../../constants";
+import { EMPTY_PARSED_RESULT, StatementFormats } from "../../constants";
 import toast from "solid-toast";
 
 interface LandingDemoProps {
@@ -22,7 +22,7 @@ interface LandingDemoProps {
 
 const LandingDemo = (props: LandingDemoProps) => {
   const [docFormat, setDocFormat] = createSignal<string>(
-    StatementFormatsEnum.DBS_CARD
+    StatementFormats.DBS_CARD
   );
   const [parsedResult, setParsedResult] =
     createSignal<ParsedResult<RowData>>(EMPTY_PARSED_RESULT);

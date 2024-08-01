@@ -1,12 +1,4 @@
-import {
-  Accessor,
-  For,
-  createEffect,
-  createSignal,
-  Show,
-  Switch,
-  Match,
-} from "solid-js";
+import { Accessor, For, createEffect, createSignal, Show } from "solid-js";
 import { debounce } from "@solid-primitives/scheduled";
 import {
   RowData,
