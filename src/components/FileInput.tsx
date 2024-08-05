@@ -22,13 +22,14 @@ import toast from "solid-toast";
 import { CSVFileParser, ExcelFileParser, PDFFileParser } from "../lib/parsers";
 import { useLocation } from "@solidjs/router";
 import { formInfo } from "../views/App/DataEntry";
+import { Button } from "./Button";
 
 interface FileInputProps<T> {
   dataSetter: Setter<ParsedResult<T>>;
   password: Accessor<string | undefined>;
   passwordDialogTriggerSetter: Setter<boolean>;
   passwordSetter: Setter<string | undefined>;
-  docFormat?: Accessor<string>;
+  docFormat?: Accessor<string | undefined>;
   formInfo?: formInfo;
 }
 
@@ -162,20 +163,12 @@ export function FileInput<T>(props: FileInputProps<T>) {
         onDragOver={onDragOverHandler}
         onDrop={handleDrop}
       >
-        <div class="flex justify-center items-center">
+        <div class="flex justify-center items-center gap-2">
           <div class="i-radix-icons-file" p="r-2" />
           Drop Files or
-          <label
-            for="file"
-            text="white sm"
-            class="min-w-max bg-cyan-900 rounded hover:shadow-md"
-            border="~ solid black"
-            p="y-1 x-1"
-            m="l-1"
-            cursor="pointer"
-          >
-            Click to choose
-          </label>
+          <Button size="sm">
+            <label for="file">Click to choose</label>
+          </Button>
         </div>
         <div class="pt-4 flex justify-center">
           <div font="semibold truncate">{fileName()}</div>

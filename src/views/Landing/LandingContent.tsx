@@ -5,6 +5,7 @@ import {
   BuildingLogo,
   GearLogo,
 } from "../../components";
+import { Button } from "../../components/Button";
 
 const MainLogo = lazy(() => import("../../components/MainLogo"));
 
@@ -17,7 +18,7 @@ export const LandingContent: Component<{ clickHandler: () => void }> = (
         <div class="flex flex-col items-center max-w-sm 2xl:max-w-2xl 3xl:max-w-xl ">
           <div
             class="font-black pb-4"
-            text=" slate-800 3xl 2xl:5xl 3xl:7xl center"
+            text="slate-800 3xl 2xl:5xl 3xl:7xl center"
           >
             Simplify your personal finances
           </div>
@@ -47,19 +48,15 @@ export const LandingContent: Component<{ clickHandler: () => void }> = (
             />
           </div>
         </div>
-        <button
-          class="mt-10 mb-10 rounded-xl h-3.5rem hover:bg-cyan-800 shadow"
-          border="none"
-          bg="cyan-900"
-          text="white lg"
-          font="sans bold"
-          cursor="pointer"
-          animate="bounce"
-          p="x-10"
-          onClick={() => props.clickHandler()}
-        >
-          Try it out
-        </button>
+        <div class="mt-10">
+          <Button
+            size="xl"
+            animate="bounce"
+            onClick={() => props.clickHandler()}
+          >
+            Try it out
+          </Button>
+        </div>
       </div>
     </section>
   );

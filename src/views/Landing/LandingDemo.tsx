@@ -5,12 +5,13 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
 import { Accessor, createSignal, JSX, Setter } from "solid-js";
 import {
   FileInput,
+  Button,
   DataGrid,
-  PrimaryButton,
   StatementFormatSelector,
+  Statement,
 } from "../../components";
 import { ParsedResult, RowData } from "../../types";
-import { EMPTY_PARSED_RESULT, StatementFormats } from "../../constants";
+import { EMPTY_PARSED_RESULT } from "../../constants";
 import toast from "solid-toast";
 
 interface LandingDemoProps {
@@ -21,24 +22,13 @@ interface LandingDemoProps {
 }
 
 const LandingDemo = (props: LandingDemoProps) => {
-  const [docFormat, setDocFormat] = createSignal<string>(
-    StatementFormats.DBS_CARD
-  );
+  const [docFormat, setDocFormat] = createSignal<string>();
   const [parsedResult, setParsedResult] =
     createSignal<ParsedResult<RowData>>(EMPTY_PARSED_RESULT);
   const [gridRef, setGridRef] = createSignal<any>(null);
 
-  const handleSelectChange = (
-    event: Event & {
-      currentTarget: HTMLSelectElement;
-      target: HTMLSelectElement;
-    }
-  ) => {
-    const selectedIdx = event?.target?.selectedIndex;
-    const option = event?.target?.options[selectedIdx];
-    const optGroup = option.parentElement;
-    const category = optGroup?.getAttribute("id");
-    setDocFormat(`${option.value}-${category}`);
+  const handleStatementChange = (statement: Statement) => {
+    setDocFormat(statement.label);
   };
 
   const onClickCopyAll: JSX.EventHandlerUnion<
@@ -82,7 +72,9 @@ const LandingDemo = (props: LandingDemoProps) => {
               <div class="pb-2" text="cyan-900">
                 Select your statement format:
               </div>
-              <StatementFormatSelector handleChange={handleSelectChange} />
+              <StatementFormatSelector
+                onStatementChange={handleStatementChange}
+              />
             </div>
             <FileInput
               dataSetter={setParsedResult}
@@ -92,7 +84,7 @@ const LandingDemo = (props: LandingDemoProps) => {
               passwordSetter={props.setFilePassword}
             />
             <div class="flex justify-between max-w-max mx-auto" p="b-4">
-              <PrimaryButton
+              <Button
                 onClick={onClickCopyAll}
                 disabled={!parsedResult()?.data.length}
               >
@@ -100,8 +92,8 @@ const LandingDemo = (props: LandingDemoProps) => {
                   <div class="i-radix-icons-clipboard" />
                   Copy All
                 </div>
-              </PrimaryButton>
-              <PrimaryButton
+              </Button>
+              <Button
                 onClick={onClickDownload}
                 disabled={!parsedResult()?.data.length}
               >
@@ -109,24 +101,17 @@ const LandingDemo = (props: LandingDemoProps) => {
                   <div class="i-radix-icons-download" />
                   Download as CSV
                 </div>
-              </PrimaryButton>
+              </Button>
             </div>
             <div>
               <a href="/app/data-entry" class="no-underline">
-                <div
-                  class="flex flex-row items-center hover:animate-bounce rounded-xl"
-                  border="cyan-900 solid"
-                  p="2"
-                  bg="cyan-900"
-                >
+                <Button size="xl" animate="bounce">
                   <div
                     class="i-radix-icons:enter w-2rem h-2rem pr-2"
                     text="white"
                   />
-                  <div text="white xl" font="900">
-                    Try the app now!
-                  </div>
-                </div>
+                  Try the app now!
+                </Button>
               </a>
             </div>
           </div>

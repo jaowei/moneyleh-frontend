@@ -1,31 +1,103 @@
-import { Select } from "./Select";
+import { StatementFormats } from "../constants";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectSection,
+  SelectTrigger,
+  SelectValue,
+} from "./Select";
 
 interface StatementFormatSelectorProps {
-  handleChange: (
-    e: Event & {
-      currentTarget: HTMLSelectElement;
-      target: HTMLSelectElement;
-    }
-  ) => void;
+  onStatementChange: (selected: Statement) => void;
 }
+
+export interface Statement {
+  value: string;
+  label: string;
+  disabled: boolean;
+}
+
+interface Category {
+  label: string;
+  id: string;
+  options: Array<Statement>;
+}
+
+const statementOptions: Array<Category> = [
+  {
+    label: "Credit Card Statements",
+    id: "creditcard",
+    options: [
+      { value: StatementFormats.DBS_CARD, label: "DBS - PDF", disabled: false },
+      {
+        value: StatementFormats.CITI_CARD,
+        label: "Citibank - PDF",
+        disabled: false,
+      },
+      { value: StatementFormats.UOB_CARD, label: "UOB - XLS", disabled: false },
+      {
+        value: StatementFormats.HSBC_CARD,
+        label: "HSBC - CSV",
+        disabled: false,
+      },
+    ],
+  },
+  {
+    id: "account",
+    label: "Accounts",
+    options: [
+      {
+        value: StatementFormats.DBS_ACCOUNT,
+        label: "DBS - CSV",
+        disabled: false,
+      },
+      {
+        value: StatementFormats.DBS_NAV_ACCOUNT,
+        label: "DBS NAV - CSV",
+        disabled: false,
+      },
+      {
+        value: StatementFormats.MOOMOO_ACCOUNT,
+        label: "MooMoo - PDF",
+        disabled: false,
+      },
+      {
+        value: StatementFormats.IBKR_ACCOUNT,
+        label: "IBKR - CSV",
+        disabled: false,
+      },
+    ],
+  },
+];
 
 export const StatementFormatSelector = (
   props: StatementFormatSelectorProps
 ) => {
   return (
-    <Select onChange={(e) => props.handleChange(e)}>
-      <optgroup id="creditcard" label="Credit Card Statements">
-        <option value="dbs">DBS - PDF</option>
-        <option value="citi">Citibank - PDF</option>
-        <option value="uob">UOB - XLS</option>
-        <option value="hsbc">HSBC - CSV</option>
-      </optgroup>
-      <optgroup id="account" label="Accounts">
-        <option value="dbs">DBS - CSV</option>
-        <option value="dbs-NAV">DBS NAV - CSV</option>
-        <option value="moomoo">MooMoo - PDF</option>
-        <option value="ibkr">IBKR - CSV</option>
-      </optgroup>
+    <Select<Statement, Category>
+      options={statementOptions}
+      placeholder="Select a statement format"
+      optionValue="value"
+      optionTextValue="label"
+      optionDisabled="disabled"
+      optionGroupChildren="options"
+      itemComponent={(props) => (
+        <SelectItem item={props.item}>{props.item.rawValue.label}</SelectItem>
+      )}
+      sectionComponent={(props) => (
+        <SelectSection>{props.section.rawValue.label}</SelectSection>
+      )}
+    >
+      <SelectTrigger>
+        <SelectValue<Statement>>
+          {(state) => {
+            props.onStatementChange(state.selectedOption());
+            return state.selectedOption().label;
+          }}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent />
     </Select>
   );
 };
