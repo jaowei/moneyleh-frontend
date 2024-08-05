@@ -21,9 +21,15 @@ import { Input } from "../Input";
 import { ColumnSort } from "./ColumnSort";
 import { ColumnResizer } from "./ColumnResizer";
 
+export type UpdateTableData = (
+  rowIndex: number,
+  columnId: string,
+  value: unknown
+) => void;
+
 declare module "@tanstack/solid-table" {
   interface TableMeta<TData extends RowData> {
-    updateData: (rowIndex: number, columnId: string, value: unknown) => void;
+    updateData: UpdateTableData;
   }
 }
 

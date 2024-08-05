@@ -16,7 +16,7 @@ const Account: DatabaseModel<AccountModel, SqlValue[]> = {
     createTable:
       "CREATE TABLE account (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, accountTypeId int, startingBalance int, financialEntityId INTEGER, FOREIGN KEY(financialEntityId) REFERENCES financialEntity(id), FOREIGN KEY(accountTypeId) REFERENCES accountType(id));",
     insertOne:
-      "INSERT INTO account(name, type, accountingRelation, financialEntityId, startingBalance) VALUES ($name, $accountTypeId, $financialEntityId, $startingBalance) RETURNING id;",
+      "INSERT INTO account(name, accountTypeId, financialEntityId, startingBalance) VALUES ($name, $accountTypeId, $financialEntityId, $startingBalance) RETURNING id;",
     selectAll: "SELECT * FROM account ORDER BY name ASC;",
   },
   initTable(db) {

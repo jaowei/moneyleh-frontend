@@ -4,6 +4,7 @@ import { SqlValue } from "sql.js";
 import { FinancialTransactionView } from "../../lib/storage";
 import { Select } from "../Select";
 import initDB from "../../lib/storage/sqljs";
+import { UpdateTableData } from "./DataGridLite";
 
 export const genericCell = (
   info: CellContext<
@@ -75,13 +76,32 @@ const renderOption = (value: SqlValue[], currentValue: string) => {
   );
 };
 
-const renderCellSelect = (options: SqlValue[][], currentValue: string) => {
+const renderCellSelect = (
+  options: SqlValue[][],
+  currentValue: string,
+  setValue: ((value: any) => void) | undefined
+) => {
   return (
-    <Select>
+    <Select
+      onChange={(e) => {
+        setValue?.(e.target.selectedOptions[0].label);
+      }}
+    >
       <option>Choose an option</option>
       <For each={options}>{(option) => renderOption(option, currentValue)}</For>
     </Select>
   );
+};
+
+const generateValueUpdater = (
+  fn: UpdateTableData | undefined,
+  rowIdx: number,
+  columnId: string
+) => {
+  if (!fn) {
+    return;
+  }
+  return (value: any) => fn(rowIdx, columnId, value);
 };
 
 export const selectTransactionMethodCell = (
@@ -91,7 +111,15 @@ export const selectTransactionMethodCell = (
 
   return (
     <div>
-      {renderCellSelect(staticInfo.transactionMethods, props.getValue())}
+      {renderCellSelect(
+        staticInfo.transactionMethods,
+        props.getValue(),
+        generateValueUpdater(
+          props.table.options.meta?.updateData,
+          props.row.index,
+          props.column.id
+        )
+      )}
     </div>
   );
 };
@@ -102,6 +130,16 @@ export const selectTransactionTypeCell = (
   const { staticInfo } = initDB;
 
   return (
-    <div>{renderCellSelect(staticInfo.transactionTypes, props.getValue())}</div>
+    <div>
+      {renderCellSelect(
+        staticInfo.transactionTypes,
+        props.getValue(),
+        generateValueUpdater(
+          props.table.options.meta?.updateData,
+          props.row.index,
+          props.column.id
+        )
+      )}
+    </div>
   );
 };
