@@ -2,10 +2,10 @@ import * as pdfjsLib from "pdfjs-dist";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
 
-import { Accessor, createSignal, JSX, Setter } from "solid-js";
+import { createSignal, JSX } from "solid-js";
+
 import {
   FileInput,
-  Button,
   DataGrid,
   StatementFormatSelector,
   Statement,
@@ -13,12 +13,10 @@ import {
 import { ParsedResult, RowData } from "../../types";
 import { EMPTY_PARSED_RESULT } from "../../constants";
 import toast from "solid-toast";
+import { Button } from "~/components/ui/button";
 
 interface LandingDemoProps {
   ref: any;
-  filePassword: Accessor<string | undefined>;
-  setFilePassword: Setter<string | undefined>;
-  setPasswordDialogIsOpen: Setter<boolean>;
 }
 
 const LandingDemo = (props: LandingDemoProps) => {
@@ -69,21 +67,15 @@ const LandingDemo = (props: LandingDemoProps) => {
         <div class="flex-none h-full w-1/4">
           <div class="flex flex-col gap-16 items-center">
             <div>
-              <div class="pb-2" text="cyan-900">
+              <div class="pb-2 text-cyan-900">
                 Select your statement format:
               </div>
               <StatementFormatSelector
                 onStatementChange={handleStatementChange}
               />
             </div>
-            <FileInput
-              dataSetter={setParsedResult}
-              docFormat={docFormat}
-              password={props.filePassword}
-              passwordDialogTriggerSetter={props.setPasswordDialogIsOpen}
-              passwordSetter={props.setFilePassword}
-            />
-            <div class="flex justify-between max-w-max mx-auto" p="b-4">
+            <FileInput dataSetter={setParsedResult} docFormat={docFormat} />
+            <div class="flex justify-between max-w-max mx-auto pb-4">
               <Button
                 onClick={onClickCopyAll}
                 disabled={!parsedResult()?.data.length}
@@ -105,11 +97,8 @@ const LandingDemo = (props: LandingDemoProps) => {
             </div>
             <div>
               <a href="/app/data-entry" class="no-underline">
-                <Button size="xl" animate="bounce">
-                  <div
-                    class="i-radix-icons:enter w-2rem h-2rem pr-2"
-                    text="white"
-                  />
+                <Button>
+                  <div class="i-radix-icons:enter w-2rem h-2rem pr-2 text-white" />
                   Try the app now!
                 </Button>
               </a>

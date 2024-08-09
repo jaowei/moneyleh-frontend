@@ -11,8 +11,7 @@ import {
   FileInput,
   FormField,
   PasswordDialog,
-  PrimaryButton,
-  Select,
+  Statement,
   StatementFormatSelector,
 } from "../../../components";
 import { EMPTY_PARSED_RESULT, StatementFormats } from "../../../constants";
@@ -20,6 +19,24 @@ import { ParsedResult } from "../../../types";
 import toast from "solid-toast";
 import { financialTransactionsMapper } from "../../../lib/storage/utils";
 import { AccountForm } from "./AccountForm";
+import { SqlValue } from "sql.js";
+import { DialogTriggerProps } from "@kobalte/core/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { Separator } from "~/components/ui/separator";
 export type formInfo = {
   name: string;
   type: string;
@@ -41,23 +58,10 @@ export const DataEntry = () => {
   });
   const [parsedResult, setParsedResult] =
     createSignal<ParsedResult<FinancialTransactionView>>(EMPTY_PARSED_RESULT);
-  const [filePassword, setFilePassword] = createSignal<string>();
-  const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
-  const [minimise, setMinimise] = createSignal(false);
+  const [openDialog, setOpenDialog] = createSignal(false);
 
-  let dialogRef!: HTMLDialogElement;
-
-  const handleDocSelector = (
-    event: Event & {
-      currentTarget: HTMLSelectElement;
-      target: HTMLSelectElement;
-    }
-  ) => {
-    const selectedIdx = event?.target?.selectedIndex;
-    const option = event?.target?.options[selectedIdx];
-    const optGroup = option.parentElement;
-    const category = optGroup?.getAttribute("id");
-    setFormInfo("docFormat", `${option.value}-${category}`);
+  const handleDocSelector = (statement: Statement) => {
+    setFormInfo("docFormat", statement.value);
   };
 
   const handleSubmitTransactions = () => {
@@ -74,7 +78,8 @@ export const DataEntry = () => {
           staticInfo,
           formInfo.accountId!
         );
-        FinancialTransaction?.insertMany?.(db, convertedData);
+        console.log(convertedData);
+        // FinancialTransaction?.insertMany?.(db, convertedData);
         setParsedResult(EMPTY_PARSED_RESULT);
         toast.success(
           `Successfully created added transactions to account ${formInfo.name}`,
@@ -92,151 +97,79 @@ export const DataEntry = () => {
   };
 
   const closeDialog = () => {
-    if (dialogRef.open) {
-      dialogRef.close();
+    if (openDialog()) {
+      setOpenDialog((prev) => !prev);
     }
   };
 
   return (
     <div class="flex flex-col w-full h-full items-center">
-      <Switch>
-        <Match when={minimise()}>
-          <div class="flex flex-row gap-2 pt-2">
-            <div>{formInfo.name || "No account selected"}</div>
-            <div>{formInfo.docFormat}</div>
-          </div>
-        </Match>
-        <Match when={!minimise()}>
-          <div
-            class={`flex gap-16 p-6 justify-center items-start`}
-            style={{
-              // eslint-disable-next-line solid/style-prop
-              "view-transition-name": "data-entry-header",
-            }}
-          >
-            <div class="flex flex-col gap-4">
-              <FormField formLabel="You are entering transactions for account:">
-                <Select
-                  onChange={(e) => {
-                    const accountId = e.target.value;
-                    const accountIdIdx = parseInt(accountId) - 1;
-                    if (accountId) {
-                      setFormInfo("accountId", accountId);
-                      setFormInfo(
-                        "type",
-                        staticInfo.accounts[accountIdIdx][3] as string
-                      );
-                      setFormInfo(
-                        "name",
-                        staticInfo.accounts[accountIdIdx][2] as string
-                      );
-                    } else {
-                      setFormInfo("accountId", "");
-                      setFormInfo("name", "");
-                    }
-                  }}
-                >
-                  <option value={""}>select existing account</option>
-                  <For each={staticInfo.accounts}>
-                    {(account) => {
-                      const name =
-                        typeof account[2] === "string" ? account[2] : "N/A";
-                      return (
-                        <option value={account[0] as string}>{name}</option>
-                      );
-                    }}
-                  </For>
-                </Select>
-              </FormField>
-              <PrimaryButton
-                class="inline-flex h-8 items-center justify-center rounded-xl hover:shadow-md"
-                onClick={() => {
-                  if (dialogRef.open) {
-                    dialogRef.close();
-                  } else {
-                    dialogRef.showModal();
-                  }
-                }}
-              >
-                Create new account
-              </PrimaryButton>
-            </div>
-            <FormField formLabel="Select Statement Format:">
-              <StatementFormatSelector handleChange={handleDocSelector} />
-            </FormField>
-            <div class="w-sm">
-              <FileInput
-                dataSetter={setParsedResult}
-                password={filePassword}
-                passwordDialogTriggerSetter={setPasswordDialogIsOpen}
-                passwordSetter={setFilePassword}
-                formInfo={formInfo}
-              />
-            </div>
-          </div>
-        </Match>
-      </Switch>
-      <div class="w-full flex flex-row items-center">
-        <div class="flex-1 bg-cyan-900 h-px ml-4" />
-        <button
-          class="flex-none rounded-full p-0 bg-cyan-900"
-          onClick={() => {
-            if (!document.startViewTransition) {
-              setMinimise((prev) => !prev);
-              return;
-            }
-            document.startViewTransition(() => {
-              setMinimise((prev) => !prev);
-            });
-          }}
-        >
-          <Switch>
-            <Match when={minimise()}>
-              <div class="i-radix-icons:caret-down w-1.2rem h-1.2rem bg-white" />
-            </Match>
-            <Match when={!minimise()}>
-              <div class="i-radix-icons:caret-up w-1.2rem h-1.2rem bg-white" />
-            </Match>
-          </Switch>
-        </button>
-        <div class="flex-1 bg-cyan-900 h-px mr-4" />
-      </div>
-      <div class="flex flex-col gap-6 p-4 items-center">
-        <DataGridLite rowData={parsedResult} />
-      </div>
-      <div class="flex flex-col gap-6 p-6 items-center">
-        <PrimaryButton
-          onClick={handleSubmitTransactions}
-          disabled={!(parsedResult().data.length && formInfo.accountId)}
-        >
-          Submit transactions
-        </PrimaryButton>
-      </div>
-      <PasswordDialog
-        passwordDialogTrigger={passwordDialogIsOpen}
-        passwordDialogTriggerSetter={setPasswordDialogIsOpen}
-        passwordSetter={setFilePassword}
-      />
-      <dialog ref={dialogRef} class="rounded-lg p-6" border="none">
-        <div class="flex flex-col gap-6">
-          <button
-            class="flex rounded-full bg-transparent items-center w-fit h-fit self-end hover:bg-gray-1"
-            border="none"
-            onClick={() => {
-              dialogRef.close();
-            }}
-          >
-            <div class="i-radix-icons:cross-2 w-30px h-30px" />
-          </button>
-          <Show when={!database.loading} fallback={<div>Loading....</div>}>
+      <div class="flex gap-16 pt-4 pb-2 px-4 justify-center items-start w-full bg-white">
+        <Dialog open={openDialog()} onOpenChange={setOpenDialog}>
+          <DialogTrigger
+            as={(props: DialogTriggerProps) => (
+              <Button class="w-full" {...props}>
+                Create New Account
+              </Button>
+            )}
+          />
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create new account</DialogTitle>
+            </DialogHeader>
             <AccountForm
               formInfo={formInfo}
               setFormInfo={setFormInfo}
               closeForm={closeDialog}
             />
-          </Show>
-        </div>
-      </dialog>
+          </DialogContent>
+        </Dialog>
+        <Select
+          class="w-full"
+          options={staticInfo.accounts.map((account) => {
+            return {
+              label: typeof account[2] === "string" ? account[2] : "N/A",
+              value: account,
+            };
+          })}
+          optionValue="value"
+          optionTextValue="label"
+          placeholder="select existing account"
+          itemComponent={(props) => (
+            <SelectItem item={props.item}>
+              {props.item.rawValue.label}
+            </SelectItem>
+          )}
+        >
+          <SelectTrigger>
+            <SelectValue<{ label: string; value: SqlValue[] }>>
+              {(state) => {
+                const account = state.selectedOption().value;
+                const label = state.selectedOption().label;
+                setFormInfo("accountId", account[0] as string);
+                setFormInfo("type", account[3] as string);
+                setFormInfo("name", label);
+                return label;
+              }}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
+        <StatementFormatSelector onStatementChange={handleDocSelector} />
+        <FileInput dataSetter={setParsedResult} formInfo={formInfo} />
+      </div>
+      <Separator />
+      <div class="flex flex-col gap-6 p-2 items-center w-full">
+        <DataGridLite rowData={parsedResult} />
+      </div>
+      <div class="flex flex-col gap-6 p-6 items-center">
+        <Button
+          onClick={handleSubmitTransactions}
+          disabled={!(parsedResult().data.length && formInfo.accountId)}
+        >
+          Submit transactions
+        </Button>
+      </div>
     </div>
   );
 };

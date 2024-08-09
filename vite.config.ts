@@ -1,10 +1,10 @@
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
-import UnoCSS from "unocss/vite";
 import { visualizer } from "rollup-plugin-visualizer";
+import path from "path";
 
 export default defineConfig({
-  plugins: [UnoCSS({ configFile: "./uno.config.ts" }), solid(), visualizer()],
+  plugins: [solid(), visualizer()],
   build: {
     target: "esnext",
   },
@@ -12,9 +12,13 @@ export default defineConfig({
     esbuildOptions: {
       target: "esnext",
     },
-    exclude: ["@evolu/common-web"],
   },
   worker: {
     format: "es",
+  },
+  resolve: {
+    alias: {
+      "~": path.resolve(__dirname, "./src"),
+    },
   },
 });

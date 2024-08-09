@@ -56,14 +56,10 @@ export const parsePDF = async (
 
 export const PDFFileParser = {
   async decodeFile(file: File, password?: string) {
-    try {
-      const fileUrl = URL.createObjectURL(file);
-      const loadingTask = pdfjsLib.getDocument({ url: fileUrl, password });
-      const doc = await loadingTask.promise;
-      return await this.extractContent(doc);
-    } catch (error) {
-      toast.error("Error parsing file...");
-    }
+    const fileUrl = URL.createObjectURL(file);
+    const loadingTask = pdfjsLib.getDocument({ url: fileUrl, password });
+    const doc = await loadingTask.promise;
+    return await this.extractContent(doc);
   },
   async extractContent(doc: pdfjsLib.PDFDocumentProxy, sort = false) {
     const result = [];
@@ -87,7 +83,6 @@ export const PDFFileParser = {
     try {
       return parser(data);
     } catch (error) {
-      toast.error(INVALID_FORMAT_ERROR);
       return null;
     }
   },

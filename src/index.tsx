@@ -2,8 +2,6 @@
 import { render } from "solid-js/web";
 
 import "./index.css";
-import "virtual:uno.css";
-
 import { Router, Route } from "@solidjs/router";
 import { Toaster } from "solid-toast";
 import { lazy } from "solid-js";

@@ -18,8 +18,7 @@ export const ColumnResizer = (props: ColumnResizerProps) => {
   > = (e) => props.onResize()?.(e);
   return (
     <div
-      class="w-1 h-6 bg-gray-300 rounded-xl z-50"
-      cursor={props.isResizing ? "grabbing" : "grab"}
+      class={`w-1 h-6 bg-gray-300 rounded-xl z-50 ${props.isResizing ? "cursor-grabbing" : "cursor-grab"}`}
       style={{
         transform:
           props.mode === "onEnd" && props.isResizing

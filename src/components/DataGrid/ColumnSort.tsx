@@ -8,7 +8,7 @@ export interface ColumnSortProps {
 
 export const ColumnSort = (props: ColumnSortProps) => {
   return (
-    <div cursor="pointer" onClick={(e) => props.onSort?.()?.(e)}>
+    <div class="cursor-pointer" onClick={(e) => props.onSort?.()?.(e)}>
       <Switch fallback={<div class="i-radix-icons:caret-sort w-1em h-1em" />}>
         <Match when={props.sortDirection === "asc"}>
           <div class="i-radix-icons:caret-up w-1em h-1em" />

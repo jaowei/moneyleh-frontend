@@ -12,6 +12,7 @@ export const mapToFinancialTransaction = ({
   transactionMethod,
   transactionType,
   account,
+  transactionTag,
 }: FinancialTransactionView) => ({
   $transactionDate: transactionDate,
   $description: description,
@@ -20,6 +21,7 @@ export const mapToFinancialTransaction = ({
   $transactionMethodId: transactionMethod,
   $transactionTypeId: transactionType,
   $accountId: account,
+  $transactionTagIds: transactionTag,
 });
 
 export const financialTransactionsMapper = (

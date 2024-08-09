@@ -10,7 +10,7 @@ export type FinancialTransactionView = {
   transactionMethod: string;
   transactionType?: string;
   account?: string;
-  transactionTagIds?: Array<number>;
+  transactionTag?: Array<number>;
 };
 
 export type CreateFinancialTransactionDto = {
@@ -36,7 +36,7 @@ const FinancialTransaction: DatabaseModel<
     insertOne:
       "INSERT INTO financialTransaction(transactionDate, description, amount, currency, transactionMethodId, transactionTypeId, accountId, transactionTagIds) VALUES ($transactionDate, $description, $amount, $currency, $transactionMethodId, $transactionTypeId, $accountId, $transactionTagIds);",
     selectAll: `SELECT transactionDate, description, amount, currency, transactionMethod.name AS transactionMethod, transactionType.name AS transactionType,  
-    account.name as account, transactionTagIds
+    account.name as account, transactionTagIds as transactionTag
     from financialTransaction 
     LEFT JOIN transactionMethod ON financialTransaction.transactionMethodId=transactionMethod.id
     LEFT JOIN transactionType ON financialTransaction.transactionTypeId=transactionType.id

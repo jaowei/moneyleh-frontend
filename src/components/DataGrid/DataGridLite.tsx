@@ -151,7 +151,7 @@ export const DataGridLite = (props: DataGridLiteProps) => {
           <tbody class="text-gray-500 text-sm">
             <For each={table.getRowModel().rows}>
               {(row) => (
-                <tr class="snap-start" border="b t-0 l-0 r-0 solid">
+                <tr class="snap-start border-b border-t-0 border-l-0 border-r-0 border-solid">
                   <For each={row.getVisibleCells()}>
                     {(cell) => (
                       <td

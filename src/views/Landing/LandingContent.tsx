@@ -5,7 +5,7 @@ import {
   BuildingLogo,
   GearLogo,
 } from "../../components";
-import { Button } from "../../components/Button";
+import { Button } from "~/components/ui/button";
 
 const MainLogo = lazy(() => import("../../components/MainLogo"));
 
@@ -16,19 +16,16 @@ export const LandingContent: Component<{ clickHandler: () => void }> = (
     <section>
       <div class="flex flex-col items-center">
         <div class="flex flex-col items-center max-w-sm 2xl:max-w-2xl 3xl:max-w-xl ">
-          <div
-            class="font-black pb-4"
-            text="slate-800 3xl 2xl:5xl 3xl:7xl center"
-          >
+          <div class="font-black pb-4 text-slate-800 text-3xl center">
             Simplify your personal finances
           </div>
           <MainLogo />
-          <div text="md 2xl:lg 3xl:xl center">
+          <div class="text-md 2xl:text-lg 3xl:text-xl text-center">
             Simple tool that converts bank, credit card statements and more into
             a standardised format!
           </div>
         </div>
-        <div class="grid grid-cols-3 gap-24" p="t-10">
+        <div class="grid grid-cols-3 gap-24 pt-10">
           <div>
             <LandingContentLogoMessage
               icon={<FileLogo />}
@@ -49,13 +46,7 @@ export const LandingContent: Component<{ clickHandler: () => void }> = (
           </div>
         </div>
         <div class="mt-10">
-          <Button
-            size="xl"
-            animate="bounce"
-            onClick={() => props.clickHandler()}
-          >
-            Try it out
-          </Button>
+          <Button onClick={() => props.clickHandler()}>Try it out</Button>
         </div>
       </div>
     </section>

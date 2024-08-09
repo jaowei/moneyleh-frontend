@@ -3,13 +3,10 @@ import { MoneyLehLogo } from "../../components";
 export const LandingHeader = () => {
   return (
     <header class="pb-4">
-      <div class="flex justify-between" p="y-2 x-4">
+      <div class="flex justify-between py-2 px-4">
         <MoneyLehLogo href="" textSize="2xl" iconSize="2rem" />
         <a href="mailto: jaowei.8@gmail.com">
-          <div
-            class="i-radix-icons:envelope-closed w-2rem h-2rem"
-            style={{ color: "#164e63" }}
-          />
+          <span class="iconify radix-icons--envelope-closed text-2xl fill-red" />
         </a>
       </div>
     </header>

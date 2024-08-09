@@ -12,11 +12,7 @@ const NavItem: ParentComponent<NavItemProps> = (props) => {
   return (
     <a href={props.href} class="no-underline">
       <div
-        class={`flex items-center gap-2 rounded-lg`}
-        text="cyan-900 lg"
-        font="400"
-        bg={props.isSelected ? "slate-3" : "none"}
-        p={!props.isMinimised ? "y-2 x-4" : "x-1 y-1"}
+        class={`flex items-center gap-2 rounded-lg text-cyan-900 text-lg font-400 ${props.isSelected ? "bg-slate-3" : "bg-none"} ${!props.isMinimised ? "y-2 x-4" : "x-1 y-1"}`}
       >
         {props.children}
       </div>
@@ -57,7 +53,7 @@ export const Nav = (props: NavProps) => {
           isMinimised={props.isMinimised}
         >
           <div
-            class="i-radix-icons:bar-chart w-1.2rem h-1.2rem"
+            class="iconify radix-icons--bar-chart"
             style={{ color: "#164e63" }}
           />
           {!props.isMinimised && "Dashboard"}
@@ -68,7 +64,7 @@ export const Nav = (props: NavProps) => {
           isMinimised={props.isMinimised}
         >
           <div
-            class="i-radix-icons:avatar w-1.2rem h-1.2rem"
+            class="iconify radix-icons--avatar"
             style={{ color: "#164e63" }}
           />
 
@@ -80,7 +76,7 @@ export const Nav = (props: NavProps) => {
           isMinimised={props.isMinimised}
         >
           <div
-            class="i-radix-icons:table w-1.2rem h-1.2rem"
+            class="iconify radix-icons--table"
             style={{ color: "#164e63" }}
           />
           {!props.isMinimised && "Transactions"}
@@ -91,7 +87,7 @@ export const Nav = (props: NavProps) => {
           isMinimised={props.isMinimised}
         >
           <div
-            class="i-radix-icons:upload w-1.2rem h-1.2rem"
+            class="iconify radix-icons--upload"
             style={{ color: "#164e63" }}
           />
 

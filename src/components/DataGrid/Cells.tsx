@@ -2,9 +2,9 @@ import { CellContext } from "@tanstack/solid-table";
 import { For, createEffect, createSignal } from "solid-js";
 import { SqlValue } from "sql.js";
 import { FinancialTransactionView } from "../../lib/storage";
-import { Select } from "../Select";
 import initDB from "../../lib/storage/sqljs";
 import { UpdateTableData } from "./DataGridLite";
+import { Select } from "../ui/select";
 
 export const genericCell = (
   info: CellContext<

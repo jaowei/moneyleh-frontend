@@ -21,10 +21,16 @@ const App: ParentComponent = (props) => {
             >
               <Switch>
                 <Match when={navMinimised()}>
-                  <div class="i-radix-icons:double-arrow-right w-1.2rem h-1.2rem" />
+                  <span
+                    class="icon-[radix-icons--double-arrow-right]"
+                    style={{ width: "1.2rem", height: "1.2rem" }}
+                  />
                 </Match>
                 <Match when={!navMinimised()}>
-                  <div class="i-radix-icons:double-arrow-left w-1.2rem h-1.2rem" />
+                  <span
+                    class="icon-[radix-icons--double-arrow-left]"
+                    style={{ width: "1.2rem", height: "1.2rem" }}
+                  />
                 </Match>
               </Switch>
             </button>

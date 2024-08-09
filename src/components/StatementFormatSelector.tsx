@@ -3,10 +3,9 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectSection,
   SelectTrigger,
   SelectValue,
-} from "./Select";
+} from "./ui/select";
 
 interface StatementFormatSelectorProps {
   onStatementChange: (selected: Statement) => void;
@@ -76,6 +75,7 @@ export const StatementFormatSelector = (
 ) => {
   return (
     <Select<Statement, Category>
+      class="w-full"
       options={statementOptions}
       placeholder="Select a statement format"
       optionValue="value"
@@ -85,9 +85,7 @@ export const StatementFormatSelector = (
       itemComponent={(props) => (
         <SelectItem item={props.item}>{props.item.rawValue.label}</SelectItem>
       )}
-      sectionComponent={(props) => (
-        <SelectSection>{props.section.rawValue.label}</SelectSection>
-      )}
+      sectionComponent={(props) => <div>{props.section.rawValue.label}</div>}
     >
       <SelectTrigger>
         <SelectValue<Statement>>

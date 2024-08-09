@@ -11,6 +11,7 @@ import {
   TransactionType,
 } from "./sql";
 import { createStore } from "solid-js/store";
+import { TransactionTag, TransactionTagModel } from "./sql/TransactionTags";
 
 const initialiseOpfsFile = async () => {
   const opfsRoot = await navigator.storage.getDirectory();
@@ -40,6 +41,7 @@ const initTables = (db: Database) => {
   TransactionMethod.initTable(db);
   TransactionType.initTable(db);
   FinancialTransaction.initTable(db);
+  TransactionTag.initTable(db);
 };
 
 const mountDB = async () => {
@@ -69,6 +71,7 @@ export type staticInfo = {
   transactionMethods: SqlValue[][];
   transactionTypes: SqlValue[][];
   accountTypes: SqlValue[][];
+  transactionTags: TransactionTagModel[];
 };
 
 const createLocalDB = () => {
@@ -80,6 +83,7 @@ const createLocalDB = () => {
     transactionMethods: [],
     transactionTypes: [],
     accountTypes: [],
+    transactionTags: [],
   });
 
   createEffect(() => {
@@ -93,6 +97,7 @@ const createLocalDB = () => {
       );
       setStaticInfo("transactionTypes", TransactionType.selectAll?.(db) ?? []);
       setStaticInfo("accountTypes", AccountType.selectAll?.(db) ?? []);
+      setStaticInfo("transactionTags", TransactionTag.selectAll(db));
     }
   });
 

@@ -93,10 +93,7 @@ export const Accounts = () => {
                 <div>
                   <Show when={!header.isPlaceholder}>
                     <div
-                      class="flex flex-row items-center gap-6 w-full justify-between"
-                      cursor={
-                        header.column.getCanSort() ? "pointer" : undefined
-                      }
+                      class={`flex flex-row items-center gap-6 w-full justify-between ${header.column.getCanSort() ? "pointer" : ""}`}
                     >
                       <div
                         class="flex flex-row items-center gap-2"
