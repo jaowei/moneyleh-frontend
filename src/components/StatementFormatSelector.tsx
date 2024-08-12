@@ -75,7 +75,7 @@ export const StatementFormatSelector = (
 ) => {
   return (
     <Select<Statement, Category>
-      class="w-full"
+      class="w-full bg-white"
       options={statementOptions}
       placeholder="Select a statement format"
       optionValue="value"

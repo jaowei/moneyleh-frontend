@@ -12,7 +12,7 @@ const NavItem: ParentComponent<NavItemProps> = (props) => {
   return (
     <a href={props.href} class="no-underline">
       <div
-        class={`flex items-center gap-2 rounded-lg text-cyan-900 text-lg font-400 ${props.isSelected ? "bg-slate-3" : "bg-none"} ${!props.isMinimised ? "y-2 x-4" : "x-1 y-1"}`}
+        class={`flex items-center gap-2 rounded-lg text-cyan-900 text-lg font-400 ${props.isSelected ? "bg-gray-200" : "bg-none"} ${!props.isMinimised ? "y-2 x-4" : "x-1 y-1"}`}
       >
         {props.children}
       </div>

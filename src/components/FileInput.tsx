@@ -115,15 +115,16 @@ export function FileInput<T>(props: FileInputProps<T>) {
         setPasswordDialogIsOpen(true);
         setSavedFile(file);
         setFileName(file?.name ?? "");
-        if (event?.target?.value) {
-          event.target.value = "";
-        }
         return;
       }
+      console.log(error);
       toast.error(FILE_PROCESSING_ERROR);
       setSavedFile();
       setFilePassword();
       setFileName(NO_FILE_SELECTED_MSG);
+      if (event?.target?.value) {
+        event.target.value = "";
+      }
     }
   };
 
@@ -183,9 +184,9 @@ export function FileInput<T>(props: FileInputProps<T>) {
             <label for="file">Click to select</label>
           </Button>
         </div>
-        {/* <div class="pt-4 flex justify-center">
+        <div class="pt-4 flex justify-center">
           <div class="font-semibold font-truncate">{fileName()}</div>
-        </div> */}
+        </div>
       </div>
       <div class="text-xs text-red-500 my-1">
         *Supported File Formats: {ACCEPTED_FILE_TYPES}

@@ -4,7 +4,20 @@ import { SqlValue } from "sql.js";
 import { FinancialTransactionView } from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
 import { UpdateTableData } from "./DataGridLite";
-import { Select } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { TextField, TextFieldInput } from "../ui/text-field";
+import {
+  NumberField,
+  NumberFieldDecrementTrigger,
+  NumberFieldIncrementTrigger,
+  NumberFieldInput,
+} from "../ui/number-field";
 
 export const genericCell = (
   info: CellContext<
@@ -30,22 +43,14 @@ function editableState<T>(
   return { value, setValue, onBlur };
 }
 
-const editableInputStyles =
-  "bg-transparent text-gray-500 border border-transparent py-2.5 focus:outline-0 focus:bg-gray-1 focus:rounded-lg w-full";
-
 export const editableStringInputCell = (
   props: CellContext<Partial<FinancialTransactionView>, string | undefined>
 ) => {
   const { value, setValue, onBlur } = editableState<string>(props);
   return (
-    <div>
-      <input
-        class={editableInputStyles}
-        value={value()}
-        onBlur={onBlur}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    </div>
+    <TextField value={value()} onBlur={onBlur} onChange={(e) => setValue(e)}>
+      <TextFieldInput type="text" />
+    </TextField>
   );
 };
 
@@ -54,25 +59,21 @@ export const editableNumberInputCell = (
 ) => {
   const { value, setValue, onBlur } = editableState<number>(props);
   return (
-    <div>
-      <input
-        class={editableInputStyles}
-        type="number"
-        step="0.01"
-        value={value()}
-        onBlur={onBlur}
-        onChange={(e) => setValue(parseInt(e.target.value))}
-      />
-    </div>
-  );
-};
-
-const renderOption = (value: SqlValue[], currentValue: string) => {
-  const methodName = typeof value[2] === "string" ? value[2] : "N/A";
-  return (
-    <option value={methodName} selected={currentValue === methodName}>
-      {methodName}
-    </option>
+    <NumberField
+      value={value()}
+      formatOptions={{
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 2,
+      }}
+      onBlur={onBlur}
+      onChange={(e) => setValue(parseInt(e, 10))}
+    >
+      <div class="relative">
+        <NumberFieldInput />
+        <NumberFieldIncrementTrigger />
+        <NumberFieldDecrementTrigger />
+      </div>
+    </NumberField>
   );
 };
 
@@ -83,12 +84,25 @@ const renderCellSelect = (
 ) => {
   return (
     <Select
-      onChange={(e) => {
-        setValue?.(e.target.selectedOptions[0].label);
-      }}
+      class="w-full"
+      value={currentValue}
+      options={options.map((opt) => {
+        return typeof opt[2] === "string" ? opt[2] : "N/A";
+      })}
+      placeholder="---"
+      itemComponent={(props) => (
+        <SelectItem item={props.item}>{props.item.rawValue}</SelectItem>
+      )}
     >
-      <option>Choose an option</option>
-      <For each={options}>{(option) => renderOption(option, currentValue)}</For>
+      <SelectTrigger>
+        <SelectValue<string>>
+          {(state) => {
+            setValue?.(state.selectedOption());
+            return state.selectedOption();
+          }}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent />
     </Select>
   );
 };

@@ -9,8 +9,6 @@ import initDB from "../../../lib/storage/sqljs";
 import {
   DataGridLite,
   FileInput,
-  FormField,
-  PasswordDialog,
   Statement,
   StatementFormatSelector,
 } from "../../../components";
@@ -36,7 +34,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { Separator } from "~/components/ui/separator";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "~/components/ui/collapsible";
+
 export type formInfo = {
   name: string;
   type: string;
@@ -53,7 +56,7 @@ export const DataEntry = () => {
     type: AccountTypes.cash,
     financialEntityId: 1,
     startingBalance: 0,
-    docFormat: StatementFormats.DBS_CARD,
+    docFormat: "",
     accountId: "",
   });
   const [parsedResult, setParsedResult] =
@@ -61,6 +64,7 @@ export const DataEntry = () => {
   const [openDialog, setOpenDialog] = createSignal(false);
 
   const handleDocSelector = (statement: Statement) => {
+    console.log(statement);
     setFormInfo("docFormat", statement.value);
   };
 
@@ -104,72 +108,82 @@ export const DataEntry = () => {
 
   return (
     <div class="flex flex-col w-full h-full items-center">
-      <div class="flex gap-16 pt-4 pb-2 px-4 justify-center items-start w-full bg-white">
-        <Dialog open={openDialog()} onOpenChange={setOpenDialog}>
-          <DialogTrigger
-            as={(props: DialogTriggerProps) => (
-              <Button class="w-full" {...props}>
-                Create New Account
-              </Button>
-            )}
-          />
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create new account</DialogTitle>
-            </DialogHeader>
-            <AccountForm
-              formInfo={formInfo}
-              setFormInfo={setFormInfo}
-              closeForm={closeDialog}
-            />
-          </DialogContent>
-        </Dialog>
-        <Select
-          class="w-full"
-          options={staticInfo.accounts.map((account) => {
-            return {
-              label: typeof account[2] === "string" ? account[2] : "N/A",
-              value: account,
-            };
-          })}
-          optionValue="value"
-          optionTextValue="label"
-          placeholder="select existing account"
-          itemComponent={(props) => (
-            <SelectItem item={props.item}>
-              {props.item.rawValue.label}
-            </SelectItem>
-          )}
-        >
-          <SelectTrigger>
-            <SelectValue<{ label: string; value: SqlValue[] }>>
-              {(state) => {
-                const account = state.selectedOption().value;
-                const label = state.selectedOption().label;
-                setFormInfo("accountId", account[0] as string);
-                setFormInfo("type", account[3] as string);
-                setFormInfo("name", label);
-                return label;
-              }}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent />
-        </Select>
-        <StatementFormatSelector onStatementChange={handleDocSelector} />
-        <FileInput dataSetter={setParsedResult} formInfo={formInfo} />
-      </div>
-      <Separator />
+      <Collapsible class="w-full" defaultOpen={true}>
+        <CollapsibleContent>
+          <div class="bg-gray-50 flex flex-col items-center">
+            <div class="flex gap-16 pt-4 pb-2 px-4 justify-center items-start w-full ">
+              <Dialog open={openDialog()} onOpenChange={setOpenDialog}>
+                <DialogTrigger
+                  as={(props: DialogTriggerProps) => (
+                    <Button class="w-full" {...props}>
+                      Create New Account
+                    </Button>
+                  )}
+                />
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create new account</DialogTitle>
+                  </DialogHeader>
+                  <AccountForm
+                    formInfo={formInfo}
+                    setFormInfo={setFormInfo}
+                    closeForm={closeDialog}
+                  />
+                </DialogContent>
+              </Dialog>
+              <Select
+                class="w-full bg-white"
+                options={staticInfo.accounts.map((account) => {
+                  return {
+                    label: typeof account[2] === "string" ? account[2] : "N/A",
+                    value: account,
+                  };
+                })}
+                disabled={!staticInfo.accounts.length}
+                optionValue="value"
+                optionTextValue="label"
+                placeholder="select existing account"
+                itemComponent={(props) => (
+                  <SelectItem item={props.item}>
+                    {props.item.rawValue.label}
+                  </SelectItem>
+                )}
+              >
+                <SelectTrigger>
+                  <SelectValue<{ label: string; value: SqlValue[] }>>
+                    {(state) => {
+                      const account = state.selectedOption().value;
+                      const label = state.selectedOption().label;
+                      setFormInfo("accountId", account[0] as string);
+                      setFormInfo("type", account[3] as string);
+                      setFormInfo("name", label);
+                      return label;
+                    }}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent />
+              </Select>
+              <StatementFormatSelector onStatementChange={handleDocSelector} />
+              <FileInput dataSetter={setParsedResult} formInfo={formInfo} />
+            </div>
+            <Button
+              onClick={handleSubmitTransactions}
+              disabled={!(parsedResult().data.length && formInfo.accountId)}
+            >
+              Submit transactions
+            </Button>
+          </div>
+        </CollapsibleContent>
+        <CollapsibleTrigger class="w-full">
+          <div class="bg-gray-100">
+            <span class="iconify radix-icons--chevron-up" />
+          </div>
+        </CollapsibleTrigger>
+      </Collapsible>
       <div class="flex flex-col gap-6 p-2 items-center w-full">
         <DataGridLite rowData={parsedResult} />
       </div>
-      <div class="flex flex-col gap-6 p-6 items-center">
-        <Button
-          onClick={handleSubmitTransactions}
-          disabled={!(parsedResult().data.length && formInfo.accountId)}
-        >
-          Submit transactions
-        </Button>
-      </div>
+      <div class="flex flex-col gap-6 p-6 items-center" />
     </div>
   );
 };
