@@ -163,7 +163,7 @@ export function FileInput<T>(props: FileInputProps<T>) {
   };
 
   return (
-    <div class="flex flex-col w-full">
+    <div class="flex flex-col flex-grow w-full">
       <input
         id="file"
         type="file"

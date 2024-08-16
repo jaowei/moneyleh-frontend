@@ -6,7 +6,7 @@ import { cn } from "~/lib/utils";
 const Table: Component<ComponentProps<"table">> = (props) => {
   const [local, others] = splitProps(props, ["class"]);
   return (
-    <div class="relative w-full overflow-auto max-h-[90vh]">
+    <div class="relative w-full overflow-auto h-full">
       <table
         class={cn("w-full caption-bottom text-sm relative", local.class)}
         {...others}
@@ -55,7 +55,7 @@ const TableHead: Component<ComponentProps<"th">> = (props) => {
   return (
     <th
       class={cn(
-        "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 sticky top-0 w-auto bg-white",
+        "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 sticky top-0 w-auto bg-white z-40",
         local.class
       )}
       {...others}

@@ -101,33 +101,27 @@ export const DataGridLite = (props: DataGridLiteProps) => {
   });
 
   return (
-    <div class="flex flex-col gap-2">
-      <div class="w-1/5 sticky top-0">
+    <div class="flex flex-col gap-2 h-full w-full">
+      {/* <div class="w-1/5 sticky top-0">
         <Input
           type="text"
           value={globalFilter() ?? ""}
           onInput={(e) => debounceSetGlobalFilter(e.currentTarget.value)}
           placeholder="Search all columns"
         />
-      </div>
-      {/* <div class="overflow-y-auto max-h-screen"> */}
-      {/* <table class="table-auto border-collapse border-gray-300 bg-white w-full"> */}
+      </div> */}
       <Table>
-        {/* <thead class="bg-gray-100"> */}
         <TableHeader>
           <For each={table.getHeaderGroups()}>
             {(headerGroup) => (
-              // <tr>
               <TableRow>
                 <For each={headerGroup.headers}>
                   {(header) => (
-                    // <th
-                    //   class="w-auto py-2 px-4 text-gray-600 font-semibold sticky top-0 bg-gray-1"
-                    //   style={{
-                    //     "min-width": `${header.column.getSize()}px`,
-                    //   }}
-                    // >
-                    <TableHead>
+                    <TableHead
+                      style={{
+                        "min-width": `${header.column.getSize()}px`,
+                      }}
+                    >
                       <Show when={!header.isPlaceholder}>
                         <div class="flex flex-row items-center gap-6 w-full justify-between">
                           <div class="flex flex-row items-center">
@@ -154,48 +148,36 @@ export const DataGridLite = (props: DataGridLiteProps) => {
                           />
                         </div>
                       </Show>
-                      {/* </th> */}
                     </TableHead>
                   )}
                 </For>
-                {/* </tr> */}
               </TableRow>
             )}
           </For>
-          {/* </thead> */}
         </TableHeader>
-        {/* <tbody class="text-gray-500 text-sm"> */}
         <TableBody>
           <For each={table.getRowModel().rows}>
             {(row) => (
-              // <tr class="snap-start border-b border-t-0 border-l-0 border-r-0 border-solid">
               <TableRow>
                 <For each={row.getVisibleCells()}>
                   {(cell) => (
-                    // <td
-                    //   class="py-2 px-4 w-auto"
-                    //   style={{
-                    //     "min-width": `${cell.column.getSize()}px`,
-                    //   }}
-                    // >
-                    <TableCell>
+                    <TableCell
+                      style={{
+                        "min-width": `${cell.column.getSize()}px`,
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                      {/* </td> */}
                     </TableCell>
                   )}
                 </For>
-                {/* </tr> */}
               </TableRow>
             )}
           </For>
-          {/* </tbody> */}
         </TableBody>
-        {/* </table> */}
       </Table>
-      {/* </div> */}
     </div>
   );
 };

@@ -77,16 +77,18 @@ export const editableNumberInputCell = (
   );
 };
 
-const renderCellSelect = (
-  options: SqlValue[][],
-  currentValue: string,
-  setValue: ((value: any) => void) | undefined
-) => {
+interface CellSelectProps {
+  options: SqlValue[][];
+  currentValue: string;
+  setValue: ((value: any) => void) | undefined;
+}
+
+const CellSelect = (props: CellSelectProps) => {
   return (
     <Select
       class="w-full"
-      value={currentValue}
-      options={options.map((opt) => {
+      value={props.currentValue}
+      options={props.options.map((opt) => {
         return typeof opt[2] === "string" ? opt[2] : "N/A";
       })}
       placeholder="---"
@@ -97,7 +99,7 @@ const renderCellSelect = (
       <SelectTrigger>
         <SelectValue<string>>
           {(state) => {
-            setValue?.(state.selectedOption());
+            props.setValue?.(state.selectedOption());
             return state.selectedOption();
           }}
         </SelectValue>
@@ -124,17 +126,15 @@ export const selectTransactionMethodCell = (
   const { staticInfo } = initDB;
 
   return (
-    <div>
-      {renderCellSelect(
-        staticInfo.transactionMethods,
-        props.getValue(),
-        generateValueUpdater(
-          props.table.options.meta?.updateData,
-          props.row.index,
-          props.column.id
-        )
+    <CellSelect
+      options={staticInfo.transactionMethods}
+      currentValue={props.getValue()}
+      setValue={generateValueUpdater(
+        props.table.options.meta?.updateData,
+        props.row.index,
+        props.column.id
       )}
-    </div>
+    />
   );
 };
 
@@ -144,16 +144,14 @@ export const selectTransactionTypeCell = (
   const { staticInfo } = initDB;
 
   return (
-    <div>
-      {renderCellSelect(
-        staticInfo.transactionTypes,
-        props.getValue(),
-        generateValueUpdater(
-          props.table.options.meta?.updateData,
-          props.row.index,
-          props.column.id
-        )
+    <CellSelect
+      options={staticInfo.transactionTypes}
+      currentValue={props.getValue()}
+      setValue={generateValueUpdater(
+        props.table.options.meta?.updateData,
+        props.row.index,
+        props.column.id
       )}
-    </div>
+    />
   );
 };

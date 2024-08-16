@@ -39,7 +39,7 @@ const App: ParentComponent = (props) => {
           </div>
         </div>
       </div>
-      <div class="w-full overflow-x-auto">{props.children}</div>
+      <div class="w-full">{props.children}</div>
     </main>
   );
 };

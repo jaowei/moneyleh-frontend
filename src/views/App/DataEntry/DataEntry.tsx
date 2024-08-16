@@ -107,11 +107,11 @@ export const DataEntry = () => {
   };
 
   return (
-    <div class="flex flex-col w-full h-full items-center">
+    <div class="flex flex-col w-full h-screen items-center">
       <Collapsible class="w-full" defaultOpen={true}>
         <CollapsibleContent>
           <div class="bg-gray-50 flex flex-col items-center">
-            <div class="flex gap-16 pt-4 pb-2 px-4 justify-center items-start w-full ">
+            <div class="flex gap-10 pt-4 pb-2 px-4 justify-center items-start w-full ">
               <Dialog open={openDialog()} onOpenChange={setOpenDialog}>
                 <DialogTrigger
                   as={(props: DialogTriggerProps) => (
@@ -165,13 +165,13 @@ export const DataEntry = () => {
               </Select>
               <StatementFormatSelector onStatementChange={handleDocSelector} />
               <FileInput dataSetter={setParsedResult} formInfo={formInfo} />
+              <Button
+                onClick={handleSubmitTransactions}
+                disabled={!(parsedResult().data.length && formInfo.accountId)}
+              >
+                Submit transactions
+              </Button>
             </div>
-            <Button
-              onClick={handleSubmitTransactions}
-              disabled={!(parsedResult().data.length && formInfo.accountId)}
-            >
-              Submit transactions
-            </Button>
           </div>
         </CollapsibleContent>
         <CollapsibleTrigger class="w-full">
@@ -180,10 +180,7 @@ export const DataEntry = () => {
           </div>
         </CollapsibleTrigger>
       </Collapsible>
-      <div class="flex flex-col gap-6 p-2 items-center w-full">
-        <DataGridLite rowData={parsedResult} />
-      </div>
-      <div class="flex flex-col gap-6 p-6 items-center" />
+      <DataGridLite rowData={parsedResult} />
     </div>
   );
 };
