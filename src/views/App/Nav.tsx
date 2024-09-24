@@ -93,6 +93,15 @@ export const Nav = (props: NavProps) => {
 
           {!props.isMinimised && "Data Entry"}
         </NavItem>
+        <NavItem
+          href="migrations"
+          isSelected={currentTab() === "migrations"}
+          isMinimised={props.isMinimised}
+        >
+          <div class="iconify radix-icons--loop" style={{ color: "#164e63" }} />
+
+          {!props.isMinimised && "Migrations"}
+        </NavItem>
       </nav>
     </div>
   );

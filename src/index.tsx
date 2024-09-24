@@ -6,7 +6,7 @@ import { Router, Route } from "@solidjs/router";
 import { Toaster } from "solid-toast";
 import { lazy } from "solid-js";
 import { ComingSoon, NotFound } from "./components";
-import { DataEntry, Dashboard, Transactions } from "./views/App";
+import { DataEntry, Dashboard, Transactions, Migrations } from "./views/App";
 
 const root = document.getElementById("root");
 
@@ -23,6 +23,7 @@ render(
           <Route path="/accounts" component={ComingSoon} />
           <Route path="/data-entry" component={DataEntry} />
           <Route path="/transactions" component={Transactions} />
+          <Route path="/migrations" component={Migrations} />
         </Route>
         <Route path="*404" component={NotFound} />
       </Router>

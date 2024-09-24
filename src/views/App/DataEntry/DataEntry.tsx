@@ -12,7 +12,7 @@ import {
   Statement,
   StatementFormatSelector,
 } from "../../../components";
-import { EMPTY_PARSED_RESULT, StatementFormats } from "../../../constants";
+import { EMPTY_PARSED_RESULT } from "../../../constants";
 import { ParsedResult } from "../../../types";
 import toast from "solid-toast";
 import { financialTransactionsMapper } from "../../../lib/storage/utils";

@@ -101,7 +101,7 @@ export const DataGridLite = (props: DataGridLiteProps) => {
   });
 
   return (
-    <div class="flex flex-col gap-2 h-full w-full">
+    <div class="flex flex-col gap-2 h-full w-full overflow-auto">
       {/* <div class="w-1/5 sticky top-0">
         <Input
           type="text"

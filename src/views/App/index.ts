@@ -4,3 +4,4 @@ export * from "./Nav";
 export * from "./Transactions";
 export * from "./Accounts";
 export * from "./Dashboard";
+export * from "./Migrations";
