@@ -24,8 +24,11 @@ export const parseExcel = async (
 };
 
 export const ExcelFileParser = {
+  async readFile(file: File) {
+    return read(await file.arrayBuffer());
+  },
   async decodeFile(file: File) {
-    const workbook = read(await file.arrayBuffer());
+    const workbook = await this.readFile(file);
     const numSheets = workbook.SheetNames.length;
     if (numSheets == 0) {
       toast.error("No sheets detected");
@@ -44,6 +47,10 @@ export const ExcelFileParser = {
       toast.error(INVALID_FORMAT_ERROR);
       return null;
     }
+  },
+  async getSheetNames(file: File) {
+    const workbook = await this.readFile(file);
+    return workbook.SheetNames;
   },
   demoParsers: {
     [StatementFormats.UOB_CARD]: demoUOBFormat,

@@ -1,44 +1,34 @@
-import { JSX } from "solid-js";
-import { FileUploadLogo } from "~/components/FileUploadLogo";
+import { createSignal, JSX, Match, Switch } from "solid-js";
+import { ExcelFileParser } from "~/lib/parsers";
+import { FileInput } from "./FileInput";
+import { SheetSelection } from "./SheetSelection";
 
-const DropZone = () => {
-  const handleDrop = () => {};
+export const Migrations = () => {
+  const sequence = ["fileInput", "sheetSelection"];
+  const [sequenceIdx, setSequenceIdx] = createSignal(0);
+  const [sheetNames, setSheetNames] = createSignal<string[]>([]);
   const handleInputChange: JSX.ChangeEventHandlerUnion<
     HTMLInputElement,
     Event
-  > = (event) => {
+  > = async (event) => {
     const file = event.target.files?.[0];
-    console.log(file);
+    if (!file) {
+      return;
+    }
+    const sheetNames = await ExcelFileParser.getSheetNames(file);
+    setSheetNames(sheetNames);
+    setSequenceIdx((prev) => prev + 1);
   };
   return (
-    <div class="h-1/2 w-1/2 flex flex-col justify-center items-center">
-      <label
-        for="upload"
-        class="w-full border-4 border-gray-400 p-10 hover:bg-gray-100"
-        onDrop={handleDrop}
-      >
-        <div class="flex flex-col items-center gap-4">
-          <FileUploadLogo />
-          <div class="font-bold text-lg">
-            Drop files here or click to upload
-          </div>
-        </div>
-      </label>
-      <input
-        id="upload"
-        type="file"
-        class="hidden"
-        onChange={handleInputChange}
-        accept=".xls,.xlsx"
-      />
-    </div>
-  );
-};
-
-export const Migrations = () => {
-  return (
     <main class="flex justify-center items-center h-full">
-      <DropZone />
+      <Switch fallback={<div>An error occurred</div>}>
+        <Match when={sequenceIdx() === 0}>
+          <FileInput onFileInputChange={handleInputChange} />
+        </Match>
+        <Match when={sequenceIdx() === 1}>
+          <SheetSelection sheetNames={sheetNames()} />
+        </Match>
+      </Switch>
     </main>
   );
 };
