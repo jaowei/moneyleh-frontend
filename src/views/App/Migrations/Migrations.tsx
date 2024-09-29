@@ -4,14 +4,54 @@ import { FileInput } from "./FileInput";
 import { SheetSelection } from "./SheetSelection";
 import { WorkBook } from "xlsx";
 import { Mapping } from "./Mapping";
+import { Preview } from "./Preview";
+
+export interface ColumnMapInfo {
+  baseColName: string;
+  helperText: string;
+  selectedColIdx?: number[];
+}
 
 const increment = (prev: number) => prev + 1;
 const decrement = (prev: number) => prev - 1;
+const selectedColMap: ColumnMapInfo[] = [
+  {
+    baseColName: "Transaction Date",
+    helperText: "Date of the transaction",
+  },
+  {
+    baseColName: "Description",
+    helperText: "Description of the transaction, can be multiple columns",
+  },
+  {
+    baseColName: "Amount",
+    helperText: "Amount can be positive or negative value of the transaction",
+  },
+  {
+    baseColName: "Currency",
+    helperText: "Currency transaction was made in",
+  },
+  {
+    baseColName: "Account",
+    helperText: "The account the transaction was made under",
+  },
+  {
+    baseColName: "Entity",
+    helperText: "The company that the account is under",
+  },
+  {
+    baseColName: "Transaction Tag",
+    helperText:
+      "Any useful information that can be used to categorise the transaction",
+  },
+];
 
 export const Migrations = () => {
   const [sequenceIdx, setSequenceIdx] = createSignal(0);
   const [sheetNames, setSheetNames] = createSignal<string[]>([]);
   const [sheets, setSheets] = createSignal<WorkBook["Sheets"]>({});
+  const [selectedCols, setSelectedCols] = createSignal<string[]>([]);
+  const [colMap, setColMap] = createSignal(selectedColMap);
 
   const handleInputChange: JSX.ChangeEventHandlerUnion<
     HTMLInputElement,
@@ -35,6 +75,24 @@ export const Migrations = () => {
     setSequenceIdx(decrement);
   };
 
+  const handleSheetSelection = (cols: string[]) => {
+    setSelectedCols(cols);
+  };
+
+  const handleColMapSelection = (baseIdx: number, selectedIdxs: number[]) => {
+    setColMap((prev) => {
+      return prev.map((info, idx) => {
+        if (idx === baseIdx) {
+          return {
+            ...info,
+            selectedColIdx: selectedIdxs,
+          };
+        }
+        return info;
+      });
+    });
+  };
+
   return (
     <main class="h-full">
       <Switch fallback={<div>An error occurred</div>}>
@@ -47,14 +105,20 @@ export const Migrations = () => {
             sheets={sheets()}
             onContinue={handleContinue}
             onBack={handleBack}
+            onSelection={handleSheetSelection}
           />
         </Match>
         <Match when={sequenceIdx() === 2}>
           <Mapping
-            sheetNames={sheetNames()}
+            colNames={selectedCols()}
+            selectedColMap={colMap()}
+            onColMapSelection={handleColMapSelection}
             onContinue={handleContinue}
             onBack={handleBack}
           />
+        </Match>
+        <Match when={sequenceIdx() === 3}>
+          <Preview onContinue={handleContinue} onBack={handleBack} />
         </Match>
       </Switch>
     </main>

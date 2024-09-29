@@ -29,6 +29,7 @@ import { TraversableProps, TraverseButtons } from "./TraverseButtons";
 interface SheetSelectionProps extends TraversableProps {
   sheetNames: string[];
   sheets: WorkBook["Sheets"];
+  onSelection: (cols: string[]) => void;
 }
 
 const colHelper = createColumnHelper<any>();
@@ -36,9 +37,9 @@ const colHelper = createColumnHelper<any>();
 export const SheetSelection = (props: SheetSelectionProps) => {
   const [selectedSheet, setSelectedSheet] = createSignal<string>();
   const [previewData, setPreviewData] = createSignal<any[]>([]);
-  const [columns, setColumns] = createSignal<AccessorKeyColumnDef<any, any>[]>(
-    []
-  );
+  const [columnsDefs, setColumnsDefs] = createSignal<
+    AccessorKeyColumnDef<any, any>[]
+  >([]);
   const [table, setTable] = createSignal<Table<any>>();
 
   const handleSelectChange = (selectedValue: string) => {
@@ -48,6 +49,7 @@ export const SheetSelection = (props: SheetSelectionProps) => {
       const arrData = utils.sheet_to_json<any[]>(sheetData, { header: 1 });
       if (!arrData.length) return;
       const cols = arrData[0];
+      props.onSelection(cols);
       const colDefs = cols.map((col) => {
         if (typeof col === "string") {
           return colHelper.accessor(col, {
@@ -56,7 +58,7 @@ export const SheetSelection = (props: SheetSelectionProps) => {
         }
         return colHelper.accessor("", { header: "" });
       });
-      setColumns(colDefs);
+      setColumnsDefs(colDefs);
       const cleanRows = arrData.slice(1, 100).map((val) => {
         return val.reduce(
           (prev, curr, idx) => ({ ...prev, [cols[idx]]: curr }),
@@ -69,7 +71,8 @@ export const SheetSelection = (props: SheetSelectionProps) => {
         position: "top-center",
       });
       setPreviewData([]);
-      setColumns([]);
+      setColumnsDefs([]);
+      props.onSelection([]);
     }
   };
 
@@ -78,7 +81,7 @@ export const SheetSelection = (props: SheetSelectionProps) => {
       get data() {
         return previewData();
       },
-      columns: columns(),
+      columns: columnsDefs(),
       getCoreRowModel: getCoreRowModel(),
     });
     setTable(table);
