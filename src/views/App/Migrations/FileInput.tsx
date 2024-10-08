@@ -8,14 +8,14 @@ interface DropZoneProps {
 export const FileInput = (props: DropZoneProps) => {
   const handleDrop = () => {};
   return (
-    <div class="flex justify-center items-center h-full">
-      <div class="h-1/2 w-1/2 flex flex-col justify-center items-center">
+    <div class="flex justify-center items-center h-screen">
+      <div class="h-2/3 w-1/2 flex flex-col justify-center items-center">
         <label
           for="upload"
-          class="w-full rounded-xl border-4 border-gray-400 p-10 hover:bg-gray-100"
+          class="w-full h-full rounded-xl border-4 border-gray-400 p-10 hover:bg-gray-100"
           onDrop={handleDrop}
         >
-          <div class="flex flex-col items-center gap-4">
+          <div class="flex flex-col items-center gap-4 h-full">
             <FileUploadLogo />
             <div class="font-bold text-lg">
               Drop files here or click to upload

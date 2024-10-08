@@ -94,7 +94,7 @@ export const Migrations = () => {
   };
 
   return (
-    <main class="h-full">
+    <main class="h-screen">
       <Switch fallback={<div>An error occurred</div>}>
         <Match when={sequenceIdx() === 0}>
           <FileInput onFileInputChange={handleInputChange} />
