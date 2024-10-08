@@ -5,6 +5,7 @@ import { SheetSelection } from "./SheetSelection";
 import { WorkBook } from "xlsx";
 import { Mapping } from "./Mapping";
 import { Preview } from "./Preview";
+import { Save } from "./Save";
 
 export interface ColumnMapInfo {
   baseColName: string;
@@ -52,6 +53,7 @@ export const Migrations = () => {
   const [sheets, setSheets] = createSignal<WorkBook["Sheets"]>({});
   const [selectedCols, setSelectedCols] = createSignal<string[]>([]);
   const [colMap, setColMap] = createSignal(selectedColMap);
+  const [selectedSheetData, setSelectedSheetData] = createSignal<any[][]>([]);
 
   const handleInputChange: JSX.ChangeEventHandlerUnion<
     HTMLInputElement,
@@ -75,8 +77,9 @@ export const Migrations = () => {
     setSequenceIdx(decrement);
   };
 
-  const handleSheetSelection = (cols: string[]) => {
+  const handleSheetSelection = (cols: string[], selectedSheetData: any[][]) => {
     setSelectedCols(cols);
+    setSelectedSheetData(selectedSheetData);
   };
 
   const handleColMapSelection = (baseIdx: number, selectedIdxs: number[]) => {
@@ -118,7 +121,15 @@ export const Migrations = () => {
           />
         </Match>
         <Match when={sequenceIdx() === 3}>
-          <Preview onContinue={handleContinue} onBack={handleBack} />
+          <Preview
+            colMap={colMap()}
+            sheetData={selectedSheetData()}
+            onContinue={handleContinue}
+            onBack={handleBack}
+          />
+        </Match>
+        <Match when={sequenceIdx() === 4}>
+          <Save onContinue={handleContinue} onBack={handleBack} />
         </Match>
       </Switch>
     </main>

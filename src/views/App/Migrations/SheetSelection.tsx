@@ -29,7 +29,7 @@ import { TraversableProps, TraverseButtons } from "./TraverseButtons";
 interface SheetSelectionProps extends TraversableProps {
   sheetNames: string[];
   sheets: WorkBook["Sheets"];
-  onSelection: (cols: string[]) => void;
+  onSelection: (cols: string[], sheetData: any[][]) => void;
 }
 
 const colHelper = createColumnHelper<any>();
@@ -49,7 +49,7 @@ export const SheetSelection = (props: SheetSelectionProps) => {
       const arrData = utils.sheet_to_json<any[]>(sheetData, { header: 1 });
       if (!arrData.length) return;
       const cols = arrData[0];
-      props.onSelection(cols);
+      props.onSelection(cols, arrData.slice(1));
       const colDefs = cols.map((col) => {
         if (typeof col === "string") {
           return colHelper.accessor(col, {
@@ -72,7 +72,7 @@ export const SheetSelection = (props: SheetSelectionProps) => {
       });
       setPreviewData([]);
       setColumnsDefs([]);
-      props.onSelection([]);
+      props.onSelection([], []);
     }
   };
 
