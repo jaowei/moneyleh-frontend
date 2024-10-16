@@ -152,7 +152,9 @@ export const Migrations = () => {
         </Match>
         <Match when={sequenceIdx() === 4}>
           <Save
+            colMap={colMap}
             dataToSave={dataToSave}
+            sheetData={selectedSheetData()}
             onContinue={handleContinue}
             onBack={handleBack}
           />

@@ -25,7 +25,7 @@ export const parseExcel = async (
 
 export const ExcelFileParser = {
   async readFile(file: File) {
-    return read(await file.arrayBuffer());
+    return read(await file.arrayBuffer(), { cellDates: true });
   },
   async decodeFile(file: File) {
     const workbook = await this.readFile(file);

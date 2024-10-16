@@ -1,5 +1,4 @@
 import { createColumnHelper } from "@tanstack/solid-table";
-import { FinancialTransactionView } from "../../lib/storage";
 import {
   editableStringInputCell,
   editableNumberInputCell,
@@ -8,28 +7,47 @@ import {
   genericCell,
 } from "./Cells";
 
-const columnHelper = createColumnHelper<Partial<FinancialTransactionView>>();
+const columnHelper = createColumnHelper<any>();
 
-export const commonColumns = [
-  columnHelper.accessor("transactionDate", {
+export const columnHelpers = {
+  transactionDate: columnHelper.accessor("transactionDate", {
     header: "Transaction Date",
     cell: editableStringInputCell,
   }),
-  columnHelper.accessor("description", {
+  description: columnHelper.accessor("description", {
     header: "Description",
     cell: editableStringInputCell,
     size: 300,
   }),
-  columnHelper.accessor("amount", {
+  amount: columnHelper.accessor("amount", {
     header: "Amount",
     cell: editableNumberInputCell,
     size: 90,
   }),
-  columnHelper.accessor("currency", {
+  currency: columnHelper.accessor("currency", {
     header: "Currency",
     cell: editableStringInputCell,
     size: 90,
   }),
+  account: columnHelper.accessor("account", {
+    header: "Account Name",
+    cell: genericCell,
+  }),
+  transactionTags: columnHelper.accessor("transactionTags", {
+    header: "Transaction Tags",
+    cell: genericCell,
+  }),
+  entity: columnHelper.accessor("entity", {
+    header: "Entity",
+    cell: genericCell,
+  }),
+};
+
+export const commonColumns = [
+  columnHelpers.transactionDate,
+  columnHelpers.description,
+  columnHelpers.amount,
+  columnHelpers.currency,
   columnHelper.accessor("transactionMethod", {
     header: "Transaction Method",
     cell: selectTransactionMethodCell,
@@ -49,22 +67,10 @@ export const transactionsPageColumns = [
     header: "Account Name",
     cell: genericCell,
   }),
-  columnHelper.accessor("transactionDate", {
-    header: "Transaction Date",
-    cell: genericCell,
-  }),
-  columnHelper.accessor("description", {
-    header: "Description",
-    cell: genericCell,
-  }),
-  columnHelper.accessor("amount", {
-    header: "Amount",
-    cell: genericCell,
-  }),
-  columnHelper.accessor("currency", {
-    header: "Currency",
-    cell: genericCell,
-  }),
+  columnHelpers.transactionDate,
+  columnHelpers.description,
+  columnHelpers.amount,
+  columnHelpers.currency,
   columnHelper.accessor("transactionMethod", {
     header: "Transaction Method",
     cell: genericCell,
