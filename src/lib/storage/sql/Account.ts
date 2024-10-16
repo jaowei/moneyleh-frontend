@@ -14,7 +14,7 @@ export type AccountModel = {
 const Account: DatabaseModel<AccountModel, SqlValue[]> = {
   queries: {
     createTable:
-      "CREATE TABLE account (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, accountTypeId int, startingBalance int, financialEntityId INTEGER, FOREIGN KEY(financialEntityId) REFERENCES financialEntity(id), FOREIGN KEY(accountTypeId) REFERENCES accountType(id));",
+      "CREATE TABLE account (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char, accountTypeId int, startingBalance int, financialEntityId INTEGER, FOREIGN KEY(financialEntityId) REFERENCES financialEntity(id), FOREIGN KEY(accountTypeId) REFERENCES accountType(id));",
     insertOne:
       "INSERT INTO account(name, accountTypeId, financialEntityId, startingBalance) VALUES ($name, $accountTypeId, $financialEntityId, $startingBalance) RETURNING id;",
     selectAll: "SELECT * FROM account ORDER BY name ASC;",

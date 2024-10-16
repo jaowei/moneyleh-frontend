@@ -1,6 +1,9 @@
+import { DataToSave } from "./Migrations";
 import { TraversableProps, TraverseButtons } from "./TraverseButtons";
 
-interface SaveProps extends TraversableProps {}
+interface SaveProps extends TraversableProps {
+  dataToSave: DataToSave;
+}
 
 export const Save = (props: SaveProps) => {
   return (

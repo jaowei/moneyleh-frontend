@@ -24,6 +24,12 @@ export interface ColumnMap {
   tag: ColumnMapInfo;
 }
 
+export interface DataToSave {
+  accountEntityMap?: Map<any, any>;
+  entityNameMap?: Map<any, any>;
+  tagsSet?: Set<any>;
+}
+
 const increment = (prev: number) => prev + 1;
 const decrement = (prev: number) => prev - 1;
 
@@ -66,8 +72,9 @@ export const Migrations = () => {
   const [sheetNames, setSheetNames] = createSignal<string[]>([]);
   const [sheets, setSheets] = createSignal<WorkBook["Sheets"]>({});
   const [selectedCols, setSelectedCols] = createSignal<string[]>([]);
-  const [colMap, setColMap] = createStore(selectedColMap);
   const [selectedSheetData, setSelectedSheetData] = createSignal<any[][]>([]);
+  const [colMap, setColMap] = createStore(selectedColMap);
+  const [dataToSave, setDataToSave] = createStore<DataToSave>({});
 
   const handleInputChange: JSX.ChangeEventHandlerUnion<
     HTMLInputElement,
@@ -106,6 +113,10 @@ export const Migrations = () => {
     }));
   };
 
+  const handlePreivew = (data: DataToSave) => {
+    setDataToSave(data);
+  };
+
   return (
     <main class="h-screen">
       <Switch fallback={<div>An error occurred</div>}>
@@ -133,13 +144,18 @@ export const Migrations = () => {
         <Match when={sequenceIdx() === 3}>
           <Preview
             colMap={colMap}
+            onPreview={handlePreivew}
             sheetData={selectedSheetData()}
             onContinue={handleContinue}
             onBack={handleBack}
           />
         </Match>
         <Match when={sequenceIdx() === 4}>
-          <Save onContinue={handleContinue} onBack={handleBack} />
+          <Save
+            dataToSave={dataToSave}
+            onContinue={handleContinue}
+            onBack={handleBack}
+          />
         </Match>
       </Switch>
     </main>

@@ -6,30 +6,38 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { ColumnMap } from "./Migrations";
+import { ColumnMap, DataToSave } from "./Migrations";
 import { TraversableProps, TraverseButtons } from "./TraverseButtons";
 import { createEffect, createSignal, For } from "solid-js";
 
 interface PreviewProps extends TraversableProps {
   colMap: ColumnMap;
   sheetData: any[][];
+  onPreview: (data: DataToSave) => void;
 }
 
 export const Preview = (props: PreviewProps) => {
   const [accountEntities, setAccountEntities] = createSignal<[any, any][]>();
   const [tags, setTags] = createSignal<any[]>();
+
   // Process accounts & entities
   createEffect(() => {
     const accountIdx = props.colMap.account.selectedColIdx;
     const entityIdx = props.colMap.entity.selectedColIdx;
     if (accountIdx?.length && entityIdx?.length) {
       let accountEntityMap = new Map();
-      props.sheetData.forEach((data) => {
+      let entityNameMap = new Map();
+      for (let data of props.sheetData) {
         const accountName = data[accountIdx[0]];
         const entityName = data[entityIdx[0]];
+        entityNameMap.set(entityName, undefined);
         accountEntityMap.set(accountName, entityName);
-      });
+      }
       setAccountEntities(Array.from(accountEntityMap));
+      props.onPreview({
+        accountEntityMap,
+        entityNameMap,
+      });
     }
   });
 
@@ -37,11 +45,12 @@ export const Preview = (props: PreviewProps) => {
   createEffect(() => {
     const tagIdx = props.colMap.tag.selectedColIdx;
     if (tagIdx?.length) {
-      let tagSet = new Set();
+      let tagsSet = new Set();
       props.sheetData.forEach((data) => {
-        tagSet.add(data[tagIdx[0]]);
+        tagsSet.add(data[tagIdx[0]]);
       });
-      setTags(Array.from(tagSet));
+      setTags(Array.from(tagsSet));
+      props.onPreview({ tagsSet });
     }
   });
 

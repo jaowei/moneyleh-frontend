@@ -1,6 +1,5 @@
-import { SqlValue } from "sql.js";
-import { DatabaseModel } from "../../../types";
-import { databaseSeeder } from "../utils";
+import { Database } from "sql.js";
+import { persistDB } from "../sqljs";
 
 export type FinancialEntityModel = {
   id: string;
@@ -9,33 +8,26 @@ export type FinancialEntityModel = {
   isDeleted: boolean;
 };
 
-export const financialEntities = [
-  "DBS",
-  "UOB",
-  "OCBC",
-  "SCB",
-  "HSBC",
-  "Citi",
-  "CPF",
-  "IBKR",
-  "Moo Moo",
-  "Syfe",
-  "Tiger Brokers",
-];
-
-const FinancialEntity: DatabaseModel<FinancialEntityModel, SqlValue[]> = {
+const FinancialEntity = {
   queries: {
     createTable:
       "CREATE TABLE financialEntity (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, isDeleted boolean);",
-    insertOne: "INSERT INTO financialEntity(name) VALUES (?);",
+    insertOne: "INSERT INTO financialEntity(name) VALUES (?) RETURNING id;",
     selectAll: "SELECT * FROM financialEntity ORDER BY name ASC;",
   },
-  initTable(db) {
+  initTable(db: Database) {
     db.run(this.queries.createTable);
-    const stmt = db.prepare(this.queries.insertOne);
-    databaseSeeder(stmt, financialEntities);
   },
-  selectAll(db) {
+  async insertOne(db: Database, data: string) {
+    const stmt = db.prepare(this.queries.insertOne);
+    stmt.bind([data]);
+    stmt.step();
+    const id = stmt.get();
+    stmt.free();
+    await persistDB(db);
+    return id;
+  },
+  selectAll(db: Database) {
     return db.exec(this.queries.selectAll)[0]?.values;
   },
 };
