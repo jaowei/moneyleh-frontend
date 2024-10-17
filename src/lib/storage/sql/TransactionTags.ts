@@ -1,5 +1,6 @@
 import { Database } from "sql.js";
 import { databaseSeeder, stepper } from "../utils";
+import { persistDB } from "../sqljs";
 
 export type TransactionTagModel = {
   id: number;
@@ -30,13 +31,20 @@ export const TransactionTag = {
   queries: {
     createTable: `CREATE TABLE transactionTag (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, 
       updatedAt DEFAULT CURRENT_TIMESTAMP, name TEXT UNIQUE);`,
-    insertOne: `INSERT INTO transactionTag(name) VALUES ($name);`,
+    insertOne: `INSERT INTO transactionTag(name) VALUES ($name) RETURNING id;`,
     selectAll: `SELECT * FROM transactionTag ORDER BY name ASC;`,
   },
   initTable(db: Database) {
     db.run(this.queries.createTable);
+  },
+  async insertOne(db: Database, data: string) {
     const stmt = db.prepare(this.queries.insertOne);
-    databaseSeeder(stmt, Object.values(defaultTags));
+    stmt.bind([data]);
+    stmt.step();
+    const id = stmt.get();
+    stmt.free();
+    await persistDB(db);
+    return id;
   },
   selectAll(db: Database) {
     return stepper(
