@@ -24,7 +24,7 @@ import {
   TableCell,
 } from "~/components/ui/table";
 import toast from "solid-toast";
-import { TraversableProps, TraverseButtons } from "./TraverseButtons";
+import { TraversableProps, TraverseButtons } from "./Footer";
 
 interface SheetSelectionProps extends TraversableProps {
   sheetNames: string[];

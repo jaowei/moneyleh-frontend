@@ -12,7 +12,7 @@ const NavItem: ParentComponent<NavItemProps> = (props) => {
   return (
     <a href={props.href} class="no-underline">
       <div
-        class={`flex items-center gap-2 rounded-lg text-cyan-900 text-lg font-400 ${props.isSelected ? "bg-gray-200" : "bg-none"} ${!props.isMinimised ? "y-2 x-4" : "x-1 y-1"}`}
+        class={`flex items-center gap-2 rounded-lg text-cyan-900 text-lg font-400 px-[8px] py-[4px] ${props.isSelected ? "bg-gray-200" : "bg-none"} ${!props.isMinimised ? "y-2 x-2" : "x-1 y-1"}`}
       >
         {props.children}
       </div>
@@ -25,7 +25,7 @@ interface NavProps {
 }
 
 const navContainerStyles = (isMinimised: boolean) =>
-  isMinimised ? "px-2 items-center" : "px-6";
+  isMinimised ? "px-2 items-center" : "px-2";
 
 export const Nav = (props: NavProps) => {
   const [currentTab, setCurrentTab] = createSignal();

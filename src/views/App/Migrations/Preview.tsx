@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { ColumnMap, DataToSave } from "./Migrations";
-import { TraversableProps, TraverseButtons } from "./TraverseButtons";
+import { TraversableProps, TraverseButtons } from "./Footer";
 import { createEffect, createSignal, For } from "solid-js";
 
 interface PreviewProps extends TraversableProps {

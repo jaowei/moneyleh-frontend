@@ -7,18 +7,18 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { ColumnMap, DataToSave } from "./Migrations";
-import { TraversableProps, TraverseButtons } from "./TraverseButtons";
+import { BackButton, Footer, TraversableProps } from "./Footer";
 import {
   createColumnHelper,
   createSolidTable,
   flexRender,
   getCoreRowModel,
 } from "@tanstack/solid-table";
-import { createMemo, For } from "solid-js";
+import { createMemo, createSignal, For, Show } from "solid-js";
 import { genericCell } from "~/components/DataGrid/Cells";
 import { formatTransactionDate } from "~/utils/dayjs";
 import { Button } from "~/components/ui/button";
-import initDB from "../../../lib/storage/sqljs";
+import initDB, { staticInfo } from "../../../lib/storage/sqljs";
 import {
   Account,
   AccountTypes,
@@ -29,6 +29,12 @@ import {
 import { Database } from "sql.js";
 import toast from "solid-toast";
 import { TransactionTag } from "~/lib/storage/sql/TransactionTags";
+import { descriptionToTags } from "~/lib/parsers/description";
+import {
+  Progress,
+  ProgressLabel,
+  ProgressValueLabel,
+} from "~/components/ui/progress";
 
 interface SaveProps extends TraversableProps {
   colMap: ColumnMap;
@@ -110,10 +116,14 @@ const createTransactions = async (
   accountIdMap: Map<any, any>,
   tagIdMap: Map<any, any>,
   colMap: ColumnMap,
-  sheetData: any[]
+  sheetData: any[],
+  dbStaticInfo: staticInfo
 ) => {
   const toPersist = sheetData.map((data) => {
     const transaction = mapColsToData(colMap, data, "");
+    const { transactionMethod, transactionType } = descriptionToTags(
+      transaction.description
+    );
     return {
       $transactionDate: transaction.transactionDate ?? "",
       $amount: transaction.amount,
@@ -123,6 +133,11 @@ const createTransactions = async (
       $transactionTagIds: JSON.stringify([
         tagIdMap.get(transaction.transactionTags),
       ]),
+      $transactionMethodId:
+        dbStaticInfo.transactionMethods.get(transactionMethod)?.id.toString() ??
+        "",
+      $transactionTypeId:
+        dbStaticInfo.transactionTypes.get(transactionType)?.id.toString() ?? "",
     };
   });
   await FinancialTransaction.insertMany?.(db, toPersist);
@@ -161,14 +176,27 @@ const mapColsToData = (
 };
 
 export const Save = (props: SaveProps) => {
-  const { database } = initDB;
+  const { database, staticInfo } = initDB;
+  const [saveProg, setSaveProg] = createSignal<number>();
   const transactionData = createMemo(() => {
     return props.sheetData.slice(0, 100).map((data) => {
       return mapColsToData(props.colMap, data);
     });
   });
+  const totalSize = createMemo(() => {
+    const entityNameMapSize = props.dataToSave?.entityNameMap?.size ?? 0;
+    const accountEntityMapSize = props.dataToSave?.accountEntityMap?.size ?? 0;
+    const tagsSetSize = props.dataToSave.tagsSet?.size ?? 0;
+    return (
+      entityNameMapSize +
+      accountEntityMapSize +
+      tagsSetSize +
+      props.sheetData.length
+    );
+  });
 
   const handleSave = async () => {
+    setSaveProg(0);
     const db = database();
     const entityNameMap = props.dataToSave?.entityNameMap ?? new Map();
     const accountEntityMap = props.dataToSave?.accountEntityMap ?? new Map();
@@ -176,19 +204,27 @@ export const Save = (props: SaveProps) => {
     if (db) {
       try {
         await createEntities(db, entityNameMap);
+        setSaveProg(entityNameMap.size);
+
         const accountIdMap = await createAccounts(
           db,
           accountEntityMap,
           entityNameMap
         );
+        setSaveProg((prev) => prev ?? 0 + accountEntityMap.size);
+
         const tagIdMap = await createTags(db, tagsSet);
+        setSaveProg((prev) => prev ?? 0 + tagsSet.size);
+
         await createTransactions(
           db,
           accountIdMap,
           tagIdMap,
           props.colMap,
-          props.sheetData
+          props.sheetData,
+          staticInfo
         );
+        setSaveProg(totalSize);
       } catch (error) {
         toast.error("Error saving", { position: "bottom-center" });
         console.error(error);
@@ -206,50 +242,67 @@ export const Save = (props: SaveProps) => {
 
   return (
     <div class="grid grid-cols-1 grid-rows-[1fr_max-content] h-screen gap-6 p-6">
-      <div class="overflow-auto border rounded-xl">
-        <Table>
-          <TableHeader>
-            <For each={transactionsTable.getHeaderGroups()}>
-              {(headerGroup) => (
-                <TableRow>
-                  <For each={headerGroup.headers}>
-                    {(header) => (
-                      <TableHead>
-                        {flexRender(
-                          header.column.columnDef.header ?? "",
-                          header.getContext()
-                        )}
-                      </TableHead>
-                    )}
-                  </For>
-                </TableRow>
-              )}
-            </For>
-          </TableHeader>
-          <TableBody>
-            <For each={transactionsTable.getRowModel().rows}>
-              {(row) => (
-                <TableRow>
-                  <For each={row.getVisibleCells()}>
-                    {(cell) => (
-                      <TableCell>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    )}
-                  </For>
-                </TableRow>
-              )}
-            </For>
-          </TableBody>
-        </Table>
-      </div>
-      <div>
+      <Show
+        when={saveProg() === undefined}
+        fallback={
+          <Progress
+            value={saveProg()}
+            minValue={0}
+            maxValue={totalSize()}
+            getValueLabel={({ value, max }) =>
+              `Saving ${value} row of ${max} rows`
+            }
+          >
+            <ProgressLabel>Processing...</ProgressLabel>
+            <ProgressValueLabel />
+          </Progress>
+        }
+      >
+        <div class="overflow-auto border rounded-xl">
+          <Table>
+            <TableHeader>
+              <For each={transactionsTable.getHeaderGroups()}>
+                {(headerGroup) => (
+                  <TableRow>
+                    <For each={headerGroup.headers}>
+                      {(header) => (
+                        <TableHead>
+                          {flexRender(
+                            header.column.columnDef.header ?? "",
+                            header.getContext()
+                          )}
+                        </TableHead>
+                      )}
+                    </For>
+                  </TableRow>
+                )}
+              </For>
+            </TableHeader>
+            <TableBody>
+              <For each={transactionsTable.getRowModel().rows}>
+                {(row) => (
+                  <TableRow>
+                    <For each={row.getVisibleCells()}>
+                      {(cell) => (
+                        <TableCell>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      )}
+                    </For>
+                  </TableRow>
+                )}
+              </For>
+            </TableBody>
+          </Table>
+        </div>
+      </Show>
+      <Footer>
+        <BackButton onBack={props.onBack} />
         <Button onClick={handleSave}>Save</Button>
-      </div>
-      <TraverseButtons onBack={props.onBack} onContinue={props.onContinue} />
+      </Footer>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, For, Index } from "solid-js";
-import { TraversableProps, TraverseButtons } from "./TraverseButtons";
+import { TraversableProps, TraverseButtons } from "./Footer";
 import {
   Select,
   SelectContent,

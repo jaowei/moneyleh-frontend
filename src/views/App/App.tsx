@@ -16,7 +16,7 @@ const App: ParentComponent = (props) => {
             class={`flex flex-1 items-end pb-2 ${navMinimised() ? "" : "pr-4"}`}
           >
             <button
-              class="p-1 bg-none rounded-xl border-none hover:bg-gray-2"
+              class="flex items-center p-2 bg-none rounded-full border-none hover:bg-gray-200"
               onClick={() => {
                 setNavMinimised((prev) => !prev);
               }}
