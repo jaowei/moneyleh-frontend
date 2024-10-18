@@ -8,7 +8,9 @@ import {
   FinancialEntity,
   FinancialTransaction,
   TransactionMethod,
+  TransactionMethodModel,
   TransactionType,
+  TransactionTypeModel,
 } from "./sql";
 import { createStore } from "solid-js/store";
 import { TransactionTag, TransactionTagModel } from "./sql/TransactionTags";
@@ -68,20 +70,35 @@ const mountDB = async () => {
 export type staticInfo = {
   entities: SqlValue[][];
   accounts: SqlValue[][];
-  transactionMethods: SqlValue[][];
-  transactionTypes: SqlValue[][];
+  transactionMethods: Map<string, TransactionMethodModel>;
+  transactionTypes: Map<string, TransactionTypeModel>;
   accountTypes: SqlValue[][];
   transactionTags: TransactionTagModel[];
 };
 
+const mapTransactionMethods = (methods: TransactionMethodModel[]) => {
+  const methodMap = new Map();
+  for (const method of methods) {
+    methodMap.set(method.name, method);
+  }
+  return methodMap;
+};
+
+const mapTransactionTypes = (types: TransactionTypeModel[]) => {
+  const typeMap = new Map();
+  for (const type of types) {
+    typeMap.set(type.name, type);
+  }
+  return typeMap;
+};
 const createLocalDB = () => {
   const [database, { refetch }] = createResource(mountDB);
 
   const [staticInfo, setStaticInfo] = createStore<staticInfo>({
     entities: [],
     accounts: [],
-    transactionMethods: [],
-    transactionTypes: [],
+    transactionMethods: new Map(),
+    transactionTypes: new Map(),
     accountTypes: [],
     transactionTags: [],
   });
@@ -93,9 +110,12 @@ const createLocalDB = () => {
       setStaticInfo("accounts", Account.selectAll?.(db) ?? []);
       setStaticInfo(
         "transactionMethods",
-        TransactionMethod.selectAll?.(db) ?? []
+        mapTransactionMethods(TransactionMethod.selectAll?.(db) ?? [])
       );
-      setStaticInfo("transactionTypes", TransactionType.selectAll?.(db) ?? []);
+      setStaticInfo(
+        "transactionTypes",
+        mapTransactionTypes(TransactionType.selectAll?.(db) ?? [])
+      );
       setStaticInfo("accountTypes", AccountType.selectAll?.(db) ?? []);
       setStaticInfo("transactionTags", TransactionTag.selectAll(db));
     }

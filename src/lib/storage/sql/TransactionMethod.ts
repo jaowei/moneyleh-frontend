@@ -1,4 +1,3 @@
-import { SqlValue } from "sql.js";
 import { DatabaseModel } from "../../../types";
 import { databaseSeeder } from "../utils";
 import { AccountTypes, DefaultAccountTypeIds } from "./AccountType";
@@ -59,7 +58,10 @@ const baseTransactionMethods = Object.values(TransactionMethods).map(
   }
 );
 
-const TransactionMethod: DatabaseModel<TransactionMethodModel, SqlValue[]> = {
+const TransactionMethod: DatabaseModel<
+  TransactionMethodModel,
+  TransactionMethodModel
+> = {
   queries: {
     createTable:
       "CREATE TABLE transactionMethod (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE, accountTypeId INTEGER, FOREIGN KEY(accountTypeId) REFERENCES accountType(id));",
@@ -73,7 +75,13 @@ const TransactionMethod: DatabaseModel<TransactionMethodModel, SqlValue[]> = {
     databaseSeeder(stmt, baseTransactionMethods);
   },
   selectAll(db) {
-    return db.exec(this.queries.selectAll)[0]?.values;
+    const row = [];
+    const stmt = db.prepare(this.queries.selectAll);
+    while (stmt.step()) {
+      row.push(stmt.getAsObject() as TransactionMethodModel);
+    }
+    stmt.free();
+    return row;
   },
 };
 

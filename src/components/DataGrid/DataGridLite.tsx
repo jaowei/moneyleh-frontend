@@ -1,5 +1,4 @@
 import { Accessor, For, createEffect, createSignal, Show } from "solid-js";
-import { debounce } from "@solid-primitives/scheduled";
 import {
   RowData,
   SortingState,
@@ -17,7 +16,6 @@ import {
   transactionsPageColumns,
 } from "./Column";
 import { useLocation } from "@solidjs/router";
-import { Input } from "../Input";
 import { ColumnSort } from "./ColumnSort";
 import { ColumnResizer } from "./ColumnResizer";
 import {
@@ -60,11 +58,6 @@ export const DataGridLite = (props: DataGridLiteProps) => {
     return commonColumns;
   };
 
-  const debounceSetGlobalFilter = debounce(
-    (value: string) => setGlobalFilter(value),
-    500
-  );
-
   createEffect(() => {
     const incomingData = props?.rowData()?.data;
     console.log(incomingData);
@@ -102,14 +95,6 @@ export const DataGridLite = (props: DataGridLiteProps) => {
 
   return (
     <div class="flex flex-col gap-2 h-full w-full overflow-auto">
-      {/* <div class="w-1/5 sticky top-0">
-        <Input
-          type="text"
-          value={globalFilter() ?? ""}
-          onInput={(e) => debounceSetGlobalFilter(e.currentTarget.value)}
-          placeholder="Search all columns"
-        />
-      </div> */}
       <Table>
         <TableHeader>
           <For each={table.getHeaderGroups()}>

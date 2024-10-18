@@ -21,7 +21,7 @@ export const mapToFinancialTransaction = ({
   $transactionMethodId: transactionMethod,
   $transactionTypeId: transactionType,
   $accountId: account,
-  $transactionTagIds: transactionTag,
+  $transactionTagIds: JSON.stringify(transactionTag),
 });
 
 export const financialTransactionsMapper = (
@@ -34,17 +34,18 @@ export const financialTransactionsMapper = (
     const dbModel = mapToFinancialTransaction(row);
     dbModel.$accountId = accountId;
 
-    const methodArr = databaseInfo.transactionMethods.filter((method) => {
-      return method.includes(dbModel.$transactionMethodId);
-    });
-    dbModel.$transactionMethodId =
-      methodArr?.[0]?.[0]?.toString() ?? dbModel.$transactionMethodId;
+    const methodId = databaseInfo.transactionMethods.get(
+      dbModel.$transactionMethodId
+    )?.id;
 
-    const typeArr = databaseInfo.transactionTypes.filter((type) => {
-      return type.includes(dbModel.$transactionTypeId ?? null);
-    });
+    dbModel.$transactionMethodId =
+      methodId?.toString() ?? dbModel.$transactionMethodId;
+
+    const typeId = databaseInfo.transactionTypes.get(
+      dbModel.$transactionTypeId ?? ""
+    )?.id;
     dbModel.$transactionTypeId =
-      typeArr?.[0]?.[0]?.toString() ?? dbModel.$transactionTypeId;
+      typeId?.toString() ?? dbModel.$transactionTypeId;
 
     financialTransactionModel.push(dbModel);
   }

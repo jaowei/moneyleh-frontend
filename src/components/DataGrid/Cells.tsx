@@ -1,6 +1,5 @@
 import { CellContext } from "@tanstack/solid-table";
-import { For, createEffect, createSignal } from "solid-js";
-import { SqlValue } from "sql.js";
+import { createEffect, createMemo, createSignal } from "solid-js";
 import { FinancialTransactionView } from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
 import { UpdateTableData } from "./DataGridLite";
@@ -78,19 +77,24 @@ export const editableNumberInputCell = (
 };
 
 interface CellSelectProps {
-  options: SqlValue[][];
+  options: Map<string, any>;
   currentValue: string;
   setValue: ((value: any) => void) | undefined;
 }
 
 const CellSelect = (props: CellSelectProps) => {
+  const options = createMemo(() => {
+    const optsList = [];
+    for (const opts of props.options) {
+      optsList.push(opts[0]);
+    }
+    return optsList;
+  });
   return (
     <Select
       class="w-full"
       value={props.currentValue}
-      options={props.options.map((opt) => {
-        return typeof opt[2] === "string" ? opt[2] : "N/A";
-      })}
+      options={options()}
       placeholder="---"
       itemComponent={(props) => (
         <SelectItem item={props.item}>{props.item.rawValue}</SelectItem>

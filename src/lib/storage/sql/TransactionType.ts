@@ -1,4 +1,3 @@
-import { SqlValue } from "sql.js";
 import { DatabaseModel } from "../../../types";
 import { databaseSeeder } from "../utils";
 
@@ -18,7 +17,10 @@ export const TransactionTypes = {
 
 const baseTransactionTypes = Object.values(TransactionTypes);
 
-const TransactionType: DatabaseModel<TransactionTypeModel, SqlValue[]> = {
+const TransactionType: DatabaseModel<
+  TransactionTypeModel,
+  TransactionTypeModel
+> = {
   queries: {
     createTable:
       "CREATE TABLE transactionType (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, name char UNIQUE);",
@@ -31,7 +33,13 @@ const TransactionType: DatabaseModel<TransactionTypeModel, SqlValue[]> = {
     databaseSeeder(stmt, baseTransactionTypes);
   },
   selectAll(db) {
-    return db.exec(this.queries.selectAll)[0]?.values;
+    const row = [];
+    const stmt = db.prepare(this.queries.selectAll);
+    while (stmt.step()) {
+      row.push(stmt.getAsObject() as TransactionTypeModel);
+    }
+    stmt.free();
+    return row;
   },
 };
 

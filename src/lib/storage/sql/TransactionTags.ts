@@ -1,5 +1,5 @@
 import { Database } from "sql.js";
-import { databaseSeeder, stepper } from "../utils";
+import { stepper } from "../utils";
 import { persistDB } from "../sqljs";
 
 export type TransactionTagModel = {

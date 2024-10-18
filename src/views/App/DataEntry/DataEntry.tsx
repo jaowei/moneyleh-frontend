@@ -1,4 +1,4 @@
-import { For, Match, Show, Switch, createSignal } from "solid-js";
+import { createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import {
   AccountTypes,
@@ -82,8 +82,7 @@ export const DataEntry = () => {
           staticInfo,
           formInfo.accountId!
         );
-        console.log(convertedData);
-        // FinancialTransaction?.insertMany?.(db, convertedData);
+        FinancialTransaction?.insertMany?.(db, convertedData);
         setParsedResult(EMPTY_PARSED_RESULT);
         toast.success(
           `Successfully created added transactions to account ${formInfo.name}`,
