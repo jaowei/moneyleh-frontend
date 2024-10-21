@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button";
 export interface TraversableProps {
   onContinue: () => void;
   onBack: () => void;
+  isContinueDisabled?: boolean;
 }
 
 export const Footer: ParentComponent = (props) => (
@@ -16,15 +17,23 @@ export const BackButton = (props: { onBack: () => void }) => (
   </Button>
 );
 
-export const ContinueButton = (props: { onContinue: () => void }) => (
-  <Button onClick={() => props.onContinue()}>Continue</Button>
+export const ContinueButton = (props: {
+  onContinue: () => void;
+  isDisabled: boolean;
+}) => (
+  <Button disabled={props.isDisabled} onClick={() => props.onContinue()}>
+    Continue
+  </Button>
 );
 
 export const TraverseButtons = (props: TraversableProps) => {
   return (
     <Footer>
       <BackButton onBack={props.onBack} />
-      <ContinueButton onContinue={props.onContinue} />
+      <ContinueButton
+        onContinue={props.onContinue}
+        isDisabled={props.isContinueDisabled ?? false}
+      />
     </Footer>
   );
 };

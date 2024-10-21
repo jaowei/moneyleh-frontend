@@ -11,6 +11,7 @@ import { createStore } from "solid-js/store";
 export interface ColumnMapInfo {
   baseColName: string;
   helperText: string;
+  isMulti: boolean;
   selectedColIdx?: number[];
 }
 
@@ -39,31 +40,38 @@ const selectedColMap: ColumnMap = {
   transactionDate: {
     baseColName: "Transaction Date",
     helperText: "Date of the transaction",
+    isMulti: false,
   },
   description: {
     baseColName: "Description",
     helperText: "Description of the transaction, can be multiple columns",
+    isMulti: true,
   },
   amount: {
     baseColName: "Amount",
     helperText: "Amount can be positive or negative value of the transaction",
+    isMulti: false,
   },
   currency: {
     baseColName: "Currency",
     helperText: "Currency transaction was made in",
+    isMulti: false,
   },
   account: {
     baseColName: "Account",
     helperText: "The account the transaction was made under",
+    isMulti: false,
   },
   entity: {
     baseColName: "Entity",
     helperText: "The company that the account is under",
+    isMulti: false,
   },
   tag: {
     baseColName: "Transaction Tag",
     helperText:
       "Any useful information that can be used to categorise the transaction",
+    isMulti: false,
   },
 };
 

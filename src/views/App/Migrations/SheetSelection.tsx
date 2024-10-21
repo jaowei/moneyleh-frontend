@@ -107,7 +107,7 @@ export const SheetSelection = (props: SheetSelectionProps) => {
         when={previewData().length}
         fallback={
           <div class="flex items-center justify-center bg-gray-100 rounded-xl">
-            Preview Data
+            Select a sheet to preview data
           </div>
         }
       >
@@ -150,7 +150,11 @@ export const SheetSelection = (props: SheetSelectionProps) => {
           </TableBody>
         </TableComponent>
       </Show>
-      <TraverseButtons onBack={props.onBack} onContinue={props.onContinue} />
+      <TraverseButtons
+        onBack={props.onBack}
+        onContinue={props.onContinue}
+        isContinueDisabled={!previewData().length}
+      />
     </div>
   );
 };
