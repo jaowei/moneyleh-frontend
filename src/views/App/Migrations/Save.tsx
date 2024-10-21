@@ -75,8 +75,6 @@ const columnDefs = [
   }),
 ];
 
-const CellError = "Err!";
-
 const createEntities = async (db: Database, entityNameMap: Map<any, any>) => {
   for (const entry of entityNameMap) {
     const entityId = await FinancialEntity.insertOne(db, entry[0]);
@@ -146,7 +144,7 @@ const createTransactions = async (
 const mapColsToData = (
   colMap: ColumnMap,
   rowData: any[],
-  emptyValue = CellError
+  emptyValue = CELL_ERROR
 ) => {
   const transactionDateColIdx = colMap.transactionDate.selectedColIdx?.[0];
   const descriptionColIdx = colMap.description.selectedColIdx;
@@ -175,11 +173,14 @@ const mapColsToData = (
   };
 };
 
+const ROWS_TO_PREVIEW = 100;
+const CELL_ERROR = "Err!";
+
 export const Save = (props: SaveProps) => {
   const { database, staticInfo } = initDB;
   const [saveProg, setSaveProg] = createSignal<number>();
   const transactionData = createMemo(() => {
-    return props.sheetData.slice(0, 100).map((data) => {
+    return props.sheetData.slice(0, ROWS_TO_PREVIEW).map((data) => {
       return mapColsToData(props.colMap, data);
     });
   });
@@ -225,6 +226,7 @@ export const Save = (props: SaveProps) => {
           staticInfo
         );
         setSaveProg(totalSize);
+        toast.success("Data saved!", { position: "top-center" });
       } catch (error) {
         toast.error("Error saving", { position: "bottom-center" });
         console.error(error);
@@ -241,7 +243,8 @@ export const Save = (props: SaveProps) => {
   });
 
   return (
-    <div class="grid grid-cols-1 grid-rows-[1fr_max-content] h-screen gap-6 p-6">
+    <div class="grid grid-cols-1 grid-rows-[max-content_1fr_max-content] h-screen gap-4 p-6">
+      <div class="flex flex-row justify-center text-gray-700">{`Preview of first ${ROWS_TO_PREVIEW} rows`}</div>
       <Show
         when={saveProg() === undefined}
         fallback={
@@ -301,7 +304,9 @@ export const Save = (props: SaveProps) => {
       </Show>
       <Footer>
         <BackButton onBack={props.onBack} />
-        <Button onClick={handleSave}>Save</Button>
+        <Button variant="special" onClick={handleSave}>
+          Save Data
+        </Button>
       </Footer>
     </div>
   );

@@ -12,7 +12,7 @@ export const Footer: ParentComponent = (props) => (
 );
 
 export const BackButton = (props: { onBack: () => void }) => (
-  <Button variant="destructive" onClick={() => props.onBack()}>
+  <Button variant="secondary" onClick={() => props.onBack()}>
     Back
   </Button>
 );
