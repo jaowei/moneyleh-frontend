@@ -6,7 +6,7 @@
   "scripts": {
     "copy-assets": "bash copy-assets.sh",
     "dev": "vite",
-    "build": "pnpm run copy-assets && tsc && vite build",
+    "build": "bun run copy-assets && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

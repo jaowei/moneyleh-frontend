@@ -22,12 +22,12 @@ export const columnHelpers = {
   amount: columnHelper.accessor("amount", {
     header: "Amount",
     cell: editableNumberInputCell,
-    size: 90,
+    size: 120,
   }),
   currency: columnHelper.accessor("currency", {
     header: "Currency",
     cell: editableStringInputCell,
-    size: 90,
+    size: 70,
   }),
   account: columnHelper.accessor("account", {
     header: "Account Name",

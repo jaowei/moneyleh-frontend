@@ -101,5 +101,5 @@ export default {
       }
     }
   },
-  plugins: [addIconSelectors(["radix-icons", "ph"]), require("tailwindcss-animate")]
+  plugins: [addIconSelectors(["radix-icons", "ph", "fa6-brands", "flag"]), require("tailwindcss-animate")]
 }

@@ -35,17 +35,17 @@ interface SheetSelectionProps extends TraversableProps {
 const colHelper = createColumnHelper<any>();
 
 export const SheetSelection = (props: SheetSelectionProps) => {
-  const [selectedSheet, setSelectedSheet] = createSignal<string>();
+  const [selectedSheet, setSelectedSheet] = createSignal<string | null>();
   const [previewData, setPreviewData] = createSignal<any[]>([]);
   const [columnsDefs, setColumnsDefs] = createSignal<
     AccessorKeyColumnDef<any, any>[]
   >([]);
   const [table, setTable] = createSignal<Table<any>>();
 
-  const handleSelectChange = (selectedValue: string) => {
+  const handleSelectChange = (selectedValue: string | null) => {
     try {
       setSelectedSheet(selectedValue);
-      const sheetData = props.sheets[selectedValue];
+      const sheetData = selectedValue ? props.sheets[selectedValue] : [];
       const arrData = utils.sheet_to_json<any[]>(sheetData, { header: 1 });
       if (!arrData.length) return;
       const cols = arrData[0];

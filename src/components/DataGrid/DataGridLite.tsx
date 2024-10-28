@@ -60,7 +60,6 @@ export const DataGridLite = (props: DataGridLiteProps) => {
 
   createEffect(() => {
     const incomingData = props?.rowData()?.data;
-    console.log(incomingData);
     if (incomingData) {
       setData(incomingData);
     }

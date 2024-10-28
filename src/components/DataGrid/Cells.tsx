@@ -28,7 +28,7 @@ export const genericCell = (
 function editableState<T>(
   props: CellContext<Partial<FinancialTransactionView>, T | undefined>
 ) {
-  const [value, setValue] = createSignal<T>();
+  const [value, setValue] = createSignal<T>(props.getValue() as any);
   createEffect(() => {
     setValue(props.getValue());
   });

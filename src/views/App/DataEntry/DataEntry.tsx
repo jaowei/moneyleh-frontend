@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, JSX, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 import {
   AccountTypes,
@@ -6,39 +6,20 @@ import {
   FinancialTransactionView,
 } from "../../../lib/storage";
 import initDB from "../../../lib/storage/sqljs";
+import { DataGridLite, FileInput, PasswordDialog } from "../../../components";
 import {
-  DataGridLite,
-  FileInput,
-  Statement,
-  StatementFormatSelector,
-} from "../../../components";
-import { EMPTY_PARSED_RESULT } from "../../../constants";
+  ACCEPTED_FILE_TYPES,
+  EMPTY_PARSED_RESULT,
+  FILE_PROCESSING_ERROR,
+  NO_FILE_SELECTED_MSG,
+} from "../../../constants";
 import { ParsedResult } from "../../../types";
 import toast from "solid-toast";
 import { financialTransactionsMapper } from "../../../lib/storage/utils";
-import { AccountForm } from "./AccountForm";
-import { SqlValue } from "sql.js";
-import { DialogTriggerProps } from "@kobalte/core/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { Button } from "~/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "~/components/ui/collapsible";
+import { Header } from "./Header";
+import { routeToParsers } from "~/lib/parsers/fileHandler";
+import { unparse } from "papaparse";
+import { exportAsCSV } from "~/utils/csv";
 
 export type formInfo = {
   name: string;
@@ -51,6 +32,10 @@ export type formInfo = {
 
 export const DataEntry = () => {
   const { database, staticInfo } = initDB;
+  const [savedFile, setSavedFile] = createSignal<File>();
+  const [fileName, setFileName] = createSignal(NO_FILE_SELECTED_MSG);
+  const [filePassword, setFilePassword] = createSignal<string>();
+  const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
   const [formInfo, setFormInfo] = createStore<formInfo>({
     name: "",
     type: AccountTypes.cash,
@@ -61,12 +46,6 @@ export const DataEntry = () => {
   });
   const [parsedResult, setParsedResult] =
     createSignal<ParsedResult<FinancialTransactionView>>(EMPTY_PARSED_RESULT);
-  const [openDialog, setOpenDialog] = createSignal(false);
-
-  const handleDocSelector = (statement: Statement) => {
-    console.log(statement);
-    setFormInfo("docFormat", statement.value);
-  };
 
   const handleSubmitTransactions = () => {
     if (!formInfo.accountId) {
@@ -99,87 +78,127 @@ export const DataEntry = () => {
     }
   };
 
-  const closeDialog = () => {
-    if (openDialog()) {
-      setOpenDialog((prev) => !prev);
+  const handleFileType = async (
+    file: File | undefined,
+    event?: Event & {
+      currentTarget: HTMLInputElement;
+      target: HTMLInputElement;
+    }
+  ) => {
+    try {
+      const rowData = await routeToParsers(
+        file,
+        filePassword(),
+        formInfo?.accountId,
+        formInfo?.type
+      );
+      if (!rowData) {
+        throw new Error();
+      }
+      setParsedResult({ format: "", data: rowData as any });
+      setFileName(file?.name ?? "");
+    } catch (error: any) {
+      if (error?.name === "PasswordException") {
+        toast.error("Incorrect/No Password");
+        setPasswordDialogIsOpen(true);
+        setSavedFile(file);
+        setFileName(file?.name ?? NO_FILE_SELECTED_MSG);
+        return;
+      }
+      toast.error(FILE_PROCESSING_ERROR);
+      setSavedFile();
+      setFilePassword();
+      setFileName(NO_FILE_SELECTED_MSG);
+      if (event?.target?.value) {
+        event.target.value = "";
+      }
+    }
+  };
+
+  const handleInputChange: JSX.ChangeEventHandlerUnion<
+    HTMLInputElement,
+    Event
+  > = (event) => {
+    setParsedResult(EMPTY_PARSED_RESULT);
+    setFileName("");
+    const file = event.target.files?.[0];
+    setSavedFile(file);
+    handleFileType(file, event);
+  };
+
+  const handleDrop = async (e: DragEvent) => {
+    e.preventDefault();
+    setParsedResult(EMPTY_PARSED_RESULT);
+    setFileName("");
+    const file = e.dataTransfer?.files[0];
+    setSavedFile(file);
+    handleFileType(file);
+  };
+
+  const handlePasswordDialogOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setFileName(NO_FILE_SELECTED_MSG);
+      setSavedFile();
+    }
+    setPasswordDialogIsOpen(isOpen);
+  };
+
+  const handlePasswordSubmit = (password: string) => {
+    if (password) {
+      setFilePassword(password);
+      handleFileType(savedFile());
+    }
+  };
+
+  const handleCopyClick = async () => {
+    try {
+      const data = unparse(parsedResult().data);
+      await navigator.clipboard.writeText(data);
+      toast.success("Copied to clipboard!");
+    } catch (error) {
+      toast.error("Error copying");
+    }
+  };
+
+  const handleExportClick = () => {
+    try {
+      const data = unparse(parsedResult().data);
+      exportAsCSV(data, `parsed-${fileName()}`);
+      toast.success("Exported as CSV!");
+    } catch (error) {
+      toast.error("Error exporting");
     }
   };
 
   return (
-    <div class="flex flex-col w-full h-screen items-center">
-      <Collapsible class="w-full" defaultOpen={true}>
-        <CollapsibleContent>
-          <div class="bg-gray-50 flex flex-col items-center">
-            <div class="flex gap-10 pt-4 pb-2 px-4 justify-center items-start w-full ">
-              <Dialog open={openDialog()} onOpenChange={setOpenDialog}>
-                <DialogTrigger
-                  as={(props: DialogTriggerProps) => (
-                    <Button class="w-full" {...props}>
-                      Create New Account
-                    </Button>
-                  )}
-                />
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create new account</DialogTitle>
-                  </DialogHeader>
-                  <AccountForm
-                    formInfo={formInfo}
-                    setFormInfo={setFormInfo}
-                    closeForm={closeDialog}
-                  />
-                </DialogContent>
-              </Dialog>
-              <Select
-                class="w-full bg-white"
-                options={staticInfo.accounts.map((account) => {
-                  return {
-                    label: typeof account[2] === "string" ? account[2] : "N/A",
-                    value: account,
-                  };
-                })}
-                disabled={!staticInfo.accounts.length}
-                optionValue="value"
-                optionTextValue="label"
-                placeholder="select existing account"
-                itemComponent={(props) => (
-                  <SelectItem item={props.item}>
-                    {props.item.rawValue.label}
-                  </SelectItem>
-                )}
-              >
-                <SelectTrigger>
-                  <SelectValue<{ label: string; value: SqlValue[] }>>
-                    {(state) => {
-                      const account = state.selectedOption().value;
-                      const label = state.selectedOption().label;
-                      setFormInfo("accountId", account[0] as string);
-                      setFormInfo("type", account[3] as string);
-                      setFormInfo("name", label);
-                      return label;
-                    }}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent />
-              </Select>
-              <StatementFormatSelector onStatementChange={handleDocSelector} />
-              <FileInput dataSetter={setParsedResult} formInfo={formInfo} />
-              <Button
-                onClick={handleSubmitTransactions}
-                disabled={!(parsedResult().data.length && formInfo.accountId)}
-              >
-                Submit transactions
-              </Button>
-            </div>
-          </div>
-        </CollapsibleContent>
-        <CollapsibleTrigger class="w-full">
-          <div class="bg-gray-100">
-            <span class="iconify radix-icons--chevron-up" />
-          </div>
-        </CollapsibleTrigger>
-      </Collapsible>
-      <DataGridLite rowData={parsedResult} />
+    <div class="grid grid-rows-[min-content_1fr] h-screen">
+      <Header
+        fileName={fileName()}
+        isDisabled={!(parsedResult().data.length && formInfo.accountId)}
+        onSaveClick={handleSubmitTransactions}
+        formInfo={formInfo}
+        setFormInfo={setFormInfo}
+        onCopyClick={handleCopyClick}
+        onExportClick={handleExportClick}
+      />
+
+      <Show
+        when={parsedResult().data.length}
+        fallback={
+          <FileInput
+            onFileInputChange={handleInputChange}
+            fileInputAccept={ACCEPTED_FILE_TYPES}
+            onFileDrop={handleDrop}
+          />
+        }
+      >
+        <DataGridLite rowData={parsedResult} />
+      </Show>
+      <PasswordDialog
+        isOpen={passwordDialogIsOpen}
+        onDialogOpenChange={handlePasswordDialogOpenChange}
+        onPasswordSubmit={handlePasswordSubmit}
+      />
     </div>
   );
 };

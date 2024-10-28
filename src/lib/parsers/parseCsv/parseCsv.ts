@@ -1,36 +1,11 @@
 import Papa from "papaparse";
-import { RowData } from "../../../types";
 import { INVALID_FORMAT_ERROR, StatementFormats } from "../../../constants";
 import toast from "solid-toast";
 import {
+  isDBSAccountFormat,
   parseDBSAppFormat,
-  parseDBSDemoFormat,
   parseDBSNAVAppFormat,
-  parseDBSNAVDemoFormat,
-  parseHSBCFormat,
-  parseIBKRFormat,
 } from "./formats";
-
-export const parseCSV = async (
-  file: File,
-  statementFormat: string
-): Promise<Array<RowData> | undefined> => {
-  const textContent = await file.text();
-  const parsedContent = Papa.parse(textContent, { skipEmptyLines: true });
-  switch (statementFormat) {
-    case StatementFormats.DBS_ACCOUNT:
-      return parseDBSDemoFormat(parsedContent);
-    case StatementFormats.HSBC_CARD:
-      return parseHSBCFormat(parsedContent);
-    case StatementFormats.IBKR_ACCOUNT:
-      return parseIBKRFormat(parsedContent);
-    case StatementFormats.DBS_NAV_ACCOUNT:
-      return parseDBSNAVDemoFormat(parsedContent);
-    default:
-      toast.error(INVALID_FORMAT_ERROR);
-      break;
-  }
-};
 
 export const CSVFileParser = {
   async decodeFile(file: File) {
@@ -40,23 +15,20 @@ export const CSVFileParser = {
   async extractContent(textContent: string) {
     return Papa.parse(textContent, { skipEmptyLines: true });
   },
-  async safeParseContent(
-    data: Papa.ParseResult<any>,
-    parser: (data: Papa.ParseResult<any>) => {}
-  ) {
+  async determineParser(data: Papa.ParseResult<any>) {
+    if (isDBSAccountFormat(data)) {
+      return this.appParsers[StatementFormats.DBS_ACCOUNT];
+    }
+  },
+  async safeParseContent(data: Papa.ParseResult<any>) {
     try {
+      const parser = await this.determineParser(data);
       return parser(data);
     } catch (error) {
       toast.error(INVALID_FORMAT_ERROR);
       return null;
     }
   },
-  demoParsers: {
-    [StatementFormats.DBS_ACCOUNT]: parseDBSDemoFormat,
-    [StatementFormats.HSBC_CARD]: parseHSBCFormat,
-    [StatementFormats.IBKR_ACCOUNT]: parseIBKRFormat,
-    [StatementFormats.DBS_NAV_ACCOUNT]: parseDBSNAVDemoFormat,
-  } as Record<string, any>,
   appParsers: {
     [StatementFormats.DBS_ACCOUNT]: parseDBSAppFormat,
     [StatementFormats.DBS_NAV_ACCOUNT]: parseDBSNAVAppFormat,

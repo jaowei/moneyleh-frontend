@@ -1,27 +1,7 @@
-import { RowData } from "../../../types";
 import { INVALID_FORMAT_ERROR, StatementFormats } from "../../../constants";
 import toast from "solid-toast";
 import { WorkBook, read, utils } from "xlsx";
-import { appUOBFormat, demoUOBFormat, parseUOBFormat } from "./uob";
-
-// To Deprecate
-export const parseExcel = async (
-  file: File,
-  statementFormat: string
-): Promise<Array<RowData> | undefined> => {
-  const workbook = read(await file.arrayBuffer());
-  const numSheets = workbook.SheetNames.length;
-  if (numSheets == 0) {
-    toast.error("No sheets detected");
-  }
-  switch (statementFormat) {
-    case StatementFormats.UOB_CARD:
-      return parseUOBFormat(workbook);
-    default:
-      toast.error(INVALID_FORMAT_ERROR);
-      break;
-  }
-};
+import { appUOBFormat, isUOBCardFormat } from "./uob";
 
 export const ExcelFileParser = {
   async readFile(file: File) {
@@ -40,8 +20,14 @@ export const ExcelFileParser = {
       header: 1,
     });
   },
-  async safeParseContent(data: Array<any>, parser: (data: Array<any>) => {}) {
+  async determineParser(data: Array<any>) {
+    if (isUOBCardFormat(data)) {
+      return this.appParsers[StatementFormats.UOB_CARD];
+    }
+  },
+  async safeParseContent(data: Array<any>) {
     try {
+      const parser = await this.determineParser(data);
       return parser(data);
     } catch (error) {
       toast.error(INVALID_FORMAT_ERROR);
@@ -52,9 +38,6 @@ export const ExcelFileParser = {
     const workbook = await this.readFile(file);
     return workbook.SheetNames;
   },
-  demoParsers: {
-    [StatementFormats.UOB_CARD]: demoUOBFormat,
-  } as Record<string, any>,
   appParsers: {
     [StatementFormats.UOB_CARD]: appUOBFormat,
   } as Record<string, any>,

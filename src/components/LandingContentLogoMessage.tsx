@@ -9,9 +9,9 @@ export const LandingContentLogoMessage = (
   props: LandingContentLogoMessageProps
 ) => {
   return (
-    <div class="flex flex-col items-center max-w-sm">
+    <div class="flex flex-row items-center max-w-xs">
       {props.icon}
-      <div class="font-medium text-center text-md">{props.message}</div>
+      <div class="font-medium text-center text-sm">{props.message}</div>
     </div>
   );
 };

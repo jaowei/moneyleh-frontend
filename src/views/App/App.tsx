@@ -4,9 +4,9 @@ import { createSignal, Match, ParentComponent, Switch } from "solid-js";
 const App: ParentComponent = (props) => {
   const [navMinimised, setNavMinimised] = createSignal(false);
   return (
-    <main class="flex h-full">
+    <main class="flex h-screen w-screen">
       <div
-        class={`sticky top-0 h-screen ${navMinimised() ? "w-14" : "w-48"} bg-gray-100`}
+        class={`sticky top-0 h-screen ${navMinimised() ? "w-[5%] xl:w-[4%] 2xl:w-[3%]" : "w-[16%] xl:w-[11%] 2xl:w-[9%]"} bg-gray-100`}
       >
         <div
           class={`h-full flex flex-col ${navMinimised() ? "items-center" : "items-end"}`}
@@ -39,7 +39,11 @@ const App: ParentComponent = (props) => {
           </div>
         </div>
       </div>
-      <div class="w-full">{props.children}</div>
+      <div
+        class={`${navMinimised() ? "w-[95%] xl:w-[96%] 2xl:w-[97%]" : "w-[84%] xl:w-[89%] 2xl:w-[91%]"}`}
+      >
+        {props.children}
+      </div>
     </main>
   );
 };

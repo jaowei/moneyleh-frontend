@@ -49,21 +49,6 @@ const extractAmountAndDescription = (row: string) => {
   return { amount, description };
 };
 
-const parseDemoRow = (data: RowParserData): RowData => {
-  const { row, year } = data;
-  if (Array.isArray(row)) throw new Error("Invalid row type");
-  const parsedDate = extractDate(row, year);
-
-  const { amount, description } = extractAmountAndDescription(row);
-
-  return {
-    date: parsedDate,
-    currency: "SGD",
-    description,
-    amount,
-  };
-};
-
 const parseAppRow = (data: RowParserData): FinancialTransactionView => {
   const { row, year } = data;
   if (Array.isArray(row)) throw new Error("Invalid row type");
@@ -130,10 +115,6 @@ const parseCitiFormat: PDFParser = (data, rowParser) => {
   }
 
   return result;
-};
-
-export const parseCitiDemoFormat = (data: PDFParserData) => {
-  return parseCitiFormat(data, parseDemoRow);
 };
 
 export const parseCitiAppFormat = (data: PDFParserData) => {

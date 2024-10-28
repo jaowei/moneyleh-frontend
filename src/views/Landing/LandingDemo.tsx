@@ -1,118 +1,163 @@
-import * as pdfjsLib from "pdfjs-dist";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
-
 import { createSignal, JSX } from "solid-js";
 
+import { DataGridLite, FileInput, PasswordDialog } from "../../components";
+import { ParsedResult } from "../../types";
 import {
-  FileInput,
-  DataGrid,
-  StatementFormatSelector,
-  Statement,
-} from "../../components";
-import { ParsedResult, RowData } from "../../types";
-import { EMPTY_PARSED_RESULT } from "../../constants";
+  ACCEPTED_FILE_TYPES,
+  EMPTY_PARSED_RESULT,
+  FILE_PROCESSING_ERROR,
+  NO_FILE_SELECTED_MSG,
+} from "../../constants";
 import toast from "solid-toast";
+import { routeToParsers } from "~/lib/parsers/fileHandler";
+import { FinancialTransactionView } from "~/lib/storage";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
+import { exportAsCSV } from "~/utils/csv";
+import { unparse } from "papaparse";
 
-interface LandingDemoProps {
-  ref: any;
-}
-
-const LandingDemo = (props: LandingDemoProps) => {
-  const [docFormat, setDocFormat] = createSignal<string>();
+const LandingDemo = () => {
+  const [savedFile, setSavedFile] = createSignal<File>();
+  const [fileName, setFileName] = createSignal(NO_FILE_SELECTED_MSG);
+  const [filePassword, setFilePassword] = createSignal<string>();
   const [parsedResult, setParsedResult] =
-    createSignal<ParsedResult<RowData>>(EMPTY_PARSED_RESULT);
-  const [gridRef, setGridRef] = createSignal<any>(null);
+    createSignal<ParsedResult<FinancialTransactionView>>(EMPTY_PARSED_RESULT);
+  const [passwordDialogIsOpen, setPasswordDialogIsOpen] = createSignal(false);
+  const [previewDialogIsOpen, setPreviewDialogIsOpen] = createSignal(false);
 
-  const handleStatementChange = (statement: Statement) => {
-    setDocFormat(statement.label);
-  };
-
-  const onClickCopyAll: JSX.EventHandlerUnion<
-    HTMLButtonElement,
-    MouseEvent
-  > = async (e) => {
-    e.preventDefault();
+  const handleFileType = async (
+    file: File | undefined,
+    event?: Event & {
+      currentTarget: HTMLInputElement;
+      target: HTMLInputElement;
+    }
+  ) => {
     try {
-      await navigator.clipboard.writeText(
-        gridRef()?.api?.getDataAsCsv({
-          columnSeparator: "\t",
-          skipColumnHeaders: true,
-        })
+      const rowData = await routeToParsers(
+        file,
+        filePassword(),
+        undefined,
+        undefined
       );
-      toast.success("Copied to clipboard!");
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to copy data");
+      if (!rowData) {
+        throw new Error();
+      }
+      setParsedResult({ format: "", data: rowData as any });
+      setFileName(file?.name ?? "");
+      setPreviewDialogIsOpen(true);
+    } catch (error: any) {
+      if (error?.name === "PasswordException") {
+        toast.error("Incorrect/No Password");
+        setPasswordDialogIsOpen(true);
+        setSavedFile(file);
+        setFileName(file?.name ?? NO_FILE_SELECTED_MSG);
+        return;
+      }
+      toast.error(FILE_PROCESSING_ERROR);
+      setSavedFile();
+      setFilePassword();
+      setFileName(NO_FILE_SELECTED_MSG);
+      if (event?.target?.value) {
+        event.target.value = "";
+      }
     }
   };
 
-  const onClickDownload: JSX.EventHandlerUnion<
-    HTMLButtonElement,
-    MouseEvent
-  > = async (e) => {
+  const handleInputChange: JSX.ChangeEventHandlerUnion<
+    HTMLInputElement,
+    Event
+  > = (event) => {
+    setParsedResult(EMPTY_PARSED_RESULT);
+    setFileName("");
+    const file = event.target.files?.[0];
+    setSavedFile(file);
+    handleFileType(file, event);
+  };
+
+  const handleDrop = async (e: DragEvent) => {
     e.preventDefault();
+    setParsedResult(EMPTY_PARSED_RESULT);
+    setFileName("");
+    const file = e.dataTransfer?.files[0];
+    setSavedFile(file);
+    handleFileType(file);
+  };
+  const handlePasswordDialogOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setFileName(NO_FILE_SELECTED_MSG);
+      setSavedFile();
+    }
+    setPasswordDialogIsOpen(isOpen);
+  };
+
+  const handlePasswordSubmit = (password: string) => {
+    if (password) {
+      setFilePassword(password);
+      handleFileType(savedFile());
+    }
+  };
+
+  const handleCopyClick = async () => {
     try {
-      gridRef()?.api?.exportDataAsCsv();
-      toast.success("Downloaded!");
+      const data = unparse(parsedResult().data);
+      await navigator.clipboard.writeText(data);
+      toast.success("Copied to clipboard!");
     } catch (error) {
-      toast.error("Failed to download, please try again.");
+      toast.error("Error copying");
+    }
+  };
+
+  const handleExportClick = () => {
+    try {
+      const data = unparse(parsedResult().data);
+      exportAsCSV(data, `parsed-${fileName()}`);
+      toast.success("Exported as CSV!");
+    } catch (error) {
+      toast.error("Error exporting");
     }
   };
 
   return (
-    <section ref={props.ref}>
-      <div class="flex flex-row px-6 gap-8 h-screen items-center pb-2 pt-10">
-        <div class="flex-none h-full w-1/4">
-          <div class="flex flex-col gap-16 items-center">
-            <div>
-              <div class="pb-2 text-cyan-900">
-                Select your statement format:
-              </div>
-              <StatementFormatSelector
-                onStatementChange={handleStatementChange}
-              />
+    <section class="col-span-2 row-span-3">
+      <FileInput
+        fileInputAccept={ACCEPTED_FILE_TYPES}
+        onFileDrop={handleDrop}
+        onFileInputChange={handleInputChange}
+      />
+      <Dialog
+        open={previewDialogIsOpen()}
+        onOpenChange={setPreviewDialogIsOpen}
+      >
+        <DialogContent class="max-w-[90%] max-h-[90%]">
+          <DialogHeader>
+            <DialogTitle>Preview Data</DialogTitle>
+            <div class="grid grid-cols-[max-content_min-content] w-9/12 xl:w-[98%] p-2 gap-2">
+              <div class="font-semibold text-gray-800">File Name:</div>
+              <div class="font-bold">{fileName()}</div>
+              {/* <div class="font-semibold text-gray-800">Format Detected:</div>
+              <div class="font-bold">Format</div> */}
             </div>
-            <FileInput dataSetter={setParsedResult} docFormat={docFormat} />
-            <div class="flex justify-between max-w-max mx-auto pb-4">
-              <Button
-                onClick={onClickCopyAll}
-                disabled={!parsedResult()?.data.length}
-              >
-                <div class="flex flex-row items-center">
-                  <div class="i-radix-icons-clipboard" />
-                  Copy All
-                </div>
-              </Button>
-              <Button
-                onClick={onClickDownload}
-                disabled={!parsedResult()?.data.length}
-              >
-                <div class="flex flex-row items-center">
-                  <div class="i-radix-icons-download" />
-                  Download as CSV
-                </div>
-              </Button>
+            <div class="w-9/12 xl:w-[98%] max-h-[35rem] border rounded-xl">
+              <DataGridLite rowData={parsedResult} />
             </div>
-            <div>
-              <a href="/app/data-entry" class="no-underline">
-                <Button>
-                  <div class="i-radix-icons:enter w-2rem h-2rem pr-2 text-white" />
-                  Try the app now!
-                </Button>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="flex-auto h-full">
-          <DataGrid
-            gridRef={gridRef}
-            gridRefSetter={setGridRef}
-            parsedResult={parsedResult}
-          />
-        </div>
-      </div>
+          </DialogHeader>
+          <DialogFooter class="w-9/12 xl:w-[98%]">
+            <Button onClick={handleCopyClick}>Copy</Button>
+            <Button onClick={handleExportClick}>Export as CSV</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <PasswordDialog
+        isOpen={passwordDialogIsOpen}
+        onDialogOpenChange={handlePasswordDialogOpenChange}
+        onPasswordSubmit={handlePasswordSubmit}
+      />
     </section>
   );
 };

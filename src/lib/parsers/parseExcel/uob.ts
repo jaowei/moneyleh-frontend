@@ -1,26 +1,10 @@
-import { WorkBook, utils } from "xlsx";
 import { RowData } from "../../../types";
 import { extendedDayjs, formatTransactionDate } from "../../../utils/dayjs";
 import { FinancialTransactionView } from "../../storage";
 import { descriptionToTags } from "../description";
 
-// To Deprecate
-export const parseUOBFormat = (workbook: WorkBook): Array<RowData> => {
-  const parsedContent = utils.sheet_to_json<any>(
-    workbook.Sheets[workbook.SheetNames[0]],
-    { header: 1 }
-  );
-  return parsedContent.reduce((prev: Array<RowData>, curr: Array<string>) => {
-    if (extendedDayjs(curr[0], "DD MMM YYYY").isValid()) {
-      prev.push({
-        date: curr[0],
-        currency: curr[5],
-        description: curr[2],
-        amount: parseFloat(curr?.at(-1) ?? "0"),
-      });
-    }
-    return prev;
-  }, []);
+export const isUOBCardFormat = (parsedContent: Array<any>) => {
+  return parsedContent[0][0].includes("United Overseas Bank");
 };
 
 export const demoUOBFormat = (parsedContent: Array<any>) => {

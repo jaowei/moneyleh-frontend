@@ -6,7 +6,6 @@ export * from "./FileLogo";
 export * from "./GearLogo";
 export * from "./LandingContentLogoMessage";
 export * from "./MainLogo";
-export * from "./MoneyLehLogo";
 export * from "./NotFound";
 export * from "./PasswordDialog";
 export * from "./Spinner";

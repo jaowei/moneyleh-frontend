@@ -1,4 +1,4 @@
-import { Accessor, createSignal, Setter } from "solid-js";
+import { Accessor, createSignal } from "solid-js";
 import { JSX } from "solid-js/h/jsx-runtime";
 import { Button } from "./ui/button";
 import { Dialog } from "@kobalte/core/dialog";
@@ -7,8 +7,8 @@ import { TextField, TextFieldInput, TextFieldLabel } from "./ui/text-field";
 
 type PasswordDialogProps = {
   isOpen: Accessor<boolean>;
-  onDialogOpenChange: () => void;
-  passwordSetter: Setter<string | undefined>;
+  onDialogOpenChange: (isOpen: boolean) => void;
+  onPasswordSubmit: (password: string) => void;
 };
 
 export const PasswordDialog = (props: PasswordDialogProps) => {
@@ -24,13 +24,16 @@ export const PasswordDialog = (props: PasswordDialogProps) => {
     e
   ) => {
     e.preventDefault();
-    props.passwordSetter(password());
-    props.onDialogOpenChange();
+    props.onPasswordSubmit(password() ?? "");
     setPassword("");
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    props.onDialogOpenChange(isOpen);
+  };
+
   return (
-    <Dialog open={props.isOpen()} onOpenChange={props.onDialogOpenChange}>
+    <Dialog open={props.isOpen()} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Document uploaded is password protected</DialogTitle>

@@ -1,6 +1,6 @@
 import { createSignal, JSX, Match, Switch } from "solid-js";
 import { ExcelFileParser } from "~/lib/parsers";
-import { FileInput } from "./FileInput";
+import { MigrationsFileInput } from "./FileInput";
 import { SheetSelection } from "./SheetSelection";
 import { WorkBook } from "xlsx";
 import { Mapping } from "./Mapping";
@@ -129,7 +129,7 @@ export const Migrations = () => {
     <main class="h-screen">
       <Switch fallback={<div>An error occurred</div>}>
         <Match when={sequenceIdx() === 0}>
-          <FileInput onFileInputChange={handleInputChange} />
+          <MigrationsFileInput onFileInputChange={handleInputChange} />
         </Match>
         <Match when={sequenceIdx() === 1}>
           <SheetSelection

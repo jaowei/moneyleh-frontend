@@ -29,7 +29,7 @@ interface ColumnSelectorProps {
 }
 
 const SingleColumnSelector = (props: ColumnSelectorProps) => {
-  const [values, setValues] = createSignal<string>();
+  const [values, setValues] = createSignal<string | null>();
 
   createEffect(() => {
     const existingValues = props.baseColInfo[1]?.selectedColIdx?.map((idx) => {
@@ -41,7 +41,7 @@ const SingleColumnSelector = (props: ColumnSelectorProps) => {
     }
   });
 
-  const handleChange = (values?: string) => {
+  const handleChange = (values?: string | null) => {
     setValues(values);
     props.onColMapSelection(values ? [values] : [], props.baseColInfo[0]);
   };

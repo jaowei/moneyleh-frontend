@@ -1,5 +1,4 @@
 import { ParentComponent, createEffect, createSignal } from "solid-js";
-import { MoneyLehLogo } from "../../components";
 import { useLocation } from "@solidjs/router";
 
 interface NavItemProps {
@@ -36,15 +35,20 @@ export const Nav = (props: NavProps) => {
   });
   return (
     <div
-      class={`flex flex-col gap-10 h-full ${navContainerStyles(props.isMinimised)}`}
+      class={`flex flex-col gap-10 h-full w-full ${navContainerStyles(props.isMinimised)}`}
     >
       <div class="pt-6">
-        <MoneyLehLogo
-          href="/"
-          textSize="xl"
-          iconSize="2rem"
-          isMinimised={props.isMinimised}
-        />
+        <a href="/" rel="noreferrer noopener" class="no-underline">
+          <div class="flex items-center">
+            <div
+              class="iconify ph--piggy-bank-duotone h-[24px] w-[24px]"
+              style={{ color: "#164e63" }}
+            />
+            {!props.isMinimised && (
+              <div class="font-bold pl-2 text-cyan-900 text-lg">MoneyLeh?</div>
+            )}
+          </div>
+        </a>
       </div>
       <nav class="flex flex-col gap-6">
         <NavItem

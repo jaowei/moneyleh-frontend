@@ -65,8 +65,8 @@ export const AccountForm = (props: AccountFormProps) => {
     }
   };
   return (
-    <form onSubmit={handleSubmit}>
-      <fieldset class="ps-0 pe-0 p-0 m-0 ms-0 me-0 border-none">
+    <form class="bg-gray-100 p-4 rounded-xl" onSubmit={handleSubmit}>
+      <fieldset>
         <div class="grid grid-cols-2 gap-4">
           <FormField
             formLabel="Account Name"
@@ -85,7 +85,7 @@ export const AccountForm = (props: AccountFormProps) => {
           </FormField>
           <FormField formLabel="Account Type">
             <Select
-              class="w-full"
+              class="w-full bg-white"
               placeholder="Select account type"
               options={staticInfo.accountTypes.map((acctType) =>
                 typeof acctType[2] === "string" ? acctType[2] : "N/A"
@@ -107,7 +107,7 @@ export const AccountForm = (props: AccountFormProps) => {
           </FormField>
           <FormField formLabel="Financial Entity (Company)">
             <Select
-              class="w-full"
+              class="w-full bg-white"
               placeholder="Select financial entity"
               optionValue="value"
               optionTextValue="label"

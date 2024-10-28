@@ -9,6 +9,15 @@ import {
 import { FinancialTransactionView } from "../../../storage";
 import { accountTypeConverter, isInSameRow } from "../../utils";
 import { descriptionToTags } from "../../description";
+import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
+
+export const isDBSCardFormat = (data?: Array<TextItem | TextMarkedContent>) => {
+  const cardName = data?.at(35);
+  if (cardName && isTextItem(cardName)) {
+    return cardName.str.includes("DBS");
+  }
+  return false;
+};
 
 const filterTextData = (text: string): boolean => {
   if (
@@ -43,26 +52,6 @@ const extractAmount = (row: Array<string> | string) => {
 const extractDate = (row: Array<string> | string, year: string) => {
   const rawString = year ? row.at(0) + year : row.at(0);
   return formatTransactionDate(rawString, "DD MMMYYYY");
-};
-
-const parseDemoRow = (data: RowParserData): RowData => {
-  const { row, year } = data;
-  const parsedAmount = extractAmount(row);
-
-  const date = extractDate(row, year);
-
-  const description = row.at(1) ?? "";
-
-  const { transactionMethod, transactionType } = descriptionToTags(description);
-
-  return {
-    date: date ?? "",
-    currency: "SGD",
-    description,
-    amount: parsedAmount,
-    transactionCode: transactionMethod,
-    parentTag: transactionType,
-  };
 };
 
 const parseAppRow = (data: RowParserData): FinancialTransactionView => {
@@ -140,10 +129,6 @@ const parseDBSFormat: PDFParser = (data, rowParser) => {
   }
 
   return result;
-};
-
-export const parseDBSDemoFormat = (data: PDFParserData) => {
-  return parseDBSFormat(data, parseDemoRow);
 };
 
 export const parseDBSAppFormat = (data: PDFParserData) => {
