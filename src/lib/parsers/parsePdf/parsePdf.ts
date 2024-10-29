@@ -6,8 +6,10 @@ import { StatementFormats } from "../../../constants";
 import { PDFParserData, isTextItem } from "./parsePdf.types";
 import {
   isDBSCardFormat,
+  isMooMooFormat,
   parseCitiAppFormat,
   parseDBSAppFormat,
+  parseMoomooFormat,
 } from "./formats";
 
 export const PDFFileParser = {
@@ -36,6 +38,10 @@ export const PDFFileParser = {
     if (isDBSCardFormat(data.textData)) {
       return this.appParsers[StatementFormats.DBS_CARD];
     }
+    if (isMooMooFormat(data.textData)) {
+      console.log(data);
+      return this.appParsers[StatementFormats.MOOMOO_ACCOUNT];
+    }
   },
   async safeParseContent(data: PDFParserData) {
     try {
@@ -48,5 +54,6 @@ export const PDFFileParser = {
   appParsers: {
     [StatementFormats.DBS_CARD]: parseDBSAppFormat,
     [StatementFormats.CITI_CARD]: parseCitiAppFormat,
+    [StatementFormats.MOOMOO_ACCOUNT]: parseMoomooFormat,
   } as Record<string, any>,
 };

@@ -9,6 +9,9 @@ import {
 import initDB from "../../../lib/storage/sqljs";
 import { createEffect, createSignal } from "solid-js";
 import { formInfo } from "./DataEntry";
+import { TabsList, TabsTrigger, TabsContent, Tabs } from "~/components/ui/tabs";
+import { AccountForm } from "./AccountForm";
+import { SetStoreFunction } from "solid-js/store";
 
 export interface AccountSelectorState {
   label: string;
@@ -17,7 +20,7 @@ export interface AccountSelectorState {
 
 interface AccountSelectorProps {
   formInfo: formInfo;
-  onAccountSelected: (state: AccountSelectorState | null) => void;
+  setFormInfo: SetStoreFunction<formInfo>;
 }
 
 export const AccountSelector = (props: AccountSelectorProps) => {
@@ -38,39 +41,63 @@ export const AccountSelector = (props: AccountSelectorProps) => {
     }
   });
 
-  const handleAccountSelected = (value: AccountSelectorState | null) => {
-    props.onAccountSelected(value);
-    setValue(value);
+  const handleAccountSelected = (state: AccountSelectorState | null) => {
+    const account = state?.value;
+    const label = state?.label;
+    props.setFormInfo("accountId", (account?.[0] as string) ?? "");
+    props.setFormInfo("type", (account?.[3] as string) ?? "");
+    props.setFormInfo("name", label ?? "");
+    setValue(state);
   };
 
   return (
-    <Select<AccountSelectorState>
-      class="w-full bg-white"
-      value={value()}
-      onChange={handleAccountSelected}
-      options={staticInfo.accounts.map((account) => {
-        return {
-          label: typeof account[2] === "string" ? account[2] : "N/A",
-          value: account,
-        };
-      })}
-      disabled={!staticInfo.accounts.length}
-      optionValue="value"
-      optionTextValue="label"
-      placeholder="select existing account"
-      itemComponent={(props) => (
-        <SelectItem item={props.item}>{props.item.rawValue.label}</SelectItem>
-      )}
-    >
-      <SelectTrigger>
-        <SelectValue<AccountSelectorState>>
-          {(state) => {
-            const label = state.selectedOption().label;
-            return label;
-          }}
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent class="h-96 overflow-auto" />
-    </Select>
+    <div class="flex items-center justify-center h-full">
+      <Tabs defaultValue="existing" class="border p-6 rounded-xl">
+        <TabsList>
+          <TabsTrigger value="existing">Select existing account</TabsTrigger>
+          <TabsTrigger value="new">Create new account</TabsTrigger>
+        </TabsList>
+        <TabsContent value="existing">
+          <div class="w-full bg-gray-100 p-6 rounded-xl border">
+            <Select<AccountSelectorState>
+              class="bg-white"
+              value={value()}
+              onChange={handleAccountSelected}
+              options={staticInfo.accounts.map((account) => {
+                return {
+                  label: typeof account[2] === "string" ? account[2] : "N/A",
+                  value: account,
+                };
+              })}
+              disabled={!staticInfo.accounts.length}
+              optionValue="value"
+              optionTextValue="label"
+              placeholder="select existing account"
+              itemComponent={(props) => (
+                <SelectItem item={props.item}>
+                  {props.item.rawValue.label}
+                </SelectItem>
+              )}
+            >
+              <SelectTrigger>
+                <SelectValue<AccountSelectorState>>
+                  {(state) => {
+                    const label = state.selectedOption().label;
+                    return label;
+                  }}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent class="h-96 overflow-auto" />
+            </Select>
+          </div>
+        </TabsContent>
+        <TabsContent value="new">
+          <AccountForm
+            formInfo={props.formInfo}
+            setFormInfo={props.setFormInfo}
+          />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };

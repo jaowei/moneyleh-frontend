@@ -125,11 +125,13 @@ const LandingDemo = () => {
 
   return (
     <section class="col-span-2 row-span-3">
-      <FileInput
-        fileInputAccept={ACCEPTED_FILE_TYPES}
-        onFileDrop={handleDrop}
-        onFileInputChange={handleInputChange}
-      />
+      <div class="flex items-center justify-center h-full">
+        <FileInput
+          fileInputAccept={ACCEPTED_FILE_TYPES}
+          onFileDrop={handleDrop}
+          onFileInputChange={handleInputChange}
+        />
+      </div>
       <Dialog
         open={previewDialogIsOpen()}
         onOpenChange={setPreviewDialogIsOpen}

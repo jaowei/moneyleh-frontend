@@ -1,5 +1,4 @@
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
-import { RowData } from "../../../types";
 
 export type PDFParserData = {
   textData?: Array<TextItem | TextMarkedContent>;
@@ -17,7 +16,7 @@ export type RowParserData = {
 export type PDFParser = (
   data: PDFParserData,
   rowParser?: (data: RowParserData) => any
-) => Array<RowData>;
+) => Array<any>;
 
 export const isTextItem = (
   item: TextItem | TextMarkedContent

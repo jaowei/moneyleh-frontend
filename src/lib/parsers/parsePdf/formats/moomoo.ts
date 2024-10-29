@@ -1,7 +1,15 @@
-import { TextItem } from "pdfjs-dist/types/src/display/api";
+import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 import { PDFParser, isTextItem } from "../parsePdf.types";
 import { extendedDayjs } from "../../../../utils/dayjs";
 import { isInSameRow } from "../../utils";
+
+export const isMooMooFormat = (data?: Array<TextItem | TextMarkedContent>) => {
+  const companyName = data?.at(-24);
+  if (companyName && isTextItem(companyName)) {
+    return companyName.str.includes("Moomoo");
+  }
+  return false;
+};
 
 const filterTextData = (text: string): boolean => {
   if (!text || text === " ") {
@@ -43,7 +51,7 @@ const parseRowCash = (row: Array<string>) => {
   const formattedAmt = row[2].replace(",", "");
   const amount = convertSign(formattedAmt);
   return {
-    date: extendedDayjs(row[0]).format("DD/MM/YYYY"),
+    transactionDate: extendedDayjs(row[0]).format("DD/MM/YYYY"),
     currency: "SGD",
     description: row[1],
     amount,
@@ -53,7 +61,7 @@ const parseRowCash = (row: Array<string>) => {
 const parseRowPositionValues = (row: Array<string>, endDate: string) => {
   const amount = convertSign(row.at(-5) ?? "0");
   return {
-    date: endDate,
+    transactionDate: endDate,
     currency: row.at(-12) ?? "N/A",
     description: `Mark to market of ${row.slice(0, 2).join("")}`,
     amount,

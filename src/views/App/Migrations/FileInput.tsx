@@ -8,10 +8,12 @@ interface DropZoneProps {
 export const MigrationsFileInput = (props: DropZoneProps) => {
   const handleDrop = () => {};
   return (
-    <FileInput
-      onFileDrop={handleDrop}
-      onFileInputChange={props.onFileInputChange}
-      fileInputAccept=".xls,.xlsx"
-    />
+    <div class="flex items-center justify-center h-full">
+      <FileInput
+        onFileDrop={handleDrop}
+        onFileInputChange={props.onFileInputChange}
+        fileInputAccept=".xls,.xlsx"
+      />
+    </div>
   );
 };

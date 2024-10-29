@@ -20,6 +20,7 @@ import { Header } from "./Header";
 import { routeToParsers } from "~/lib/parsers/fileHandler";
 import { unparse } from "papaparse";
 import { exportAsCSV } from "~/utils/csv";
+import { AccountSelector } from "./AccountSelector";
 
 export type formInfo = {
   name: string;
@@ -92,6 +93,7 @@ export const DataEntry = () => {
         formInfo?.accountId,
         formInfo?.type
       );
+      console.log(rowData);
       if (!rowData) {
         throw new Error();
       }
@@ -177,23 +179,27 @@ export const DataEntry = () => {
         isDisabled={!(parsedResult().data.length && formInfo.accountId)}
         onSaveClick={handleSubmitTransactions}
         formInfo={formInfo}
-        setFormInfo={setFormInfo}
         onCopyClick={handleCopyClick}
         onExportClick={handleExportClick}
       />
-
-      <Show
-        when={parsedResult().data.length}
-        fallback={
-          <FileInput
-            onFileInputChange={handleInputChange}
-            fileInputAccept={ACCEPTED_FILE_TYPES}
-            onFileDrop={handleDrop}
-          />
-        }
-      >
-        <DataGridLite rowData={parsedResult} />
-      </Show>
+      {formInfo.accountId ? (
+        <Show
+          when={parsedResult().data.length}
+          fallback={
+            <div class="flex justify-center items-center h-[75%]">
+              <FileInput
+                onFileInputChange={handleInputChange}
+                fileInputAccept={ACCEPTED_FILE_TYPES}
+                onFileDrop={handleDrop}
+              />
+            </div>
+          }
+        >
+          <DataGridLite rowData={parsedResult} />
+        </Show>
+      ) : (
+        <AccountSelector formInfo={formInfo} setFormInfo={setFormInfo} />
+      )}
       <PasswordDialog
         isOpen={passwordDialogIsOpen}
         onDialogOpenChange={handlePasswordDialogOpenChange}
