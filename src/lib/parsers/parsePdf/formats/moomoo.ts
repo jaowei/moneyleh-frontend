@@ -2,6 +2,7 @@ import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 import { PDFParser, isTextItem } from "../parsePdf.types";
 import { extendedDayjs } from "../../../../utils/dayjs";
 import { isInSameRow } from "../../utils";
+import { TransactionMethods, TransactionTypes } from "~/lib/storage";
 
 export const isMooMooFormat = (data?: Array<TextItem | TextMarkedContent>) => {
   const companyName = data?.at(-24);
@@ -47,7 +48,7 @@ const convertSign = (targetString: string) => {
   return amount;
 };
 
-const parseRowCash = (row: Array<string>) => {
+const parseRowCash = (row: Array<string>, accountId: string | undefined) => {
   const formattedAmt = row[2].replace(",", "");
   const amount = convertSign(formattedAmt);
   return {
@@ -55,21 +56,31 @@ const parseRowCash = (row: Array<string>) => {
     currency: "SGD",
     description: row[1],
     amount,
+    transactionMethod: TransactionMethods.transfer.name,
+    transactionType: TransactionTypes.investments,
+    accountId,
   };
 };
 
-const parseRowPositionValues = (row: Array<string>, endDate: string) => {
+const parseRowPositionValues = (
+  row: Array<string>,
+  endDate: string,
+  accountId: string | undefined
+) => {
   const amount = convertSign(row.at(-5) ?? "0");
   return {
     transactionDate: endDate,
     currency: row.at(-12) ?? "N/A",
     description: `Mark to market of ${row.slice(0, 2).join("")}`,
     amount,
+    transactionMethod: TransactionMethods.transfer.name,
+    transactionType: TransactionTypes.investments,
+    accountId,
   };
 };
 
 export const parseMoomooFormat: PDFParser = (data) => {
-  const { textData } = data;
+  const { textData, accountId } = data;
   if (!textData) return [];
   let row: Array<string> = [];
   let result = [];
@@ -118,7 +129,7 @@ export const parseMoomooFormat: PDFParser = (data) => {
       row.push(textItem.str);
     } else {
       if (isValidRowCash(row)) {
-        const parsedRow = parseRowCash(row);
+        const parsedRow = parseRowCash(row, accountId);
         result.push(parsedRow);
       }
       row = [textItem.str];
@@ -148,7 +159,7 @@ export const parseMoomooFormat: PDFParser = (data) => {
       row.push(textItem.str);
     } else {
       if (isValidRowPositionValues(row) && endOfMonth) {
-        const parsedRow = parseRowPositionValues(row, endOfMonth);
+        const parsedRow = parseRowPositionValues(row, endOfMonth, accountId);
         result.push(parsedRow);
       }
       row = [textItem.str];

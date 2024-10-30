@@ -27,7 +27,6 @@ export type formInfo = {
   type: string;
   financialEntityId: number;
   startingBalance: number;
-  docFormat: string;
   accountId: string;
 };
 
@@ -42,7 +41,6 @@ export const DataEntry = () => {
     type: AccountTypes.cash,
     financialEntityId: 1,
     startingBalance: 0,
-    docFormat: "",
     accountId: "",
   });
   const [parsedResult, setParsedResult] =
@@ -93,7 +91,6 @@ export const DataEntry = () => {
         formInfo?.accountId,
         formInfo?.type
       );
-      console.log(rowData);
       if (!rowData) {
         throw new Error();
       }
@@ -186,7 +183,7 @@ export const DataEntry = () => {
         <Show
           when={parsedResult().data.length}
           fallback={
-            <div class="flex justify-center items-center h-[75%]">
+            <div class="flex justify-center items-center h-[60%]">
               <FileInput
                 onFileInputChange={handleInputChange}
                 fileInputAccept={ACCEPTED_FILE_TYPES}

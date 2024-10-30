@@ -3,8 +3,10 @@ import { INVALID_FORMAT_ERROR, StatementFormats } from "../../../constants";
 import toast from "solid-toast";
 import {
   isDBSAccountFormat,
+  isHSBCCard,
   parseDBSAppFormat,
   parseDBSNAVAppFormat,
+  parseHSBCFormat,
 } from "./formats";
 
 export const CSVFileParser = {
@@ -19,6 +21,9 @@ export const CSVFileParser = {
     if (isDBSAccountFormat(data)) {
       return this.appParsers[StatementFormats.DBS_ACCOUNT];
     }
+    if (isHSBCCard(data)) {
+      return this.appParsers[StatementFormats.HSBC_CARD];
+    }
   },
   async safeParseContent(data: Papa.ParseResult<any>) {
     try {
@@ -32,5 +37,6 @@ export const CSVFileParser = {
   appParsers: {
     [StatementFormats.DBS_ACCOUNT]: parseDBSAppFormat,
     [StatementFormats.DBS_NAV_ACCOUNT]: parseDBSNAVAppFormat,
+    [StatementFormats.HSBC_CARD]: parseHSBCFormat,
   } as Record<string, any>,
 };

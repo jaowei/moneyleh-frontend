@@ -39,7 +39,6 @@ export const PDFFileParser = {
       return this.appParsers[StatementFormats.DBS_CARD];
     }
     if (isMooMooFormat(data.textData)) {
-      console.log(data);
       return this.appParsers[StatementFormats.MOOMOO_ACCOUNT];
     }
   },

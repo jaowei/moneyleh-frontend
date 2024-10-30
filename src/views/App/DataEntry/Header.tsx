@@ -18,8 +18,8 @@ export const Header = (props: HeaderProps) => {
         <Badge class="w-max">{props.fileName}</Badge>
         <span class="iconify radix-icons--arrow-right w-[32px]" />
         <Badge class="w-max">
-          {props.formInfo.accountId.length
-            ? props.formInfo.accountId
+          {props.formInfo.name.length
+            ? props.formInfo.name
             : "No account selected"}
         </Badge>
       </div>
