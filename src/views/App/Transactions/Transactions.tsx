@@ -4,9 +4,9 @@ import {
   FinancialTransaction,
   FinancialTransactionView,
 } from "../../../lib/storage";
-import { DataGridLite } from "../../../components";
 import { ParsedResult } from "../../../types";
 import { EMPTY_PARSED_RESULT } from "../../../constants";
+import { DataGrid } from "~/components/DataGrid/DataGrid";
 
 export const Transactions = () => {
   const { database } = initDB;
@@ -30,7 +30,7 @@ export const Transactions = () => {
         <div class="text-cyan-8">{parsedResult().data.length}</div>
       </div>
       <div>
-        <DataGridLite rowData={parsedResult} />
+        <DataGrid rowData={parsedResult} />
       </div>
     </div>
   );

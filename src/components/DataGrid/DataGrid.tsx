@@ -39,11 +39,11 @@ declare module "@tanstack/solid-table" {
   }
 }
 
-interface DataGridLiteProps {
+interface DataGridProps {
   rowData: Accessor<ParsedResult<FinancialTransactionView> | undefined>;
 }
 
-export const DataGridLite = (props: DataGridLiteProps) => {
+export const DataGrid = (props: DataGridProps) => {
   const [data, setData] = createSignal<Partial<FinancialTransactionView>[]>([]);
   const [sorting, setSorting] = createSignal<SortingState>([]);
   const [globalFilter, setGlobalFilter] = createSignal("");

@@ -6,7 +6,7 @@ import {
   FinancialTransactionView,
 } from "../../../lib/storage";
 import initDB from "../../../lib/storage/sqljs";
-import { DataGridLite, FileInput, PasswordDialog } from "../../../components";
+import { FileInput, PasswordDialog } from "../../../components";
 import {
   ACCEPTED_FILE_TYPES,
   EMPTY_PARSED_RESULT,
@@ -21,6 +21,7 @@ import { routeToParsers } from "~/lib/parsers/fileHandler";
 import { unparse } from "papaparse";
 import { exportAsCSV } from "~/utils/csv";
 import { AccountSelector } from "./AccountSelector";
+import { DataGrid } from "~/components/DataGrid/DataGrid";
 
 export type formInfo = {
   name: string;
@@ -192,7 +193,7 @@ export const DataEntry = () => {
             </div>
           }
         >
-          <DataGridLite rowData={parsedResult} />
+          <DataGrid rowData={parsedResult} />
         </Show>
       ) : (
         <AccountSelector formInfo={formInfo} setFormInfo={setFormInfo} />

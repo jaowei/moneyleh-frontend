@@ -1,6 +1,6 @@
 import { createSignal, JSX } from "solid-js";
 
-import { DataGridLite, FileInput, PasswordDialog } from "../../components";
+import { FileInput, PasswordDialog } from "../../components";
 import { ParsedResult } from "../../types";
 import {
   ACCEPTED_FILE_TYPES,
@@ -21,6 +21,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { exportAsCSV } from "~/utils/csv";
 import { unparse } from "papaparse";
+import { DataGrid } from "~/components/DataGrid/DataGrid";
 
 const LandingDemo = () => {
   const [savedFile, setSavedFile] = createSignal<File>();
@@ -146,7 +147,7 @@ const LandingDemo = () => {
               <div class="font-bold">Format</div> */}
             </div>
             <div class="w-9/12 xl:w-[98%] max-h-[35rem] border rounded-xl">
-              <DataGridLite rowData={parsedResult} />
+              <DataGrid rowData={parsedResult} />
             </div>
           </DialogHeader>
           <DialogFooter class="w-9/12 xl:w-[98%]">

@@ -1,8 +1,8 @@
 import { CellContext } from "@tanstack/solid-table";
-import { createEffect, createMemo, createSignal } from "solid-js";
+import { createEffect, createMemo, createSignal, For } from "solid-js";
 import { FinancialTransactionView } from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
-import { UpdateTableData } from "./DataGridLite";
+import { UpdateTableData } from "./DataGrid";
 import {
   Select,
   SelectContent,
@@ -82,6 +82,10 @@ interface CellSelectProps {
   setValue: ((value: any) => void) | undefined;
 }
 
+interface CellMultiSelectProps extends Omit<CellSelectProps, "currentValue"> {
+  currentValue: string[];
+}
+
 const CellSelect = (props: CellSelectProps) => {
   const options = createMemo(() => {
     const optsList = [];
@@ -108,7 +112,52 @@ const CellSelect = (props: CellSelectProps) => {
           }}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent />
+      <SelectContent class="max-h-96 overflow-auto" />
+    </Select>
+  );
+};
+
+const CellMultiSelect = (props: CellMultiSelectProps) => {
+  const options = createMemo(() => {
+    const optsList = [];
+    for (const opts of props.options) {
+      optsList.push(opts[0]);
+    }
+    return optsList;
+  });
+  return (
+    <Select<string>
+      class="w-full"
+      multiple
+      value={props.currentValue}
+      options={options()}
+      placeholder="---"
+      itemComponent={(props) => (
+        <SelectItem item={props.item}>{props.item.rawValue}</SelectItem>
+      )}
+    >
+      <SelectTrigger class="h-full">
+        <SelectValue<string>>
+          {(state) => {
+            props.setValue?.(state.selectedOption());
+            return (
+              <div class="flex flex-row gap-2 flex-wrap">
+                <For each={state.selectedOptions()}>
+                  {(option) => (
+                    <span
+                      class="bg-gray-200 rounded-lg py-0.5 px-1"
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
+                      {option}
+                    </span>
+                  )}
+                </For>
+              </div>
+            );
+          }}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent class="h-96 overflow-auto" />
     </Select>
   );
 };
@@ -150,6 +199,24 @@ export const selectTransactionTypeCell = (
   return (
     <CellSelect
       options={staticInfo.transactionTypes}
+      currentValue={props.getValue()}
+      setValue={generateValueUpdater(
+        props.table.options.meta?.updateData,
+        props.row.index,
+        props.column.id
+      )}
+    />
+  );
+};
+
+export const selectTransactionTagsCell = (
+  props: CellContext<Partial<FinancialTransactionView>, any | undefined>
+) => {
+  const { staticInfo } = initDB;
+
+  return (
+    <CellMultiSelect
+      options={staticInfo.transactionTags}
       currentValue={props.getValue()}
       setValue={generateValueUpdater(
         props.table.options.meta?.updateData,

@@ -73,7 +73,7 @@ export type staticInfo = {
   transactionMethods: Map<string, TransactionMethodModel>;
   transactionTypes: Map<string, TransactionTypeModel>;
   accountTypes: SqlValue[][];
-  transactionTags: TransactionTagModel[];
+  transactionTags: Map<string, TransactionTagModel>;
 };
 
 const mapTransactionMethods = (methods: TransactionMethodModel[]) => {
@@ -91,6 +91,15 @@ const mapTransactionTypes = (types: TransactionTypeModel[]) => {
   }
   return typeMap;
 };
+
+const mapTransactionTags = (tags: TransactionTagModel[]) => {
+  const tagMap = new Map();
+  for (const tag of tags) {
+    tagMap.set(tag.name, tag);
+  }
+  return tagMap;
+};
+
 const createLocalDB = () => {
   const [database, { refetch }] = createResource(mountDB);
 
@@ -100,7 +109,7 @@ const createLocalDB = () => {
     transactionMethods: new Map(),
     transactionTypes: new Map(),
     accountTypes: [],
-    transactionTags: [],
+    transactionTags: new Map(),
   });
 
   createEffect(() => {
@@ -117,7 +126,10 @@ const createLocalDB = () => {
         mapTransactionTypes(TransactionType.selectAll?.(db) ?? [])
       );
       setStaticInfo("accountTypes", AccountType.selectAll?.(db) ?? []);
-      setStaticInfo("transactionTags", TransactionTag.selectAll(db));
+      setStaticInfo(
+        "transactionTags",
+        mapTransactionTags(TransactionTag.selectAll(db) ?? [])
+      );
     }
   });
 

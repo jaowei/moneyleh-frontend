@@ -5,6 +5,7 @@ import {
   selectTransactionMethodCell,
   selectTransactionTypeCell,
   genericCell,
+  selectTransactionTagsCell,
 } from "./Cells";
 
 const columnHelper = createColumnHelper<any>();
@@ -22,12 +23,12 @@ export const columnHelpers = {
   amount: columnHelper.accessor("amount", {
     header: "Amount",
     cell: editableNumberInputCell,
-    size: 120,
+    size: 140,
   }),
   currency: columnHelper.accessor("currency", {
     header: "Currency",
     cell: editableStringInputCell,
-    size: 70,
+    size: 50,
   }),
   account: columnHelper.accessor("account", {
     header: "Account Name",
@@ -57,6 +58,11 @@ export const commonColumns = [
     header: "Transaction Type",
     cell: selectTransactionTypeCell,
     size: 200,
+  }),
+  columnHelper.accessor("transactionTags", {
+    header: "Transaction Tags",
+    cell: selectTransactionTagsCell,
+    size: 300,
   }),
 ];
 
