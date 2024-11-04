@@ -14,7 +14,7 @@ Technology Stack:
 
 1. Frontend framework: SolidJS
 2. Build Tool: Vite
-3. Styling: TailwindCSS + UnoCSS
+3. Styling: TailwindCSS
 4. Persistence: SQLite WASM
 
 ## Features

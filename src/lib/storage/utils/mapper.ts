@@ -4,26 +4,6 @@ import {
 } from "../sql";
 import { staticInfo } from "../sqljs";
 
-export const mapToFinancialTransaction = ({
-  transactionDate,
-  description,
-  amount,
-  currency,
-  transactionMethod,
-  transactionType,
-  account,
-  transactionTag,
-}: FinancialTransactionView) => ({
-  $transactionDate: transactionDate,
-  $description: description,
-  $amount: amount,
-  $currency: currency,
-  $transactionMethodId: transactionMethod,
-  $transactionTypeId: transactionType,
-  $accountId: account,
-  $transactionTagIds: JSON.stringify(transactionTag),
-});
-
 export const financialTransactionsMapper = (
   data: FinancialTransactionView[],
   databaseInfo: staticInfo,
@@ -31,23 +11,29 @@ export const financialTransactionsMapper = (
 ): CreateFinancialTransactionDto[] => {
   const financialTransactionModel: CreateFinancialTransactionDto[] = [];
   for (let row of data) {
-    const dbModel = mapToFinancialTransaction(row);
-    dbModel.$accountId = accountId;
-
     const methodId = databaseInfo.transactionMethods.get(
-      dbModel.$transactionMethodId
+      row.transactionMethod
     )?.id;
-
-    dbModel.$transactionMethodId =
-      methodId?.toString() ?? dbModel.$transactionMethodId;
 
     const typeId = databaseInfo.transactionTypes.get(
-      dbModel.$transactionTypeId ?? ""
+      row.transactionType ?? ""
     )?.id;
-    dbModel.$transactionTypeId =
-      typeId?.toString() ?? dbModel.$transactionTypeId;
 
-    financialTransactionModel.push(dbModel);
+    const tagIds =
+      row.transactionTag?.map((tagName) => {
+        return databaseInfo.transactionTags.get(tagName)?.id;
+      }) ?? [];
+
+    financialTransactionModel.push({
+      $transactionDate: row.transactionDate,
+      $description: row.description,
+      $amount: row.amount,
+      $currency: row.currency,
+      $transactionMethodId: methodId?.toString() ?? row.transactionMethod,
+      $transactionTypeId: typeId?.toString() ?? row.transactionType,
+      $accountId: accountId,
+      $transactionTagIds: JSON.stringify(tagIds),
+    });
   }
   return financialTransactionModel;
 };

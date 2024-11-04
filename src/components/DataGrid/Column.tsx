@@ -59,8 +59,8 @@ export const commonColumns = [
     cell: selectTransactionTypeCell,
     size: 200,
   }),
-  columnHelper.accessor("transactionTags", {
-    header: "Transaction Tags",
+  columnHelper.accessor("transactionTag", {
+    header: "Transaction Tag",
     cell: selectTransactionTagsCell,
     size: 300,
   }),

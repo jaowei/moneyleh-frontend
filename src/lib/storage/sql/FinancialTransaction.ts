@@ -10,7 +10,7 @@ export type FinancialTransactionView = {
   transactionMethod: string;
   transactionType?: string;
   account?: string;
-  transactionTag?: Array<number>;
+  transactionTag?: Array<string>;
 };
 
 export type CreateFinancialTransactionDto = {
@@ -46,7 +46,7 @@ const FinancialTransaction: DatabaseModel<
   initTable(db) {
     db.run(this.queries.createTable);
   },
-  async insertMany(db, data) {
+  insertMany(db, data) {
     const stmt = db.prepare(this.queries.insertOne);
     databaseSeeder(stmt, data);
     persistDB(db);

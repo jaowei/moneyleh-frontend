@@ -76,6 +76,7 @@ export const DataEntry = () => {
     } else {
       toast.error("Error with DB / No data", { position: "top-center" });
     }
+    setFileName(NO_FILE_SELECTED_MSG);
   };
 
   const handleFileType = async (

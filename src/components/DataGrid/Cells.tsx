@@ -87,6 +87,7 @@ interface CellMultiSelectProps extends Omit<CellSelectProps, "currentValue"> {
 }
 
 const CellSelect = (props: CellSelectProps) => {
+  const [value, setValue] = createSignal<string | null>(props.currentValue);
   const options = createMemo(() => {
     const optsList = [];
     for (const opts of props.options) {
@@ -94,10 +95,15 @@ const CellSelect = (props: CellSelectProps) => {
     }
     return optsList;
   });
+  const handleChange = (value: string | null) => {
+    props.setValue?.(value);
+    setValue(value);
+  };
   return (
     <Select
       class="w-full"
-      value={props.currentValue}
+      value={value()}
+      onChange={handleChange}
       options={options()}
       placeholder="---"
       itemComponent={(props) => (
@@ -107,17 +113,19 @@ const CellSelect = (props: CellSelectProps) => {
       <SelectTrigger>
         <SelectValue<string>>
           {(state) => {
-            props.setValue?.(state.selectedOption());
             return state.selectedOption();
           }}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent class="max-h-96 overflow-auto" />
+      <SelectContent />
     </Select>
   );
 };
 
 const CellMultiSelect = (props: CellMultiSelectProps) => {
+  const [value, setValue] = createSignal<string[] | undefined>(
+    props.currentValue
+  );
   const options = createMemo(() => {
     const optsList = [];
     for (const opts of props.options) {
@@ -125,11 +133,16 @@ const CellMultiSelect = (props: CellMultiSelectProps) => {
     }
     return optsList;
   });
+  const handleChange = (value: string[] | undefined) => {
+    props.setValue?.(value);
+    setValue(value);
+  };
   return (
     <Select<string>
       class="w-full"
       multiple
-      value={props.currentValue}
+      value={value()}
+      onChange={handleChange}
       options={options()}
       placeholder="---"
       itemComponent={(props) => (
@@ -139,7 +152,6 @@ const CellMultiSelect = (props: CellMultiSelectProps) => {
       <SelectTrigger class="h-full">
         <SelectValue<string>>
           {(state) => {
-            props.setValue?.(state.selectedOption());
             return (
               <div class="flex flex-row gap-2 flex-wrap">
                 <For each={state.selectedOptions()}>
