@@ -1,17 +1,19 @@
 import { SqlValue } from "sql.js";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import initDB from "../../../lib/storage/sqljs";
 import { createEffect, createSignal } from "solid-js";
 import { formInfo } from "./DataEntry";
 import { TabsList, TabsTrigger, TabsContent, Tabs } from "~/components/ui/tabs";
 import { AccountForm } from "./AccountForm";
 import { SetStoreFunction } from "solid-js/store";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxControl,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxItemLabel,
+  ComboboxTrigger,
+} from "~/components/ui/combobox";
 
 export interface AccountSelectorState {
   label: string;
@@ -59,7 +61,7 @@ export const AccountSelector = (props: AccountSelectorProps) => {
         </TabsList>
         <TabsContent value="existing">
           <div class="w-full bg-gray-100 p-6 rounded-xl border">
-            <Select<AccountSelectorState>
+            <Combobox
               class="bg-white"
               value={value()}
               onChange={handleAccountSelected}
@@ -69,26 +71,23 @@ export const AccountSelector = (props: AccountSelectorProps) => {
                   value: account,
                 };
               })}
-              disabled={!staticInfo.accounts.length}
+              placeholder="select existing account"
               optionValue="value"
               optionTextValue="label"
-              placeholder="select existing account"
               itemComponent={(props) => (
-                <SelectItem item={props.item}>
-                  {props.item.rawValue.label}
-                </SelectItem>
+                <ComboboxItem item={props.item}>
+                  <ComboboxItemLabel>
+                    {props.item.rawValue.label}
+                  </ComboboxItemLabel>
+                </ComboboxItem>
               )}
             >
-              <SelectTrigger>
-                <SelectValue<AccountSelectorState>>
-                  {(state) => {
-                    const label = state.selectedOption().label;
-                    return label;
-                  }}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent class="h-96 overflow-auto" />
-            </Select>
+              <ComboboxControl>
+                <ComboboxInput />
+                <ComboboxTrigger />
+              </ComboboxControl>
+              <ComboboxContent class="max-h-96 overflow-auto" />
+            </Combobox>
           </div>
         </TabsContent>
         <TabsContent value="new">

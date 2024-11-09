@@ -17,6 +17,16 @@ import {
   NumberFieldIncrementTrigger,
   NumberFieldInput,
 } from "../ui/number-field";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxControl,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxItemIndicator,
+  ComboboxItemLabel,
+  ComboboxTrigger,
+} from "../ui/combobox";
 
 export const genericCell = (
   info: CellContext<
@@ -122,7 +132,7 @@ const CellSelect = (props: CellSelectProps) => {
   );
 };
 
-const CellMultiSelect = (props: CellMultiSelectProps) => {
+const CellMultiCombobox = (props: CellMultiSelectProps) => {
   const [value, setValue] = createSignal<string[] | undefined>(
     props.currentValue
   );
@@ -138,39 +148,26 @@ const CellMultiSelect = (props: CellMultiSelectProps) => {
     setValue(value);
   };
   return (
-    <Select<string>
+    <Combobox<string>
       class="w-full"
       multiple
       value={value()}
       onChange={handleChange}
       options={options()}
-      placeholder="---"
+      placeholder="type to search or click to select"
       itemComponent={(props) => (
-        <SelectItem item={props.item}>{props.item.rawValue}</SelectItem>
+        <ComboboxItem item={props.item}>
+          <ComboboxItemLabel>{props.item.rawValue}</ComboboxItemLabel>
+          <ComboboxItemIndicator />
+        </ComboboxItem>
       )}
     >
-      <SelectTrigger class="h-full">
-        <SelectValue<string>>
-          {(state) => {
-            return (
-              <div class="flex flex-row gap-2 flex-wrap">
-                <For each={state.selectedOptions()}>
-                  {(option) => (
-                    <span
-                      class="bg-gray-200 rounded-lg py-0.5 px-1"
-                      onPointerDown={(e) => e.stopPropagation()}
-                    >
-                      {option}
-                    </span>
-                  )}
-                </For>
-              </div>
-            );
-          }}
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent class="h-96 overflow-auto" />
-    </Select>
+      <ComboboxControl>
+        <ComboboxInput></ComboboxInput>
+        <ComboboxTrigger></ComboboxTrigger>
+      </ComboboxControl>
+      <ComboboxContent class="max-h-96 overflow-auto" />
+    </Combobox>
   );
 };
 
@@ -227,7 +224,7 @@ export const selectTransactionTagsCell = (
   const { staticInfo } = initDB;
 
   return (
-    <CellMultiSelect
+    <CellMultiCombobox
       options={staticInfo.transactionTags}
       currentValue={props.getValue()}
       setValue={generateValueUpdater(

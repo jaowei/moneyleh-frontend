@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@kobalte/core": "^0.13.4",
+    "@kobalte/core": "^0.13.7",
     "@solid-primitives/scheduled": "^1.4.3",
     "@solidjs/router": "^0.14.1",
     "@tanstack/solid-table": "^8.19.2",
