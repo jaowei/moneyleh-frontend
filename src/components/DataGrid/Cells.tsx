@@ -1,5 +1,5 @@
 import { CellContext } from "@tanstack/solid-table";
-import { createEffect, createMemo, createSignal, For } from "solid-js";
+import { createEffect, createMemo, createSignal } from "solid-js";
 import { FinancialTransactionView } from "../../lib/storage";
 import initDB from "../../lib/storage/sqljs";
 import { UpdateTableData } from "./DataGrid";

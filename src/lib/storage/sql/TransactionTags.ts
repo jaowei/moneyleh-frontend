@@ -2,15 +2,20 @@ import { Database } from "sql.js";
 import { stepper } from "../utils";
 import { persistDB } from "../sqljs";
 
-export type TransactionTagModel = {
+export interface TransactionTagModel {
   id: number;
   createdAt: string;
   updatedAt: string;
   name: string;
-};
+}
 
-export type CreateTransactionTagDto = {
+export interface CreateTransactionTagDto {
   $name: string;
+}
+
+export type UpdateTransactionTagDto = {
+  $name: string;
+  $id: number;
 };
 
 export const defaultTags = {
@@ -32,7 +37,8 @@ export const TransactionTag = {
     createTable: `CREATE TABLE transactionTag (id INTEGER PRIMARY KEY, createdAt DEFAULT CURRENT_TIMESTAMP, 
       updatedAt DEFAULT CURRENT_TIMESTAMP, name TEXT UNIQUE);`,
     insertOne: `INSERT INTO transactionTag(name) VALUES ($name) RETURNING id;`,
-    selectAll: `SELECT * FROM transactionTag ORDER BY name ASC;`,
+    selectAll: `SELECT * FROM transactionTag ORDER BY name COLLATE NOCASE ASC;`,
+    updateOne: `UPDATE transactionTag SET name=$name WHERE id=$id;`,
   },
   initTable(db: Database) {
     db.run(this.queries.createTable);
@@ -45,6 +51,15 @@ export const TransactionTag = {
     stmt.free();
     await persistDB(db);
     return id;
+  },
+  async updateOne(db: Database, data: UpdateTransactionTagDto) {
+    const stmt = db.prepare(this.queries.updateOne);
+    const res = stmt.bind(data);
+    console.log(res);
+    stmt.step();
+    stmt.get();
+    stmt.free();
+    await persistDB(db);
   },
   selectAll(db: Database) {
     return stepper(
