@@ -10,11 +10,7 @@ import {
 } from "@tanstack/solid-table";
 import { FinancialTransactionView } from "../../lib/storage";
 import { ParsedResult } from "../../types";
-import {
-  commonColumns,
-  dataEntryPageColumns,
-  transactionsPageColumns,
-} from "./Column";
+import { commonColumns, dataEntryPageColumns } from "./Column";
 import { useLocation } from "@solidjs/router";
 import { ColumnSort } from "./ColumnSort";
 import { ColumnResizer } from "./ColumnResizer";
@@ -52,8 +48,6 @@ export const DataGrid = (props: DataGridProps) => {
   const setColumns = () => {
     if (location.pathname.includes("dataEntry")) {
       return dataEntryPageColumns;
-    } else if (location.pathname.includes("transactions")) {
-      return transactionsPageColumns;
     }
     return commonColumns;
   };
