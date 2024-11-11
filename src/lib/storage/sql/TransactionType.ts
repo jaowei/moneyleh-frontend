@@ -1,5 +1,5 @@
 import { DatabaseModel } from "../../../types";
-import { databaseSeeder } from "../utils";
+import { databaseSeeder, stepper } from "../utils";
 
 export type TransactionTypeModel = {
   id: string;
@@ -33,13 +33,10 @@ const TransactionType: DatabaseModel<
     databaseSeeder(stmt, baseTransactionTypes);
   },
   selectAll(db) {
-    const row = [];
-    const stmt = db.prepare(this.queries.selectAll);
-    while (stmt.step()) {
-      row.push(stmt.getAsObject() as TransactionTypeModel);
-    }
-    stmt.free();
-    return row;
+    return stepper(
+      db,
+      this.queries.selectAll
+    ) as unknown as TransactionTypeModel[];
   },
 };
 

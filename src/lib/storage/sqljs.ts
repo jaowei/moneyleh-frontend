@@ -6,6 +6,7 @@ import {
   Account,
   AccountType,
   FinancialEntity,
+  FinancialEntityModel,
   FinancialTransaction,
   TransactionMethod,
   TransactionMethodModel,
@@ -68,7 +69,7 @@ const mountDB = async () => {
 };
 
 export type staticInfo = {
-  entities: SqlValue[][];
+  entities: Map<string, FinancialEntityModel>;
   accounts: SqlValue[][];
   transactionMethods: Map<string, TransactionMethodModel>;
   transactionTypes: Map<string, TransactionTypeModel>;
@@ -76,35 +77,19 @@ export type staticInfo = {
   transactionTags: Map<string, TransactionTagModel>;
 };
 
-const mapTransactionMethods = (methods: TransactionMethodModel[]) => {
-  const methodMap = new Map();
-  for (const method of methods) {
-    methodMap.set(method.name, method);
+const dbDataToMap = (dbData: { name: string; [key: string]: any }[]) => {
+  const targetMap = new Map();
+  for (const data of dbData) {
+    targetMap.set(data.name, data);
   }
-  return methodMap;
-};
-
-const mapTransactionTypes = (types: TransactionTypeModel[]) => {
-  const typeMap = new Map();
-  for (const type of types) {
-    typeMap.set(type.name, type);
-  }
-  return typeMap;
-};
-
-const mapTransactionTags = (tags: TransactionTagModel[]) => {
-  const tagMap = new Map();
-  for (const tag of tags) {
-    tagMap.set(tag.name, tag);
-  }
-  return tagMap;
+  return targetMap;
 };
 
 const createLocalDB = () => {
   const [database, { refetch }] = createResource(mountDB);
 
   const [staticInfo, setStaticInfo] = createStore<staticInfo>({
-    entities: [],
+    entities: new Map(),
     accounts: [],
     transactionMethods: new Map(),
     transactionTypes: new Map(),
@@ -115,20 +100,23 @@ const createLocalDB = () => {
   createEffect(() => {
     const db = database();
     if (db) {
-      setStaticInfo("entities", FinancialEntity.selectAll?.(db) ?? []);
+      setStaticInfo(
+        "entities",
+        dbDataToMap(FinancialEntity.selectAll?.(db) ?? [])
+      );
       setStaticInfo("accounts", Account.selectAll?.(db) ?? []);
       setStaticInfo(
         "transactionMethods",
-        mapTransactionMethods(TransactionMethod.selectAll?.(db) ?? [])
+        dbDataToMap(TransactionMethod.selectAll?.(db) ?? [])
       );
       setStaticInfo(
         "transactionTypes",
-        mapTransactionTypes(TransactionType.selectAll?.(db) ?? [])
+        dbDataToMap(TransactionType.selectAll?.(db) ?? [])
       );
       setStaticInfo("accountTypes", AccountType.selectAll?.(db) ?? []);
       setStaticInfo(
         "transactionTags",
-        mapTransactionTags(TransactionTag.selectAll(db) ?? [])
+        dbDataToMap(TransactionTag.selectAll(db) ?? [])
       );
     }
   });

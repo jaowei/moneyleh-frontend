@@ -1,25 +1,11 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
 import initDB from "../../../lib/storage/sqljs";
-import { Button } from "~/components/ui/button";
-import { Accessor, createEffect, createSignal, For, JSX, Show } from "solid-js";
-import {
-  TextField,
-  TextFieldInput,
-  TextFieldLabel,
-} from "~/components/ui/text-field";
+import { createEffect, createSignal, JSX } from "solid-js";
 import { TransactionTag } from "~/lib/storage/sql/TransactionTags";
 import toast from "solid-toast";
+import { DialogWrapperProps } from "~/types/Dialog";
+import { ManagerDialog } from "~/components/ManagerDialog";
 
-interface TagDialogProps {
-  isOpen: Accessor<boolean>;
-  onDialogOpenChange: (isOpen: boolean) => void;
-}
+interface TagDialogProps extends DialogWrapperProps {}
 
 export const TagDialog = (props: TagDialogProps) => {
   const { database, staticInfo, refetch } = initDB;
@@ -28,7 +14,6 @@ export const TagDialog = (props: TagDialogProps) => {
   const [tagsList, setTagsList] = createSignal<string[]>();
   const [selectedTag, setSelectedTag] = createSignal<string>();
   const [selectedTagIdx, setSelectedTagIdx] = createSignal<number>();
-  const [isUpdateDisabled, setIsUpdateDisabled] = createSignal<boolean>(true);
 
   createEffect(() => {
     const tagsList = [];
@@ -38,20 +23,25 @@ export const TagDialog = (props: TagDialogProps) => {
     setTagsList(tagsList);
   });
 
-  createEffect(() => {
-    const tag = selectedTag();
-    const tagIdx = selectedTagIdx();
-    const tagList = tagsList();
-    if (tag && tagIdx !== undefined && tagList) {
-      setIsUpdateDisabled(tag === tagList[tagIdx]);
-    }
-  });
-
-  const handleTagInput: JSX.EventHandlerUnion<HTMLInputElement, InputEvent> = (
-    e
-  ) => {
-    setNewTagName(e.currentTarget.value);
+  const handleItemClick = (currIdx: number, currItemName: string) => {
+    const isSameIdx = selectedTagIdx() === currIdx;
+    setSelectedTag(isSameIdx ? undefined : currItemName);
+    setSelectedTagIdx((prev) => {
+      if (prev === currIdx) {
+        return undefined;
+      }
+      return currIdx;
+    });
   };
+
+  const handleUpdateChange = (value: string) => {
+    setSelectedTag(value);
+  };
+
+  const handleCreateChange = (value: string) => {
+    setNewTagName(value);
+  };
+
   const handleTagCreationSubmit: JSX.EventHandler<
     HTMLFormElement,
     SubmitEvent
@@ -101,69 +91,20 @@ export const TagDialog = (props: TagDialogProps) => {
   };
 
   return (
-    <Dialog open={props.isOpen()} onOpenChange={props.onDialogOpenChange}>
-      <DialogContent class="max-w-4xl h-[30rem]">
-        <DialogHeader>
-          <DialogTitle>Tags Manager</DialogTitle>
-          <DialogDescription>Create or update your tags</DialogDescription>
-        </DialogHeader>
-        <div class="grid grid-cols-2 grid-rows-1 gap-4 h-80">
-          <div>
-            Select to update an existing tag
-            <div class="flex flex-col gap-2 p-2 border rounded-xl overflow-auto h-full">
-              <For each={tagsList()}>
-                {(tag, idx) => (
-                  <div
-                    class={`${selectedTagIdx() === idx() ? "bg-gray-100" : ""}`}
-                    onClick={() => {
-                      const isSameIdx = selectedTagIdx() === idx();
-                      setSelectedTag(isSameIdx ? undefined : tag);
-                      setSelectedTagIdx((prev) => {
-                        if (prev === idx()) {
-                          return undefined;
-                        }
-                        return idx();
-                      });
-                    }}
-                  >
-                    {tag}
-                  </div>
-                )}
-              </For>
-            </div>
-          </div>
-          <Show
-            when={!selectedTag()}
-            fallback={
-              <form
-                class="flex flex-col gap-6"
-                onSubmit={handleTagUpdateSubmit}
-              >
-                <TextField value={selectedTag()} onChange={setSelectedTag}>
-                  <TextFieldLabel>Update existing tag:</TextFieldLabel>
-                  <TextFieldInput type="text" />
-                </TextField>
-                <Button type="submit" disabled={isUpdateDisabled()}>
-                  Save
-                </Button>
-              </form>
-            }
-          >
-            <form
-              class="flex flex-col gap-6"
-              onSubmit={handleTagCreationSubmit}
-            >
-              <TextField>
-                <TextFieldLabel>Create a tag:</TextFieldLabel>
-                <TextFieldInput type="text" onInput={handleTagInput} />
-              </TextField>
-              <Button type="submit" disabled={!newTagName()}>
-                Save
-              </Button>
-            </form>
-          </Show>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <ManagerDialog
+      isOpen={props.isOpen}
+      onDialogOpenChange={props.onDialogOpenChange}
+      title="Tag Manager"
+      desc="Update and create tags here"
+      existing={tagsList() ?? []}
+      selectedItem={selectedTag}
+      itemToCreate={newTagName}
+      selectedItemIdx={selectedTagIdx}
+      onItemClick={handleItemClick}
+      onUpdateSubmit={handleTagUpdateSubmit}
+      onCreateSubmit={handleTagCreationSubmit}
+      onCreateChange={handleCreateChange}
+      onUpdateChange={handleUpdateChange}
+    />
   );
 };

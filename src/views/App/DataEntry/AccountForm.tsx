@@ -111,13 +111,10 @@ export const AccountForm = (props: AccountFormProps) => {
               placeholder="Select financial entity"
               optionValue="value"
               optionTextValue="label"
-              options={staticInfo.entities.map((entity) => {
-                const name = typeof entity[2] === "string" ? entity[2] : "N/A";
-                return {
-                  label: name,
-                  value: entity[0],
-                };
-              })}
+              options={Array.from(staticInfo.entities, ([name, data]) => ({
+                label: name,
+                value: data,
+              }))}
               itemComponent={(props) => (
                 <SelectItem item={props.item}>
                   {props.item.rawValue.label}
@@ -135,7 +132,7 @@ export const AccountForm = (props: AccountFormProps) => {
                   }}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent />
+              <SelectContent class="max-h-96 overflow-auto" />
             </Select>
           </FormField>
           <FormField formLabel="Initial Account Balance">

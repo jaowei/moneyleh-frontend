@@ -3,6 +3,7 @@ import { formInfo } from "./DataEntry";
 import { Badge } from "~/components/ui/badge";
 import { createSignal } from "solid-js";
 import { TagDialog } from "../common/TagDialog";
+import { EntityDialog } from "../common/EntityDialog";
 
 interface HeaderProps {
   fileName: string;
@@ -15,8 +16,12 @@ interface HeaderProps {
 
 export const Header = (props: HeaderProps) => {
   const [tagDialogIsOpen, setTagDialogIsOpen] = createSignal(false);
+  const [entityDialogIsOpen, setEntityDialogIsOpen] = createSignal(false);
   const handleTagsClick = () => {
     setTagDialogIsOpen((prev) => !prev);
+  };
+  const handleEntitiesClick = () => {
+    setEntityDialogIsOpen((prev) => !prev);
   };
   return (
     <div class="flex flex-row justify-between items-center p-2 bg-gray-100">
@@ -47,9 +52,9 @@ export const Header = (props: HeaderProps) => {
         <Button size="sm" onClick={handleTagsClick}>
           Tags
         </Button>
-        {/* <Button size="sm" onClick={handleTagsClick}>
+        <Button size="sm" onClick={handleEntitiesClick}>
           Entities
-        </Button> */}
+        </Button>
         <Button
           size="sm"
           variant="special"
@@ -62,6 +67,10 @@ export const Header = (props: HeaderProps) => {
       <TagDialog
         isOpen={tagDialogIsOpen}
         onDialogOpenChange={setTagDialogIsOpen}
+      />
+      <EntityDialog
+        isOpen={entityDialogIsOpen}
+        onDialogOpenChange={setEntityDialogIsOpen}
       />
     </div>
   );

@@ -6,9 +6,14 @@
 
 ## 8 Nov 2024
 
-1. Allow creation of financial entities
+1. ~~Allow creation of financial entities~~
 2. Allow click on file badge to reupload a new file
 3. Allow deletion of rows in data entry table
 4. Edit transactions page table to have tags and entity name
 5. Add new formats, trust bank, syfe
 6. Add sorting, searching and filtering to transactions table
+
+## 11 Nov 2024
+
+1. Responsive layouts
+2. Fix dashboard error bug

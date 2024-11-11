@@ -54,10 +54,8 @@ export const TransactionTag = {
   },
   async updateOne(db: Database, data: UpdateTransactionTagDto) {
     const stmt = db.prepare(this.queries.updateOne);
-    const res = stmt.bind(data);
-    console.log(res);
+    stmt.bind(data);
     stmt.step();
-    stmt.get();
     stmt.free();
     await persistDB(db);
   },
